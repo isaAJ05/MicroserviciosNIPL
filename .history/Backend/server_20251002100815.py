@@ -151,8 +151,8 @@ def test_code():
 
     # Guarda el código en un archivo temporal
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as tmp:
-        tmp.write(code)
-        tmp_path = tmp.name
+    tmp.write(code)
+    tmp_path = tmp.name
 
     try:
         # Ejecuta el archivo con timeout de 5 segundos

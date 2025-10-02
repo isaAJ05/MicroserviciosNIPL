@@ -150,7 +150,7 @@ def test_code():
         return jsonify({"error": "No se recibió código"}), 400
 
     # Guarda el código en un archivo temporal
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as tmp:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as tmp:
         tmp.write(code)
         tmp_path = tmp.name
 

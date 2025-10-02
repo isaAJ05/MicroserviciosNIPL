@@ -536,8 +536,8 @@ function PanelPrincipal() {
                 <td>
                     <a
                       href={`http://localhost:${microservice.port}/${microservice.endpoint}?a=5&b=7`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+  target="_blank"
+  rel="noopener noreferrer"
                       style={{
                         display: 'inline-block',
                         background: '#1a73e8',

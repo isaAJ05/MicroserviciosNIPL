@@ -763,7 +763,7 @@ const handleTestCode = async () => {
           MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
         </div>
         <div>
-          <span>Contacto: microservicios@uninorte.edu.co</span>
+          <span>Contacto: microdock@uninorte.edu.co</span>
         </div>
       </footer>
     </div>

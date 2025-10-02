@@ -78,7 +78,18 @@ def get_microservices():
     microservices = load_microservices()
     # Actualiza estado y puerto desde Docker
     for ms in microservices:
-        # Estado
+    # Estado
+    ps_cmd = [
+        "docker", "ps", "--filter", f"id={ms['id']}",
+        "--format", "{{.Status}}"
+    ]
+    status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
+    ms["status"] = status_result.stdout.strip() or "stopped"
+
+    # Si está detenido, intenta iniciarlo
+    if ms["status"] == "stopped":
+        subprocess.run(["docker", "start", ms["id"]], check=False)
+        # Vuelve a consultar el estado
         ps_cmd = [
             "docker", "ps", "--filter", f"id={ms['id']}",
             "--format", "{{.Status}}"
@@ -86,25 +97,14 @@ def get_microservices():
         status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
         ms["status"] = status_result.stdout.strip() or "stopped"
 
-        # Si está detenido, intenta iniciarlo
-        if ms["status"] == "stopped":
-            subprocess.run(["docker", "start", ms["id"]], check=False)
-            # Vuelve a consultar el estado
-            ps_cmd = [
-                "docker", "ps", "--filter", f"id={ms['id']}",
-                "--format", "{{.Status}}"
-            ]
-            status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
-            ms["status"] = status_result.stdout.strip() or "stopped"
-
-        # Puerto
-        inspect_cmd = [
-            "docker", "inspect",
-            "--format", "{{(index (index .NetworkSettings.Ports \"8000/tcp\") 0).HostPort}}",
-            ms["id"]
-        ]
-        port_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
-        ms["port"] = port_result.stdout.strip() or ms.get("port")
+    # Puerto
+    inspect_cmd = [
+        "docker", "inspect",
+        "--format", "{{(index (index .NetworkSettings.Ports \"8000/tcp\") 0).HostPort}}",
+        ms["id"]
+    ]
+    port_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
+    ms["port"] = port_result.stdout.strip() or ms.get("port")
     return jsonify({"microservices": microservices}), 200
 # DELETE -> ELIMINAR MICROSERVICIO
 @app.route('/microservices/<string:container_id>', methods=['DELETE'])
@@ -150,7 +150,7 @@ def test_code():
         return jsonify({"error": "No se recibió código"}), 400
 
     # Guarda el código en un archivo temporal
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False, encoding="utf-8") as tmp:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as tmp:
         tmp.write(code)
         tmp_path = tmp.name
 

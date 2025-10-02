@@ -391,7 +391,7 @@ function PanelPrincipal() {
         >
           {isHistoryOpen ? "✖" : "☰"}
         </button>
-        <h1>MicroServicios</h1>
+        <h1>MicroDock</h1>
         <button
           style={{
             marginLeft: "auto",
@@ -535,7 +535,7 @@ function PanelPrincipal() {
                 </td>
                 <td>
                     <a
-                      href={`http://localhost:${microservice.port}/${microservice.endpoint}?a=5&b=7`}
+                      href={`http://localhost:${microservice.port}/${microservice.endpoint}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
@@ -611,7 +611,7 @@ function PanelPrincipal() {
           MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
         </div>
         <div>
-          <span>Contacto: microservicios@uninorte.edu.co</span>
+          <span>Contacto: microdock@uninorte.edu.co</span>
         </div>
       </footer>
       </div>

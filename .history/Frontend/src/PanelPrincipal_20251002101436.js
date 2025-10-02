@@ -535,7 +535,7 @@ function PanelPrincipal() {
                 </td>
                 <td>
                     <a
-                      href={`http://localhost:${microservice.port}/${microservice.endpoint}?a=5&b=7`}
+                      href={`http://localhost:${microservice.port}/${microservice.endpoint}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
