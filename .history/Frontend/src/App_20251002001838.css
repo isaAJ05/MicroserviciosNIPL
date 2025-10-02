@@ -1,0 +1,293 @@
+
+/* General container */
+/* PanelPrincipal: tabla de microservicios */
+.panel-content {
+  padding: 32px 24px;
+  flex: 1;
+  
+  /*background: radial-gradient(ellipse, #3e4863 10%, #181c27 100%); DEGRADADO DE BRITO*/
+}
+
+.microservices-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #0f131c;
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(60, 165, 108, 0.2);
+  overflow: hidden;
+}
+
+.microservices-table th,
+.microservices-table td {
+  border: 1px solid #444;
+  padding: 12px 10px;
+  text-align: left;
+  word-break: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.microservices-table th {
+  background-color: #181c27;
+  color: #fff;
+}
+
+.microservices-table tr:nth-child(even) {
+  background-color: #181c27;
+}
+
+.microservices-table tr:hover {
+  background-color: #23263a;
+}
+
+.action-btn {
+  padding: 7px 16px;
+  background-color: #9b0018;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 8px;
+  transition: background 0.3s;
+}
+.action-btn:hover {
+  background-color: #680010;
+}
+
+/* Tema claro para PanelPrincipal */
+.light-theme .panel-content {
+  background: radial-gradient(ellipse, #e5e6ea 10%, #f3f3f6 100%) !important;
+}
+
+.light-theme .microservices-table {
+  background-color: #fff !important;
+  color: #23263a !important;
+  border: 1px solid #f7b2b2;
+  box-shadow: 0 0 8px #f7b2b222;
+}
+.light-theme .microservices-table th {
+  background-color: #f7e0e0 !important;
+  color: #23263a !important;
+}
+.light-theme .microservices-table td {
+  color: #23263a !important;
+}
+
+.light-theme .action-btn {
+  background-color: #9b0018 !important;
+  color: #fff !important;
+}
+.light-theme .action-btn:hover {
+  background-color: #680010 !important;
+  color: #fff !important;
+}
+
+.app-container {
+  display: flex;
+@ -10,6 +92,15 @@
+  color: #f0f0f0;
+  transition: margin-left 0.7s cubic-bezier(0.77,0,0.175,1);
+}
+.app-container2 {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #13132b;
+  color: #f0f0f0;
+  transition: margin-left 0.7s cubic-bezier(0.77,0,0.175,1);
+}
+
+/* Navbar */
+.navbar {
+@ -577,23 +668,9 @@
+  100% { opacity: 0; }
+}
+
+/* Animación de entrada para el main */
+.main-fade-in {
+  animation: fadeInMain 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+
+@keyframes fadeInMain {
+  0% {
+    opacity: 0;
+    filter: none;
+    background: #000;
+  }
+  100% {
+    opacity: 1;
+    filter: none;
+    background: none;
+  }
+}
+
+
+
+/* Animación para mostrar el registro desde login */
+@keyframes slideInRegister {
+@ -920,4 +997,162 @@ body.light-theme, .app-container.light-theme {
+.light-theme .history-btn[aria-expanded="true"]:focus {
+  background-color: #f3f3f6 !important;
+  color: #b8001e !important;
+}
+
+.panel-header-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18px;
+  gap: 18px;
+}
+
+.table-container {
+  margin-top: 10px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #181c27;
+  box-shadow: 0 2px 16px #0002;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 12px;
+  font-size: 0.97em;
+  font-weight: 600;
+  color: #fff;
+  background: #9b0018;
+}
+.status-yellow {
+  background: #ffb300;
+  color: #23263a;
+}
+.status-green {
+  background: #00e676;
+  color: #23263a;
+}
+
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: #000a;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal {
+  background: #181c27;
+  color: #fff;
+  border-radius: 12px;
+  padding: 32px 28px;
+  box-shadow: 0 4px 32px #000a;
+  min-width: 340px;
+  max-width: 90vw;
+}
+
+.footer {
+  width: 100%;
+  background: #181c27;
+  color: #bfc7d5;
+  padding: 18px 0 8px 0;
+  text-align: center;
+  font-size: 1em;
+  border-top: 2px solid #23263a;
+  margin-top: 32px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Estilos para login */
+.login-bg {
+  min-height: 100vh;
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+}
+
+.login-form {
+  background: #181c27;
+  border: 2px solid #9b0018;
+  border-radius: 10px;
+  box-shadow: 0 0 24px #000a;
+  padding: 36px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+.register-form {
+  background: #181c27;
+  border: 2px solid #9b0018;
+  border-radius: 10px;
+  box-shadow: 0 0 24px #000;
+  padding: 36px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+}
+
+/* Animación de carga */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Estilos para el editor de Python */
+.python-editor-container {
+  min-height: 400px;
+  border: 2px solid #9b0018;
+  border-radius: 8px;
+  background: #181c27;
+}
+
+.python-editor-container .cm-editor {
+  height: 100%;
+}
+
+/* Estilos para los botones del editor */
+.buttons-row {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.buttons-row button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.buttons-row button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
