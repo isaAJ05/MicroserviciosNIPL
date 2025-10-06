@@ -11,14 +11,14 @@
     "code": "# Microservicio Hola Mundo\n\ndef main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\",\n        \"data\": data\n    }\n\nif __name__ == \"__main__\":\n    print(main())"
   },
   {
-    "id": "600a24f3832f",
+    "id": "09298123103e",
     "name": "sumita",
     "processing_type": "Data Processing",
     "endpoint": "sumita",
     "image_name": "sumita",
     "folder_name": "sumita_20251002103003",
-    "port": "32769",
+    "port": "32771",
     "status": "created",
-    "code": "# Microservicio Suma\n\ndef main(data=None):\n    \"\"\"\n    Suma dos números recibidos por parámetro.\n    Args:\n        data: dict con 'a' y 'b'\n    Returns:\n        dict con el resultado de la suma\n    \"\"\"\n    try:\n        a = float(data.get(\"a\", 0))\n        b = float(data.get(\"b\", 0))\n        resultado = a + b\n        return {\n            \"status\": \"success\",\n            \"suma\": resultado,\n            \"inputs\": {\"a\": a, \"b\": b}\n        }\n    except Exception as e:\n        return {\n            \"status\": \"error\",\n            \"message\": f\"Error: {str(e)}\"\n        }\n\nif __name__ == \"__main__\":\n    test_data = {\"a\": 5, \"b\": 7}\n    print(main(test_data))"
+    "code": "# Microservicio Suma\n\ndef main(data=None):\n    \"\"\"\n    Suma dos números recibidos por parámetro.\n    Args:\n        data: dict con 'a' y 'b'\n    Returns:\n        dict con el resultado de la suma\n    \"\"\"\n    try:\n        a = float(data.get(\"a\", 0))\n        b = float(data.get(\"b\", 0))\n        resultado = a + b\n        return {\n            \"status\": \"success\",\n            \"suma\": resultado,\n            \"inputs\": {\"a\": a, \"b\": b}\n        }\n    except Exception as e:\n        return {\n            \"status\": \"error\",\n            \"message\": f\"Error: {str(e)}\"\n        }\n\nif __name__ == \"__main__\":\n    test_data = {\"a\": 10, \"b\": 7}\n    print(main(test_data))"
   }
 ]

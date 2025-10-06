@@ -29,7 +29,7 @@ def main(data=None):
         }
 
 if __name__ == "__main__":
-    test_data = {"a": 5, "b": 7}
+    test_data = {"a": 10, "b": 7}
     print(main(test_data))
 
 @app.route('/sumita', methods=['GET', 'POST'])
