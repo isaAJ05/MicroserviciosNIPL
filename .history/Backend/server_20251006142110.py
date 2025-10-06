@@ -73,56 +73,49 @@ def add_microservice():
 
     return jsonify(microservice), 201
 # GET -> LISTAR MICROSERVICIOS
+# ...código existente...
 @app.route('/microservices', methods=['GET'])
 def get_microservices():
     microservices = load_microservices()
     for ms in microservices:
-        # 1. Verifica si el contenedor existe en Docker
+        # 1. Verifica si el contenedor existe
         inspect_proc = subprocess.run(
             ["docker", "inspect", ms["id"]],
             capture_output=True, text=True
         )
         if inspect_proc.returncode != 0:
-            # El contenedor no existe, intenta reconstruirlo y levantarlo
-            folder_path = os.path.join("historial", ms.get("folder_name", ""))
+            # El contenedor no existe, así que créalo de nuevo
+            # Debes tener el Dockerfile y el código fuente en la carpeta del historial
+            folder_path = os.path.join("historial", ms["folder_name"])
             if os.path.exists(folder_path):
-                # Construir la imagen si no existe
+                # Construye la imagen si no existe
                 subprocess.run([
                     "docker", "build", "-t", ms["image_name"], folder_path
                 ], check=True)
-                # Crear el contenedor
+                # Crea el contenedor
                 run_proc = subprocess.run([
-                    "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
+                    "docker", "run", "-d", "-p", f"{ms['port']}:8000", "--name", ms["image_name"], ms["image_name"]
                 ], capture_output=True, text=True)
+                # Actualiza el ID del contenedor si es necesario
                 if run_proc.returncode == 0:
-                    new_id = run_proc.stdout.strip()[:12]
+                    new_id = run_proc.stdout.strip()
                     ms["id"] = new_id
-                    # Actualizar el JSON con el nuevo ID
                     save_microservices(microservices)
-            else:
-                ms["status"] = "error: carpeta no encontrada"
-                continue
-
-        # Estado
+        # ...código existente para actualizar estado y puerto...
         ps_cmd = [
             "docker", "ps", "--filter", f"id={ms['id']}",
             "--format", "{{.Status}}"
         ]
         status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
         ms["status"] = status_result.stdout.strip() or "stopped"
-
-        # Si está detenido, intenta iniciarlo
         if ms["status"] == "stopped":
             subprocess.run(["docker", "start", ms["id"]], check=False)
-            # Vuelve a consultar el estado
             ps_cmd = [
                 "docker", "ps", "--filter", f"id={ms['id']}",
                 "--format", "{{.Status}}"
             ]
             status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
             ms["status"] = status_result.stdout.strip() or "stopped"
-
-        # Puerto
         inspect_cmd = [
             "docker", "inspect",
             "--format", "{{(index (index .NetworkSettings.Ports \"8000/tcp\") 0).HostPort}}",
@@ -131,6 +124,7 @@ def get_microservices():
         port_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
         ms["port"] = port_result.stdout.strip() or ms.get("port")
     return jsonify({"microservices": microservices}), 200
+
 # DELETE -> ELIMINAR MICROSERVICIO
 @app.route('/microservices/<string:container_id>', methods=['DELETE'])
 def delete_microservice(container_id):

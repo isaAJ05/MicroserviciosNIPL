@@ -76,33 +76,8 @@ def add_microservice():
 @app.route('/microservices', methods=['GET'])
 def get_microservices():
     microservices = load_microservices()
+    # Actualiza estado y puerto desde Docker
     for ms in microservices:
-        # 1. Verifica si el contenedor existe en Docker
-        inspect_proc = subprocess.run(
-            ["docker", "inspect", ms["id"]],
-            capture_output=True, text=True
-        )
-        if inspect_proc.returncode != 0:
-            # El contenedor no existe, intenta reconstruirlo y levantarlo
-            folder_path = os.path.join("historial", ms.get("folder_name", ""))
-            if os.path.exists(folder_path):
-                # Construir la imagen si no existe
-                subprocess.run([
-                    "docker", "build", "-t", ms["image_name"], folder_path
-                ], check=True)
-                # Crear el contenedor
-                run_proc = subprocess.run([
-                    "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
-                ], capture_output=True, text=True)
-                if run_proc.returncode == 0:
-                    new_id = run_proc.stdout.strip()[:12]
-                    ms["id"] = new_id
-                    # Actualizar el JSON con el nuevo ID
-                    save_microservices(microservices)
-            else:
-                ms["status"] = "error: carpeta no encontrada"
-                continue
-
         # Estado
         ps_cmd = [
             "docker", "ps", "--filter", f"id={ms['id']}",
