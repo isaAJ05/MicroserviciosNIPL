@@ -466,8 +466,8 @@ const handleTestCode = async () => {
                   value={microservice.name}
                   onChange={e => {
                     console.log('[DEBUG] input change name:', e.target.value);
-                    setMicroservice(prev => ({ ...prev, name: e.target.value }));
-                  }}
+                   setMicroservice(prev => ({ ...prev, name: e.target.value }));
+                 }}
                   placeholder="mi_microservicio"
                   style={{
                     width: '100%',

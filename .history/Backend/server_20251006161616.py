@@ -24,7 +24,7 @@ CORS(app)
 
 #ENDPOINTS ROBLE
 #LOGIN USUARIO - Devuelve token JWT
-# READ TABLA ROBLE
+
 @app.route('/roble-read', methods=['GET'])
 def roble_read():
     table_name = request.args.get("tableName", "inventario")  # por defecto "inventario"
@@ -55,7 +55,6 @@ def roble_read():
         return jsonify(res.json()), res.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 #ENDPOINTS CRUD MICROSERVICIOS
 #POST -> CREAR MICROSERVICIO
 @app.route('/microservices', methods=['POST'])

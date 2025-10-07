@@ -23,29 +23,27 @@ app = Flask(__name__)
 CORS(app)
 
 #ENDPOINTS ROBLE
-#LOGIN USUARIO - Devuelve token JWT
-# READ TABLA ROBLE
-@app.route('/roble-read', methods=['GET'])
-def roble_read():
-    table_name = request.args.get("tableName", "inventario")  # por defecto "inventario"
-
-    # 1. Primero, haz login para obtener el access token
+#LOGIN USUARIO ROBLE
+@app.route('/roble-login', methods=['POST'])
+def roble_login():
     try:
-        login_res = requests.post(
+        res = requests.post(
             f"https://roble-api.openlab.uninorte.edu.co/auth/{ROBLE_PROJECT_TOKEN}/login",
             json={
                 "email": ROBLE_EMAIL,
                 "password": ROBLE_PASSWORD
             }
         )
-        login_data = login_res.json()
-        access_token = login_data.get("accessToken")
-        if not access_token:
-            return jsonify({"error": "No se pudo obtener accessToken", "login_response": login_data}), 401
+        return jsonify(res.json()), res.status_code
     except Exception as e:
-        return jsonify({"error": f"Error en login Roble: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
+@app.route('/roble-read', methods=['GET'])
+def roble_read():
+    access_token = request.args.get("access_token")
+    table_name = request.args.get("tableName", "inventario")  # por defecto "inventario"
+    if not access_token:
+        return jsonify({"error": "Falta access_token"}), 400
 
-    # 2. Luego, consulta la tabla usando ese access token
     try:
         res = requests.get(
             f"https://roble-api.openlab.uninorte.edu.co/database/{ROBLE_PROJECT_TOKEN}/read",
@@ -55,7 +53,6 @@ def roble_read():
         return jsonify(res.json()), res.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 #ENDPOINTS CRUD MICROSERVICIOS
 #POST -> CREAR MICROSERVICIO
 @app.route('/microservices', methods=['POST'])

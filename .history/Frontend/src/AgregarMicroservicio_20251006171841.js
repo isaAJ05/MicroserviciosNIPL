@@ -58,7 +58,6 @@ function PythonEditor({ code, setCode, lightTheme }) {
   const editorRef = useRef(null);
   const viewRef = useRef(null);
   const updatingFromOutside = useRef(false);
-  const lastDocRef = useRef('');
 
   useEffect(() => {
     if (editorRef.current && !viewRef.current) {
@@ -66,69 +65,56 @@ function PythonEditor({ code, setCode, lightTheme }) {
         basicSetup,
         python(),
         createEditorTheme(lightTheme),
-        // Escucha cambios internos pero NO fuerces setCode en cada tecla
         EditorView.updateListener.of((update) => {
           if (update.docChanged && !updatingFromOutside.current) {
-            lastDocRef.current = update.state.doc.toString();
-          }
-        }),
-        // Guardar al perder foco o con Ctrl/Cmd+S
-        EditorView.domEventHandlers({
-          blur: () => {
-            if (viewRef.current) setCode(viewRef.current.state.doc.toString());
-            return false;
-          },
-          keydown: (e) => {
-            const isSave = (e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S');
-            if (isSave && viewRef.current) {
-              e.preventDefault();
-              setCode(viewRef.current.state.doc.toString());
-              return true;
-            }
-            return false;
+            setCode(update.state.doc.toString());
           }
         })
       ];
 
-      if (!lightTheme) extensions.splice(2, 0, oneDark);
+      if (!lightTheme) {
+        extensions.splice(2, 0, oneDark);
+      }
 
-      const state = EditorState.create({ doc: code, extensions });
+      const state = EditorState.create({
+        doc: code,
+        extensions
+      });
 
-      viewRef.current = new EditorView({ state, parent: editorRef.current });
-      lastDocRef.current = code;
+      viewRef.current = new EditorView({
+        state,
+        parent: editorRef.current
+      });
     }
-
+    // Solo actualiza el contenido si el cambio viene de fuera (ejemplo seleccionado)
+    else if (viewRef.current) {
+      const currentCode = viewRef.current.state.doc.toString();
+      console.log("Efecto PythonEditor: code externo:", code, "currentCode:", currentCode, "hasFocus:", viewRef.current.hasFocus);
+      // Solo actualiza si el código externo es diferente y el editor NO tiene el foco
+      if (currentCode !== code && !viewRef.current.hasFocus) {
+        updatingFromOutside.current = true;
+        // Guarda la posición actual del cursor
+        const selection = viewRef.current.state.selection.main;
+        viewRef.current.dispatch({
+          changes: { from: 0, to: currentCode.length, insert: code },
+          selection: { anchor: selection.anchor, head: selection.head }
+        });
+        updatingFromOutside.current = false;
+      }
+    }
     return () => {
       if (viewRef.current) {
         viewRef.current.destroy();
         viewRef.current = null;
       }
+      
     };
-  }, [lightTheme, setCode]);
-
-  // Aplicar cambios externos (ej. seleccionar ejemplo)
-  useEffect(() => {
-    if (!viewRef.current) return;
-    const currentCode = viewRef.current.state.doc.toString();
-    if (currentCode === code) return;
-
-    // Si el editor tiene foco, no forzamos reemplazo para no interferir
-    if (viewRef.current.hasFocus) return;
-
-    updatingFromOutside.current = true;
-    const selection = viewRef.current.state.selection.main;
-    viewRef.current.dispatch({
-      changes: { from: 0, to: currentCode.length, insert: code },
-      selection: { anchor: Math.min(selection.anchor, code.length), head: Math.min(selection.head, code.length) }
-    });
-    lastDocRef.current = code;
-    updatingFromOutside.current = false;
-  }, [code]);
+  }, [code, lightTheme]);
 
   return (
-    <div
-      ref={editorRef}
-      style={{
+    <div 
+      ref={editorRef} 
+      style={{ 
         height: '100%',
         width: '100%',
         background: lightTheme ? '#fff' : '#0d1117',
@@ -184,7 +170,6 @@ if __name__ == "__main__":
 
 import requests
 import os
-import sys
 
 def main(data=None):
     """
@@ -233,7 +218,7 @@ def main(data=None):
 if __name__ == "__main__":
     # Solo necesitas el nombre de la tabla y filtros opcionales
     test_data = {"tableName": "inventario"}
-    print(str(main(test_data)).encode('utf-8', errors='replace').decode('cp1252', errors='replace'))`
+    print(main(test_data))`
 };
 
 function AgregarMicroservicio({ onBack, lightTheme }) {
@@ -278,16 +263,13 @@ if __name__ == "__main__":
     resultado = main(test_data)
     print(resultado)`
   });
-  useEffect(() => {
-    console.log('[DEBUG] microservice changed:', microservice);
-  }, [microservice]);
   const [ejemploSeleccionado, setEjemploSeleccionado] = useState("");
 
 const handleEjemploChange = (e) => {
   const value = e.target.value;
   setEjemploSeleccionado(value);
   if (ejemplosCodigo[value]) {
-    setMicroservice(prev => ({ ...prev, code: ejemplosCodigo[value] }));
+    setMicroservice({ ...microservice, code: ejemplosCodigo[value] });
   }
 };
   const [isLoading, setIsLoading] = useState(false);
@@ -464,10 +446,7 @@ const handleTestCode = async () => {
                 <input
                   type="text"
                   value={microservice.name}
-                  onChange={e => {
-                    console.log('[DEBUG] input change name:', e.target.value);
-                    setMicroservice(prev => ({ ...prev, name: e.target.value }));
-                  }}
+                  onChange={e => setMicroservice({ ...microservice, name: e.target.value })}
                   placeholder="mi_microservicio"
                   style={{
                     width: '100%',
@@ -503,7 +482,7 @@ const handleTestCode = async () => {
                 </label>
                 <select
                   value={microservice.processing_type}
-                  onChange={e => setMicroservice(prev => ({ ...prev, processing_type: e.target.value }))}
+                  onChange={e => setMicroservice({ ...microservice, processing_type: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '7px 10px', // Reducido
@@ -569,6 +548,62 @@ const handleTestCode = async () => {
     <option value="consulta_roble">Consulta a Roble</option>
   </select>
 </div>
+
+              {/* Autenticación con Roble */}
+              <div style={{ marginBottom: 16 }}> {/* Reducido */}
+                <div style={{
+                  padding: '12px', // Reducido
+                  border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                  borderRadius: 4, // Reducido
+                  background: lightTheme ? '#f6f8fa' : '#161b22'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 10, // Reducido
+                    marginBottom: 8 // Reducido
+                  }}>
+                    <input
+                      type="checkbox"
+                      id="roble-auth"
+                      checked={microservice.use_roble_auth}
+                      onChange={e => setMicroservice({ ...microservice, use_roble_auth: e.target.checked })}
+                      style={{
+                        width: 14, // Reducido
+                        height: 14, // Reducido
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <label 
+                      htmlFor="roble-auth"
+                      style={{ 
+                        fontWeight: 500, 
+                        fontSize: 13, // Reducido
+                        color: lightTheme ? '#1f2328' : '#e6edf3',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Autenticarse con Roble
+                    </label>
+                  </div>
+                  <div style={{ 
+                    fontSize: 11, // Reducido
+                    color: lightTheme ? '#656d76' : '#8b949e',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6 // Reducido
+                  }}>
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" />
+                    </svg>
+                    {microservice.use_roble_auth ? 
+                      "✅ Este microservicio podrá acceder a los servicios de Roble" :
+                      "El microservicio funcionará de forma independiente sin autenticación"
+                    }
+                  </div>
+                </div>
+              </div>
+
               {/* Mensajes de estado */}
               {error && (
                 <div style={{
@@ -668,9 +703,9 @@ const handleTestCode = async () => {
             position: 'relative',
             overflow: 'hidden'
           }}>
-            <PythonEditor
-              code={microservice.code}
-              setCode={(code) => setMicroservice(prev => ({ ...prev, code }))}
+            <PythonEditor 
+              code={microservice.code} 
+              setCode={(code) => setMicroservice({ ...microservice, code })} 
               lightTheme={lightTheme}
             />
           </div>

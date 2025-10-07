@@ -132,6 +132,20 @@ def process():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000)
 '''
+def login_user(email, password):
+    """Realiza el login del usuario y obtiene el accessToken y refreshToken."""
+    headers = {"Authorization": f"Bearer {ROBLE_API_TOKEN}"}
+    try:
+        response = requests.post(f"{ROBLE_AUTH_URL}/login", json={
+            "email": email,
+            "password": password
+        }, headers=headers)
+        print("Respuesta de Roble:", response.status_code, response.text)  # Depuración
+        response.raise_for_status()  # Lanza una excepción si el código de estado no es 2xx
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print("Error al realizar la solicitud:", e)
+        raise Exception("Error al autenticar con Roble")
 
 def update_microservice(container_id, name, processing_type, endpoint, code):
     microservices = load_microservices()

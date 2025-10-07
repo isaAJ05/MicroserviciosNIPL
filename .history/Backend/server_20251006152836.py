@@ -15,48 +15,68 @@ from flask_cors import CORS
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
-ROBLE_PROJECT_TOKEN = os.getenv("token_contract_xyz")
-ROBLE_EMAIL = os.getenv("email")
-ROBLE_PASSWORD = os.getenv("password")
+
+# Cargar el URL base y el token desde las variables de entorno
+ROBLE_AUTH_URL = os.getenv("ROBLE_AUTH_URL")
+ROBLE_API_TOKEN = os.getenv("ROBLE_API_TOKEN")
 
 app = Flask(__name__)
 CORS(app)
 
-#ENDPOINTS ROBLE
-#LOGIN USUARIO - Devuelve token JWT
-# READ TABLA ROBLE
-@app.route('/roble-read', methods=['GET'])
-def roble_read():
-    table_name = request.args.get("tableName", "inventario")  # por defecto "inventario"
 
-    # 1. Primero, haz login para obtener el access token
+@app.route('/login', methods=['POST'])
+def login():
+    """Endpoint para autenticar usuarios."""
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+    if not email or not password:
+        return jsonify({"error": "Email y contraseña son requeridos"}), 400
     try:
-        login_res = requests.post(
-            f"https://roble-api.openlab.uninorte.edu.co/auth/{ROBLE_PROJECT_TOKEN}/login",
-            json={
-                "email": ROBLE_EMAIL,
-                "password": ROBLE_PASSWORD
-            }
-        )
-        login_data = login_res.json()
-        access_token = login_data.get("accessToken")
-        if not access_token:
-            return jsonify({"error": "No se pudo obtener accessToken", "login_response": login_data}), 401
+        tokens = login_user(email, password)
+        return jsonify(tokens), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
     except Exception as e:
-        return jsonify({"error": f"Error en login Roble: {str(e)}"}), 500
+        return jsonify({"error": str(e)}), 500
 
-    # 2. Luego, consulta la tabla usando ese access token
+@app.route('/validate', methods=['GET'])
+def validate():
+    """Endpoint para validar un token."""
+    token = request.headers.get("Authorization")
+    if not token:
+        return jsonify({"error": "Token no proporcionado"}), 400
+    try:
+        token_data = validate_token(token.split(" ")[1])  # Extrae el token después de "Bearer"
+        return jsonify(token_data), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/roble-query', methods=['GET'])
+def roble_query():
+    table = request.args.get("table")
+    # Puedes agregar más parámetros según lo que necesites filtrar
+    age = request.args.get("age")
+    # Usa tu token de proyecto Roble
+    access_token = ROBLE_API_TOKEN  # Ya lo tienes cargado arriba
+
+    params = {"tableName": table}
+    if age:
+        params["age"] = age
+
     try:
         res = requests.get(
-            f"https://roble-api.openlab.uninorte.edu.co/database/{ROBLE_PROJECT_TOKEN}/read",
+            f"https://roble-api.openlab.uninorte.edu.co/database/{access_token}/read",
             headers={"Authorization": f"Bearer {access_token}"},
-            params={"tableName": table_name}
+            params=params
         )
         return jsonify(res.json()), res.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-#ENDPOINTS CRUD MICROSERVICIOS
+    
+#ENDPOINTS MICROSERVICIOS
 #POST -> CREAR MICROSERVICIO
 @app.route('/microservices', methods=['POST'])
 def add_microservice():

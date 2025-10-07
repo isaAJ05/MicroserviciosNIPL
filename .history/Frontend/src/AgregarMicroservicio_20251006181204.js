@@ -278,9 +278,6 @@ if __name__ == "__main__":
     resultado = main(test_data)
     print(resultado)`
   });
-  useEffect(() => {
-    console.log('[DEBUG] microservice changed:', microservice);
-  }, [microservice]);
   const [ejemploSeleccionado, setEjemploSeleccionado] = useState("");
 
 const handleEjemploChange = (e) => {
@@ -464,10 +461,7 @@ const handleTestCode = async () => {
                 <input
                   type="text"
                   value={microservice.name}
-                  onChange={e => {
-                    console.log('[DEBUG] input change name:', e.target.value);
-                    setMicroservice(prev => ({ ...prev, name: e.target.value }));
-                  }}
+                  onChange={e => setMicroservice(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="mi_microservicio"
                   style={{
                     width: '100%',
@@ -569,6 +563,8 @@ const handleTestCode = async () => {
     <option value="consulta_roble">Consulta a Roble</option>
   </select>
 </div>
+
+              
               {/* Mensajes de estado */}
               {error && (
                 <div style={{

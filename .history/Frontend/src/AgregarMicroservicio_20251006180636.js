@@ -278,16 +278,13 @@ if __name__ == "__main__":
     resultado = main(test_data)
     print(resultado)`
   });
-  useEffect(() => {
-    console.log('[DEBUG] microservice changed:', microservice);
-  }, [microservice]);
   const [ejemploSeleccionado, setEjemploSeleccionado] = useState("");
 
 const handleEjemploChange = (e) => {
   const value = e.target.value;
   setEjemploSeleccionado(value);
   if (ejemplosCodigo[value]) {
-    setMicroservice(prev => ({ ...prev, code: ejemplosCodigo[value] }));
+    setMicroservice({ ...microservice, code: ejemplosCodigo[value] });
   }
 };
   const [isLoading, setIsLoading] = useState(false);
@@ -464,10 +461,7 @@ const handleTestCode = async () => {
                 <input
                   type="text"
                   value={microservice.name}
-                  onChange={e => {
-                    console.log('[DEBUG] input change name:', e.target.value);
-                    setMicroservice(prev => ({ ...prev, name: e.target.value }));
-                  }}
+                  onChange={e => setMicroservice({ ...microservice, name: e.target.value })}
                   placeholder="mi_microservicio"
                   style={{
                     width: '100%',
@@ -503,7 +497,7 @@ const handleTestCode = async () => {
                 </label>
                 <select
                   value={microservice.processing_type}
-                  onChange={e => setMicroservice(prev => ({ ...prev, processing_type: e.target.value }))}
+                  onChange={e => setMicroservice({ ...microservice, processing_type: e.target.value })}
                   style={{
                     width: '100%',
                     padding: '7px 10px', // Reducido
@@ -569,6 +563,62 @@ const handleTestCode = async () => {
     <option value="consulta_roble">Consulta a Roble</option>
   </select>
 </div>
+
+              {/* Autenticación con Roble */}
+              <div style={{ marginBottom: 16 }}> {/* Reducido */}
+                <div style={{
+                  padding: '12px', // Reducido
+                  border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                  borderRadius: 4, // Reducido
+                  background: lightTheme ? '#f6f8fa' : '#161b22'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 10, // Reducido
+                    marginBottom: 8 // Reducido
+                  }}>
+                    <input
+                      type="checkbox"
+                      id="roble-auth"
+                      checked={microservice.use_roble_auth}
+                      onChange={e => setMicroservice({ ...microservice, use_roble_auth: e.target.checked })}
+                      style={{
+                        width: 14, // Reducido
+                        height: 14, // Reducido
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <label 
+                      htmlFor="roble-auth"
+                      style={{ 
+                        fontWeight: 500, 
+                        fontSize: 13, // Reducido
+                        color: lightTheme ? '#1f2328' : '#e6edf3',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Autenticarse con Roble
+                    </label>
+                  </div>
+                  <div style={{ 
+                    fontSize: 11, // Reducido
+                    color: lightTheme ? '#656d76' : '#8b949e',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6 // Reducido
+                  }}>
+                    <svg width="12" height="12" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" />
+                    </svg>
+                    {microservice.use_roble_auth ? 
+                      "✅ Este microservicio podrá acceder a los servicios de Roble" :
+                      "El microservicio funcionará de forma independiente sin autenticación"
+                    }
+                  </div>
+                </div>
+              </div>
+
               {/* Mensajes de estado */}
               {error && (
                 <div style={{

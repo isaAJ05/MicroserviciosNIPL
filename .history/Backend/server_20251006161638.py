@@ -55,7 +55,7 @@ def roble_read():
         return jsonify(res.json()), res.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+    
 #ENDPOINTS CRUD MICROSERVICIOS
 #POST -> CREAR MICROSERVICIO
 @app.route('/microservices', methods=['POST'])
