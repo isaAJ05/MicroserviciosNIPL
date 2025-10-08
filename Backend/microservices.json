@@ -1,35 +1,57 @@
 [
   {
-    "id": "b02c33ba80a5",
-    "name": "wakawakaaehehe",
+    "id": "8bb5952b05ec",
+    "name": "opalite_hola",
     "processing_type": "Data Processing",
-    "endpoint": "wakawakaaehehe",
-    "image_name": "wakawakaaehehe",
-    "folder_name": "wakawakaaehehe_20251002015526",
-    "port": "32768",
-    "status": "Up 1 second",
+    "endpoint": "opalite_hola",
+    "image_name": "opalite_hola",
+    "folder_name": "opalite_hola_20251007222236",
+    "port": "32777",
+    "status": "created",
     "code": "# Microservicio Hola Mundo\n\ndef main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\",\n        \"data\": data\n    }\n\nif __name__ == \"__main__\":\n    print(main())"
   },
   {
-    "id": "c3fea599cd9b",
-    "name": "sumita",
+    "id": "52486c7bc3d9",
+    "name": "sumateve",
     "processing_type": "Data Processing",
-    "endpoint": "sumita",
-    "image_name": "sumita",
-    "folder_name": "sumita_20251002103003",
-    "port": "32771",
+    "endpoint": "sumateve",
+    "image_name": "sumateve",
+    "folder_name": "sumateve_20251008000635",
+    "port": "32779",
     "status": "created",
-    "code": "# Microservicio Suma\n\ndef main(data=None):\n    \"\"\"\n    Suma dos números recibidos por parámetro.\n    Args:\n        data: dict con 'a' y 'b'\n    Returns:\n        dict con el resultado de la suma\n    \"\"\"\n    try:\n        a = float(data.get(\"a\", 0))\n        b = float(data.get(\"b\", 0))\n        resultado = a + b\n        return {\n            \"status\": \"success\",\n            \"suma\": resultado,\n            \"inputs\": {\"a\": a, \"b\": b}\n        }\n    except Exception as e:\n        return {\n            \"status\": \"error\",\n            \"message\": f\"Error: {str(e)}\"\n        }\n\nif __name__ == \"__main__\":\n    test_data = {\"a\": 10, \"b\": 7}\n    print(main(test_data))"
+    "code": "# Microservicio Suma\n\ndef main(data=None):\n    \"\"\"\n    Suma dos números recibidos por parámetro.\n    Args:\n        data: dict con 'a' y 'b'\n    Returns:\n        dict con el resultado de la suma\n    \"\"\"\n    try:\n        a = float(data.get(\"a\", 0))\n        b = float(data.get(\"b\", 0))\n        resultado = a + b\n        return {\n            \"status\": \"success\",\n            \"suma\": resultado,\n            \"inputs\": {\"a\": a, \"b\": b}\n        }\n    except Exception as e:\n        return {\n            \"status\": \"error\",\n            \"message\": f\"Error: {str(e)}\"\n        }\n\nif __name__ == \"__main__\":\n    test_data = {\"a\": 5, \"b\": 7}\n    print(main(test_data))"
   },
   {
-    "id": "a32350a50038",
-    "name": "Consulta_Roble",
-    "processing_type": "Authentication Service",
-    "endpoint": "consulta_roble",
-    "image_name": "consulta_roble",
-    "folder_name": "consulta_roble_20251006181912",
-    "port": "32801",
+    "id": "8f21118eae71",
+    "name": "suma2",
+    "processing_type": "Data Processing",
+    "endpoint": "suma2",
+    "image_name": "suma2",
+    "folder_name": "suma2_20251008001357",
+    "port": "32794",
     "status": "created",
-    "code": "# Microservicio Consulta Tabla Roble (usa credenciales del backend)\n\nimport requests\nimport os\nimport sys\n\ndef main(data=None):\n    \"\"\"\n    Consulta una tabla en Roble usando las credenciales del backend.\n    Args:\n        data: dict con 'tableName' y filtros opcionales\n    Returns:\n        dict con la respuesta de Roble\n    \"\"\"\n    try:\n        # Cargar credenciales del entorno\n        token = os.getenv(\"token_contract_xyz\")\n        email = os.getenv(\"email\")\n        password = os.getenv(\"password\")\n        table_name = data.get(\"tableName\", \"inventario\")\n\n        # 1. Login para obtener access token\n        login_res = requests.post(\n            f\"https://roble-api.openlab.uninorte.edu.co/auth/{token}/login\",\n            json={\"email\": email, \"password\": password}\n        )\n        login_data = login_res.json()\n        access_token = login_data.get(\"accessToken\")\n        if not access_token:\n            return {\"status\": \"error\", \"message\": \"No se pudo obtener accessToken\", \"login_response\": login_data}\n\n        # 2. Consulta la tabla\n        params = {\"tableName\": table_name}\n        # Agrega filtros si existen\n        for k, v in (data or {}).items():\n            if k not in [\"tableName\"]:\n                params[k] = v\n\n        res = requests.get(\n            f\"https://roble-api.openlab.uninorte.edu.co/database/{token}/read\",\n            headers={\"Authorization\": f\"Bearer {access_token}\"},\n            params=params\n        )\n        if res.status_code == 200:\n            return {\"status\": \"success\", \"roble_data\": res.json()}\n        else:\n            return {\"status\": \"error\", \"message\": f\"Roble error: {res.status_code}\", \"details\": res.text}\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": f\"Error: {str(e)}\"}\n\nif __name__ == \"__main__\":\n    # Solo necesitas el nombre de la tabla y filtros opcionales\n    test_data = {\"tableName\": \"inventario\"}\n    print(str(main(test_data)).encode('utf-8', errors='replace').decode('cp1252', errors='replace'))"
+    "code": "# Microservicio Suma\n\ndef main(data=None):\n    \"\"\"\n    Suma dos números recibidos por parámetro.\n    Args:\n        data: dict con 'a' y 'b'\n    Returns:\n        dict con el resultado de la suma\n    \"\"\"\n    try:\n        a = float(data.get(\"a\", 0))\n        b = float(data.get(\"b\", 0))\n        resultado = a + b\n        return {\n            \"status\": \"success\",\n            \"suma\": resultado,\n            \"inputs\": {\"a\": a, \"b\": b},\n             \"data\": data\n        }\n    except Exception as e:\n        return {\n            \"status\": \"error\",\n            \"message\": f\"Error: {str(e)}\"\n        }\n\nif __name__ == \"__main__\":\n    print(main())"
+  },
+  {
+    "id": "a1b0359501e5",
+    "name": "hola_mundo_basico",
+    "processing_type": "Data Processing",
+    "endpoint": "hola_mundo_basico",
+    "image_name": "hola_mundo_basico",
+    "folder_name": "hola_mundo_basico_20251008002618",
+    "port": "32781",
+    "status": "created",
+    "code": "# Microservicio Hola Mundo\n\ndef main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\",\n        \"data\": data\n    }\n\nif __name__ == \"__main__\":\n    print(main())"
+  },
+  {
+    "id": "6e25773003db",
+    "name": "consultica_roblecito",
+    "processing_type": "Roble",
+    "endpoint": "consultica_roblecito",
+    "image_name": "consultica_roblecito",
+    "folder_name": "consultica_roblecito_20251008005600",
+    "port": "32795",
+    "status": "created",
+    "code": "# Microservicio Consulta Tabla Roble (usa token recibido por header y token_contract por parámetro)\ndef main(data=None):\n    \"\"\"\n    Consulta una tabla en Roble usando el token recibido por header y el token_contract recibido por parámetro.\n    \"\"\"\n    import requests\n    try:\n        # El token de Roble viene en data['roble_token']\n        token = data.get(\"roble_token\")\n        if not token:\n            return {\"status\": \"error\", \"message\": \"Token de autenticación no recibido\"}\n\n        # El token_contract viene en los parámetros\n        token_contract = data.get(\"token_contract\")\n        if not token_contract:\n            return {\"status\": \"error\", \"message\": \"Token contract no recibido\"}\n\n        table_name = data.get(\"tableName\", \"inventario\")\n\n        # Puedes agregar más parámetros de filtro si lo deseas\n        params = {\"tableName\": table_name}\n        for k, v in (data or {}).items():\n            if k not in [\"roble_token\", \"token_contract\", \"tableName\"]:\n                params[k] = v\n\n        # Consulta la tabla en Roble\n        res = requests.get(\n            f\"https://roble-api.openlab.uninorte.edu.co/database/{token_contract}/read\",\n            headers={\"Authorization\": f\"Bearer {token}\"},\n            params=params\n        )\n        if res.status_code == 200:\n            return {\"status\": \"success\", \"roble_data\": res.json()}\n        elif res.status_code == 401:\n            return {\"status\": \"error\", \"message\": \"Token inválido o expirado\", \"code\": 401}\n        elif res.status_code == 403:\n            return {\"status\": \"error\", \"message\": \"Acceso denegado\", \"code\": 403}\n        else:\n            return {\"status\": \"error\", \"message\": f\"Roble error: {res.status_code}\", \"details\": res.text}\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": f\"Error: {str(e)}\"}\n"
   }
 ]

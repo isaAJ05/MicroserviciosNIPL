@@ -1,0 +1,35 @@
+[
+  {
+    "id": "b02c33ba80a5",
+    "name": "wakawakaaehehe",
+    "processing_type": "Data Processing",
+    "endpoint": "wakawakaaehehe",
+    "image_name": "wakawakaaehehe",
+    "folder_name": "wakawakaaehehe_20251002015526",
+    "port": "32768",
+    "status": "Up 1 second",
+    "code": "# Microservicio Hola Mundo\n\ndef main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\",\n        \"data\": data\n    }\n\nif __name__ == \"__main__\":\n    print(main())"
+  },
+  {
+    "id": "bb1be270ea167a61cfc3d9076b9d49881b020d8e23541729772b1ed50e0fb961",
+    "name": "sumita",
+    "processing_type": "Data Processing",
+    "endpoint": "sumita",
+    "image_name": "sumita",
+    "folder_name": "sumita_20251002103003",
+    "port": "32771",
+    "status": "created",
+    "code": "# Microservicio Suma\n\ndef main(data=None):\n    \"\"\"\n    Suma dos números recibidos por parámetro.\n    Args:\n        data: dict con 'a' y 'b'\n    Returns:\n        dict con el resultado de la suma\n    \"\"\"\n    try:\n        a = float(data.get(\"a\", 0))\n        b = float(data.get(\"b\", 0))\n        resultado = a + b\n        return {\n            \"status\": \"success\",\n            \"suma\": resultado,\n            \"inputs\": {\"a\": a, \"b\": b}\n        }\n    except Exception as e:\n        return {\n            \"status\": \"error\",\n            \"message\": f\"Error: {str(e)}\"\n        }\n\nif __name__ == \"__main__\":\n    test_data = {\"a\": 10, \"b\": 7}\n    print(main(test_data))"
+  },
+  {
+    "id": "a32350a50038",
+    "name": "Consulta_Roble",
+    "processing_type": "Authentication Service",
+    "endpoint": "consulta_roble",
+    "image_name": "consulta_roble",
+    "folder_name": "consulta_roble_20251006181912",
+    "port": "32801",
+    "status": "created",
+    "code": "# Microservicio Consulta Tabla Roble (usa credenciales del backend)\n\nimport requests\nimport os\nimport sys\n\ndef main(data=None):\n    \"\"\"\n    Consulta una tabla en Roble usando las credenciales del backend.\n    Args:\n        data: dict con 'tableName' y filtros opcionales\n    Returns:\n        dict con la respuesta de Roble\n    \"\"\"\n    try:\n        # Cargar credenciales del entorno\n        token = os.getenv(\"token_contract_xyz\")\n        email = os.getenv(\"email\")\n        password = os.getenv(\"password\")\n        table_name = data.get(\"tableName\", \"inventario\")\n\n        # 1. Login para obtener access token\n        login_res = requests.post(\n            f\"https://roble-api.openlab.uninorte.edu.co/auth/{token}/login\",\n            json={\"email\": email, \"password\": password}\n        )\n        login_data = login_res.json()\n        access_token = login_data.get(\"accessToken\")\n        if not access_token:\n            return {\"status\": \"error\", \"message\": \"No se pudo obtener accessToken\", \"login_response\": login_data}\n\n        # 2. Consulta la tabla\n        params = {\"tableName\": table_name}\n        # Agrega filtros si existen\n        for k, v in (data or {}).items():\n            if k not in [\"tableName\"]:\n                params[k] = v\n\n        res = requests.get(\n            f\"https://roble-api.openlab.uninorte.edu.co/database/{token}/read\",\n            headers={\"Authorization\": f\"Bearer {access_token}\"},\n            params=params\n        )\n        if res.status_code == 200:\n            return {\"status\": \"success\", \"roble_data\": res.json()}\n        else:\n            return {\"status\": \"error\", \"message\": f\"Roble error: {res.status_code}\", \"details\": res.text}\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": f\"Error: {str(e)}\"}\n\nif __name__ == \"__main__\":\n    # Solo necesitas el nombre de la tabla y filtros opcionales\n    test_data = {\"tableName\": \"inventario\"}\n    print(str(main(test_data)).encode('utf-8', errors='replace').decode('cp1252', errors='replace'))"
+  }
+]
