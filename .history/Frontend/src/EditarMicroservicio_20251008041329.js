@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { EditorView, basicSetup } from 'codemirror';
 import { python } from '@codemirror/lang-python';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorState, Compartment } from "@codemirror/state";
+import { EditorState } from '@codemirror/state';
 
 function createEditorTheme(lightTheme) {
   return EditorView.theme({
@@ -48,7 +48,7 @@ function createEditorTheme(lightTheme) {
   });
 }
 
-function PythonEditor({ code, setCode, lightTheme }) {
+export default function PythonEditor({ code, setCode, lightTheme }) {
   const editorRef = useRef(null);
   const viewRef = useRef(null);
 

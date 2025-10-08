@@ -2,49 +2,33 @@ import React, { useState, useEffect, useRef } from "react";
 import { EditorView, basicSetup } from 'codemirror';
 import { python } from '@codemirror/lang-python';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorState, Compartment } from "@codemirror/state";
+import { EditorState } from '@codemirror/state';
 
 function createEditorTheme(lightTheme) {
   return EditorView.theme({
-    "&": {
-      height: "100%",
-      border: "none",
-      background: lightTheme ? "#fff" : "#0d1117",
-      fontSize: "14px",
+    '&': { height: '100%', border: 'none', background: lightTheme ? '#fff' : '#0d1117', fontSize: '14px' },
+    '.cm-content': {
+      padding: '16px 20px',
+      fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace',
+      fontSize: '14px',
+      lineHeight: '1.45',
+      color: lightTheme ? '#1f2328' : '#e6edf3',
+      minHeight: '100%'
     },
-    ".cm-content": {
-      padding: "16px 20px",
-      fontFamily:
-        'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace',
-      fontSize: "14px",
-      lineHeight: "1.45",
-      color: lightTheme ? "#1f2328" : "#e6edf3",
-      minHeight: "100%",
+    '.cm-editor': { height: '100%' },
+    '.cm-focused': { outline: 'none' },
+    '.cm-gutters': {
+      backgroundColor: lightTheme ? '#f6f8fa' : '#0d1117',
+      color: lightTheme ? '#656d76' : '#7d8590',
+      border: 'none',
+      paddingRight: '16px'
     },
-    ".cm-editor": { height: "100%" },
-    ".cm-focused": { outline: "none" },
-    ".cm-gutters": {
-      backgroundColor: lightTheme ? "#f6f8fa" : "#0d1117",
-      color: lightTheme ? "#656d76" : "#7d8590",
-      border: "none",
-      paddingRight: "16px",
-    },
-    ".cm-activeLineGutter": {
-      backgroundColor: lightTheme ? "#fff" : "#161b22",
-    },
-    ".cm-activeLine": {
-      backgroundColor: lightTheme ? "#f6f8fa" : "#161b2240",
-    },
-    ".cm-selectionMatch": {
-      backgroundColor: lightTheme ? "#ffd33d33" : "#ffd33d44",
-    },
-    ".cm-searchMatch": {
-      backgroundColor: lightTheme ? "#ffdf5d33" : "#ffdf5d44",
-    },
-    ".cm-cursor": {
-      borderLeftColor: lightTheme ? "#1f2328" : "#e6edf3",
-    },
-    ".cm-scroller": { overflow: "auto" },
+    '.cm-activeLineGutter': { backgroundColor: lightTheme ? '#fff' : '#161b22' },
+    '.cm-activeLine': { backgroundColor: lightTheme ? '#f6f8fa' : '#161b2240' },
+    '.cm-selectionMatch': { backgroundColor: lightTheme ? '#ffd33d33' : '#ffd33d44' },
+    '.cm-searchMatch': { backgroundColor: lightTheme ? '#ffdf5d33' : '#ffdf5d44' },
+    '.cm-cursor': { borderLeftColor: lightTheme ? '#1f2328' : '#e6edf3' },
+    '.cm-scroller': { overflow: 'auto' }
   });
 }
 
@@ -52,79 +36,47 @@ function PythonEditor({ code, setCode, lightTheme }) {
   const editorRef = useRef(null);
   const viewRef = useRef(null);
 
-  // Compartimento para tema y config dinámica
-  const themeCompartment = useRef(new Compartment());
-
   useEffect(() => {
     if (editorRef.current && !viewRef.current) {
-      const state = EditorState.create({
-        doc: code,
-        extensions: [
-          basicSetup,
-          python(),
-          themeCompartment.current.of([
-            createEditorTheme(lightTheme),
-            ...(lightTheme ? [] : [oneDark]),
-          ]),
-          EditorView.updateListener.of((update) => {
-            if (update.docChanged) {
-              setCode(update.state.doc.toString());
-            }
-          }),
-        ],
-      });
-
-      viewRef.current = new EditorView({
-        state,
-        parent: editorRef.current,
-      });
+      const extensions = [
+        basicSetup,
+        python(),
+        createEditorTheme(lightTheme),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) {
+            setCode(update.state.doc.toString());
+          }
+        })
+      ];
+      if (!lightTheme) extensions.splice(2, 0, oneDark);
+      const state = EditorState.create({ doc: code, extensions });
+      viewRef.current = new EditorView({ state, parent: editorRef.current });
+    } else if (viewRef.current) {
+      const currentCode = viewRef.current.state.doc.toString();
+      if (currentCode !== code) {
+        viewRef.current.dispatch({ changes: { from: 0, to: currentCode.length, insert: code } });
+      }
     }
-
     return () => {
       if (viewRef.current) {
         viewRef.current.destroy();
         viewRef.current = null;
       }
     };
-  }, []);
-
-  // Reconfigurar tema cuando cambia lightTheme
-  useEffect(() => {
-    if (viewRef.current) {
-      viewRef.current.dispatch({
-        effects: themeCompartment.current.reconfigure([
-          createEditorTheme(lightTheme),
-          ...(lightTheme ? [] : [oneDark]),
-        ]),
-      });
-    }
-  }, [lightTheme]);
-
-  // Sincronizar código externo
-  useEffect(() => {
-    if (viewRef.current) {
-      const currentCode = viewRef.current.state.doc.toString();
-      if (currentCode !== code) {
-        viewRef.current.dispatch({
-          changes: { from: 0, to: currentCode.length, insert: code },
-        });
-      }
-    }
-  }, [code]);
+  }, [code, lightTheme]);
 
   return (
     <div
       ref={editorRef}
       style={{
-        height: "100%",
-        width: "100%",
-        background: lightTheme ? "#fff" : "#0d1117",
-        overflow: "hidden",
+        height: '100%',
+        width: '100%',
+        background: lightTheme ? '#fff' : '#0d1117',
+        overflow: 'hidden'
       }}
     />
   );
 }
-
 
 function EditarMicroservicio({ id, onBack, lightTheme = false }) {
   const [microservice, setMicroservice] = useState(null);

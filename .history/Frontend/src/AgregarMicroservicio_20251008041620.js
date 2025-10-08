@@ -4,6 +4,7 @@ import './App.css';
 import { EditorView, basicSetup } from 'codemirror';
 import { python } from '@codemirror/lang-python';
 import { oneDark } from '@codemirror/theme-one-dark';
+
 import { EditorState, Compartment } from "@codemirror/state";
 
 function createEditorTheme(lightTheme) {
