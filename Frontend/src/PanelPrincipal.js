@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
 import Login from "./Login";
 import AgregarMicroservicio from './AgregarMicroservicio';
@@ -27,6 +27,10 @@ function PanelPrincipal() {
   // Estados de autenticación
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginFade, setLoginFade] = useState(false);
+  // Para la sidebar
+  const [isPinned, setIsPinned] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const sidebarRef = useRef(null);
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/microservices')
@@ -67,6 +71,21 @@ function PanelPrincipal() {
       setDockerActive(false);
     });
 }, []);
+
+  //CLIC FUERA DE SIDEBAR
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target) &&
+        !isPinned
+      ) {
+        setIsHistoryOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isPinned]);
 
   // Función para manejar login (yo digo que crear un json para ese usuario)
   const handleLogin = (userData) => {
@@ -153,7 +172,7 @@ return (
           className="toggle-history-btn"
           onClick={() => setIsHistoryOpen(!isHistoryOpen)}
         >
-          {isHistoryOpen ? "✖" : "☰"}
+          {isHistoryOpen ? "☰" : "☰"}
         </button>
         
         <h1>MicroServicios</h1>
@@ -257,11 +276,32 @@ return (
           </div>
         )}
       </nav>
+<aside
+  ref={sidebarRef}
+  className={`side-menu${isHistoryOpen ? " open" : ""}`}
+>
+  <div className="sidebar-controls">
+    <button
+      onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+      title={isHistoryOpen ? "Cerrar" : "Abrir"}
+    >
+      ❌
+    </button>
+  </div>
 
-      <aside className={`side-menu${isHistoryOpen ? " open" : ""}`}>
-        {/* Puedes agregar aquí enlaces o menú lateral si lo necesitas */}
-
+  {isHistoryOpen && (
+    <ul className="sidebar-list">
+      <li>🏠 Inicio</li>
+      <li>⚙️ Configuración</li>
+      <li>📜 Historial</li>
+    </ul>
+  )}
 </aside>
+
+
+
+
+      
 
       <div className="panel-content">
         <div className="panel-header-row">
@@ -363,6 +403,7 @@ return (
     </div>     
 
       </div>
+      
       </div>
 
       {/* Modal para agregar microservicio */}

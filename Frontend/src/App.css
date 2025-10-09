@@ -6,6 +6,11 @@
   background:  #181c27;
   padding-bottom: 0 !important;
   margin-bottom: 0 !important;
+  flex-grow: 1;
+  padding: 24px;
+  transition: margin-left 0.3s ease;
+  width: 96.05%;
+
   /*background: radial-gradient(ellipse, #3e4863 10%, #181c27 100%); DEGRADADO DE BRITO*/
 }
 
@@ -131,22 +136,27 @@
 /* Sidebar */
 .side-menu {
   position: fixed;
-  z-index: 100;
-  left: 0;
   top: 0;
-  width: 200px; /* Puedes ajustar el ancho */
+  left: 0;
+  width: 220px;
   height: 100vh;
-  background-color: #181c27;
-  padding: 10px;
-  overflow-y: auto;
-  transform: translateX(-100%);
-  transition: none !important;
-  color: #f0f0f0;
-  will-change: transform;
-  transition-property: transform;
-  transition-duration: 0.7s;
-  transition-timing-function: cubic-bezier(0.77,0,0.175,1);
+  background: #1e293b;
+  color: white;
+  transition: transform 0.3s ease;
+  transform: translateX(0);
+  z-index: 1000;
 }
+
+.side-menu.collapsed {
+  transform: translateX(-100%);
+}
+
+.sidebar-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem;
+}
+
 .app-container {
   /* Quita el margin-left fijo */
   margin-left: 0;
@@ -1160,3 +1170,91 @@ body.light-theme, .app-container.light-theme {
   opacity: 0.9;
   transform: translateY(-1px);
 }
+
+.main-container {
+  display: flex;
+  transition: margin-left 0.3s ease;
+}
+
+.main-container.pinned-active {
+  margin-left: 220px; /* ancho sidebar pinneada */
+}
+.layout {
+  display: flex;
+  transition: margin-left 0.3s ease;
+}
+
+.layout-pinned .content-area {
+  margin-left: 220px; /* desplazamiento cuando sidebar está fija */
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -220px;
+  width: 220px;
+  height: 100vh;
+  background: #1b1f2a;
+  color: white;
+  padding: 14px;
+  transition: left 0.3s ease, width 0.3s ease;
+  border-right: 2px solid #9b0018;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 200;
+}
+
+/* Cuando se abre (aunque no esté pinneada) */
+.side-menu.open {
+  left: 0;
+}
+
+/* Si está pinneada, se queda fija */
+.side-menu.pinned {
+  left: 0;
+}
+
+/* Colapsada (solo íconos) */
+.side-menu.collapsed {
+  width: 70px;
+}
+
+.sidebar-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.sidebar-controls button {
+  background: #23263a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-controls button:hover {
+  background: #9b0018;
+}
+
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-list li {
+  padding: 10px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-list li:hover {
+  background: #9b0018;
+}
+
+
