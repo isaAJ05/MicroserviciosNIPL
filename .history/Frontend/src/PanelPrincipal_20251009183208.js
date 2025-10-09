@@ -246,7 +246,7 @@ return (
           >
             <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 2, display: 'flex', alignItems: 'center', gap: 8 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-              {(user && (user.username || user.name || user.email)) || 'Invitado'}
+              {user?.username || 'Invitado'}
             </div>
             <div style={{ fontSize: 13, color: lightTheme ? '#656d76' : '#b3b3b3', marginBottom: 6, marginLeft: 28 }}>
               ID del Proyecto: {localStorage.getItem('tokenContract') || 'N/A'}

@@ -176,6 +176,25 @@ return (
         </button>
         
         <h1>MicroServicios</h1>
+        {/* Mostrar usuario y token contract si está logueado */}
+        {isLoggedIn && (
+          <div style={{
+            marginLeft: 24,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            fontSize: 14,
+            fontWeight: 600,
+            color: lightTheme ? '#23263a' : '#fff',
+            gap: 2
+          }}>
+            <span>👤 {user?.username || 'Usuario'}</span>
+            <span style={{ fontSize: 12, fontWeight: 400, color: lightTheme ? '#656d76' : '#b3b3b3' }}>
+              Proyecto: {localStorage.getItem('tokenContract') || 'N/A'}
+            </span>
+          </div>
+        )}
         <button
           style={{
             marginLeft: "auto",
@@ -244,12 +263,9 @@ return (
               gap: 10,
             }}
           >
-            <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 2, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-              {(user && (user.username || user.name || user.email)) || 'Invitado'}
-            </div>
-            <div style={{ fontSize: 13, color: lightTheme ? '#656d76' : '#b3b3b3', marginBottom: 6, marginLeft: 28 }}>
-              ID del Proyecto: {localStorage.getItem('tokenContract') || 'N/A'}
+              {user?.username || 'Invitado'}
             </div>
             <button
               style={{

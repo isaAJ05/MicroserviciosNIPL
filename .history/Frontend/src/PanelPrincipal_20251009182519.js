@@ -244,12 +244,9 @@ return (
               gap: 10,
             }}
           >
-            <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 2, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-              {(user && (user.username || user.name || user.email)) || 'Invitado'}
-            </div>
-            <div style={{ fontSize: 13, color: lightTheme ? '#656d76' : '#b3b3b3', marginBottom: 6, marginLeft: 28 }}>
-              ID del Proyecto: {localStorage.getItem('tokenContract') || 'N/A'}
+              {user?.username || 'Invitado'}
             </div>
             <button
               style={{
@@ -341,7 +338,7 @@ return (
                   </span>
                 </td>
                 <td>
-                  <button
+                                <button
                   style={{
                     display: 'inline-block',
                     background: '#1a73e8',
@@ -357,50 +354,49 @@ return (
                     cursor: 'pointer'
                   }}
                     onClick={async () => {
-                    const token = (localStorage.getItem('accessToken')).trim();
-                    console.log("Token usado:", token);
-                    const tokenContract = (localStorage.getItem('tokenContract')).trim();
-                    let url = `http://localhost:${microservice.port}/${microservice.endpoint}`;
-                    if (microservice.processing_type === "Roble") {
-                      url += `?tableName=inventario&token_contract=${encodeURIComponent(tokenContract)}`;
-                    }
-                    // Permitir al usuario editar la URL antes de hacer la petición
-                    const customUrl = window.prompt("Edita la URL del endpoint antes de probar:", url);
-                    if (!customUrl) return; // Si cancela, no hace nada
+  const token = (localStorage.getItem('accessToken')).trim();
+  console.log("Token usado:", token);
+  const tokenContract = (localStorage.getItem('tokenContract')).trim();
+  let url = `http://localhost:${microservice.port}/${microservice.endpoint}`;
+  if (microservice.processing_type === "Roble") {
+    url += `?tableName=inventario&token_contract=${encodeURIComponent(tokenContract)}`;
+  }
+  // Permitir al usuario editar la URL antes de hacer la petición
+  const customUrl = window.prompt("Edita la URL del endpoint antes de probar:", url);
+  if (!customUrl) return; // Si cancela, no hace nada
 
-                    try {
-                      const res = await fetch(customUrl, {
-                        method: 'GET',
-                        headers: {
-                          'Authorization': `Bearer ${token}`
-                        }
-                      });
-                      if (!res.ok) {
-                        throw new Error(`HTTP ${res.status}`);
-                      }
-                      const data = await res.json();
-                      // Mostrar en nueva pestaña
-                      const win = window.open("", "_blank");
-                      win.document.write(`
-                        <div style="background:#23263a;color:#fff;padding:18px 24px;font-family:monospace">
-                          <div style="font-size:17px;font-weight:600;margin-bottom:12px;">
-                            <span style="color:#75baff">GET</span> <span style="color:#ffb300">${customUrl}</span>
-                          </div>
-                          <pre style="font-size:15px;line-height:1.4;background:#181c27;color:#fff;padding:24px;border-radius:8px">${JSON.stringify(data, null, 2)}</pre>
-                        </div>
-                      `);
-                      win.document.title = "Respuesta del Microservicio";
-                    } catch (err) {
-                      alert("Error al conectar con el microservicio: " + err.message);
-                    }
-                  }}
+  try {
+    const res = await fetch(customUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    // Mostrar en nueva pestaña
+    const win = window.open("", "_blank");
+    win.document.write(`
+      <div style="background:#23263a;color:#fff;padding:18px 24px;font-family:monospace">
+        <div style="font-size:17px;font-weight:600;margin-bottom:12px;">
+          <span style="color:#75baff">GET</span> <span style="color:#ffb300">${customUrl}</span>
+        </div>
+        <pre style="font-size:15px;line-height:1.4;background:#181c27;color:#fff;padding:24px;border-radius:8px">${JSON.stringify(data, null, 2)}</pre>
+      </div>
+    `);
+    win.document.title = "Respuesta del Microservicio";
+  } catch (err) {
+    alert("Error al conectar con el microservicio: " + err.message);
+  }
+}}
 
-                                    onMouseOver={e => (e.currentTarget.style.background = '#1761c7')}
-                                    onMouseOut={e => (e.currentTarget.style.background = '#1a73e8')}
-                                  >
-                                    Probar Endpoint
-                                    </button>
-                                  </td>
+                  onMouseOver={e => (e.currentTarget.style.background = '#1761c7')}
+                  onMouseOut={e => (e.currentTarget.style.background = '#1a73e8')}
+                >
+                  Probar Endpoint
+                </button>
                 <td>
                   <button className="action-btn" title="Editar" onClick={() => setEditId(microservice.id)}>✏️</button>
                   <button className="action-btn" title="Eliminar" onClick={() => handleDelete(microservice.id)}>🗑️</button>

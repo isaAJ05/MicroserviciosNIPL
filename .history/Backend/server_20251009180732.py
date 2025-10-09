@@ -86,40 +86,31 @@ def get_microservices():
         print("DOCKER SI SIRVE")
         microservices = load_microservices()
         for ms in microservices:
-            # 1. Verifica si el contenedor existe por ID
+            # 1. Verifica si el contenedor existe en Docker
             inspect_proc = subprocess.run(
                 ["docker", "inspect", ms["id"]],
                 capture_output=True, text=True
             )
             if inspect_proc.returncode != 0:
-                # Si el ID no existe, intenta buscar por nombre
-                ps_name_proc = subprocess.run([
-                    "docker", "ps", "-a", "--filter", f"name=^{ms['image_name']}$", "--format", "{{.ID}}"
-                ], capture_output=True, text=True)
-                found_id = ps_name_proc.stdout.strip()
-                if found_id:
-                    ms["id"] = found_id[:12]
-                    save_microservices(microservices)
+                # El contenedor no existe, intenta reconstruirlo y levantarlo
+                folder_path = os.path.join("historial", ms.get("folder_name", ""))
+                if os.path.exists(folder_path):
+                    # Construir la imagen si no existe
+                    subprocess.run([
+                        "docker", "build", "-t", ms["image_name"], folder_path
+                    ], check=True)
+                    # Crear el contenedor
+                    run_proc = subprocess.run([
+                        "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
+                    ], capture_output=True, text=True)
+                    if run_proc.returncode == 0:
+                        new_id = run_proc.stdout.strip()[:12]
+                        ms["id"] = new_id
+                        # Actualizar el JSON con el nuevo ID
+                        save_microservices(microservices)
                 else:
-                    # El contenedor no existe, intenta reconstruirlo y levantarlo
-                    folder_path = os.path.join("historial", ms.get("folder_name", ""))
-                    if os.path.exists(folder_path):
-                        # Construir la imagen si no existe
-                        subprocess.run([
-                            "docker", "build", "-t", ms["image_name"], folder_path
-                        ], check=True)
-                        # Crear el contenedor
-                        run_proc = subprocess.run([
-                            "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
-                        ], capture_output=True, text=True)
-                        if run_proc.returncode == 0:
-                            new_id = run_proc.stdout.strip()[:12]
-                            ms["id"] = new_id
-                            # Actualizar el JSON con el nuevo ID
-                            save_microservices(microservices)
-                    else:
-                        ms["status"] = "error: carpeta no encontrada"
-                        continue
+                    ms["status"] = "error: carpeta no encontrada"
+                    continue
 
             # Estado
             ps_cmd = [

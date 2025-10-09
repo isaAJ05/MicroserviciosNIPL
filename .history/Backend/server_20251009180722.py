@@ -57,6 +57,38 @@ def login():
     return jsonify({"accessToken": access_token})
 
 
+# READ TABLA ROBLE
+@app.route('/roble-read', methods=['GET'])
+def roble_read():
+    table_name = request.args.get("tableName", "inventario")  # por defecto "inventario"
+
+    # 1. Primero, haz login para obtener el access token
+    try:
+        login_res = requests.post(
+            f"https://roble-api.openlab.uninorte.edu.co/auth/{ROBLE_PROJECT_TOKEN}/login",
+            json={
+                "email": ROBLE_EMAIL,
+                "password": ROBLE_PASSWORD
+            }
+        )
+        login_data = login_res.json()
+        access_token = login_data.get("accessToken")
+        if not access_token:
+            return jsonify({"error": "No se pudo obtener accessToken", "login_response": login_data}), 401
+    except Exception as e:
+        return jsonify({"error": f"Error en login Roble: {str(e)}"}), 500
+
+    # 2. Luego, consulta la tabla usando ese access token
+    try:
+        res = requests.get(
+            f"https://roble-api.openlab.uninorte.edu.co/database/{ROBLE_PROJECT_TOKEN}/read",
+            headers={"Authorization": f"Bearer {access_token}"},
+            params={"tableName": table_name}
+        )
+        return jsonify(res.json()), res.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 #ENDPOINTS CRUD MICROSERVICIOS
 #POST -> CREAR MICROSERVICIO
 @app.route('/microservices', methods=['POST'])
@@ -86,40 +118,31 @@ def get_microservices():
         print("DOCKER SI SIRVE")
         microservices = load_microservices()
         for ms in microservices:
-            # 1. Verifica si el contenedor existe por ID
+            # 1. Verifica si el contenedor existe en Docker
             inspect_proc = subprocess.run(
                 ["docker", "inspect", ms["id"]],
                 capture_output=True, text=True
             )
             if inspect_proc.returncode != 0:
-                # Si el ID no existe, intenta buscar por nombre
-                ps_name_proc = subprocess.run([
-                    "docker", "ps", "-a", "--filter", f"name=^{ms['image_name']}$", "--format", "{{.ID}}"
-                ], capture_output=True, text=True)
-                found_id = ps_name_proc.stdout.strip()
-                if found_id:
-                    ms["id"] = found_id[:12]
-                    save_microservices(microservices)
+                # El contenedor no existe, intenta reconstruirlo y levantarlo
+                folder_path = os.path.join("historial", ms.get("folder_name", ""))
+                if os.path.exists(folder_path):
+                    # Construir la imagen si no existe
+                    subprocess.run([
+                        "docker", "build", "-t", ms["image_name"], folder_path
+                    ], check=True)
+                    # Crear el contenedor
+                    run_proc = subprocess.run([
+                        "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
+                    ], capture_output=True, text=True)
+                    if run_proc.returncode == 0:
+                        new_id = run_proc.stdout.strip()[:12]
+                        ms["id"] = new_id
+                        # Actualizar el JSON con el nuevo ID
+                        save_microservices(microservices)
                 else:
-                    # El contenedor no existe, intenta reconstruirlo y levantarlo
-                    folder_path = os.path.join("historial", ms.get("folder_name", ""))
-                    if os.path.exists(folder_path):
-                        # Construir la imagen si no existe
-                        subprocess.run([
-                            "docker", "build", "-t", ms["image_name"], folder_path
-                        ], check=True)
-                        # Crear el contenedor
-                        run_proc = subprocess.run([
-                            "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
-                        ], capture_output=True, text=True)
-                        if run_proc.returncode == 0:
-                            new_id = run_proc.stdout.strip()[:12]
-                            ms["id"] = new_id
-                            # Actualizar el JSON con el nuevo ID
-                            save_microservices(microservices)
-                    else:
-                        ms["status"] = "error: carpeta no encontrada"
-                        continue
+                    ms["status"] = "error: carpeta no encontrada"
+                    continue
 
             # Estado
             ps_cmd = [
