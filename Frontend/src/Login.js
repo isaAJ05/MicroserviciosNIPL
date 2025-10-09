@@ -1,20 +1,22 @@
 import React, { useState } from "react";
 
-export default function Login() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [loginFade, setLoginFade] = useState(false)
-  const [showRegister, setShowRegister] = useState(false)
-  const [registerAnim, setRegisterAnim] = useState("")
-  const [loginUser, setLoginUser] = useState("")
-  const [loginPass, setLoginPass] = useState("")
-  const [tokenContract, setTokenContract] = useState("")
-  const [loginError, setLoginError] = useState("")
-  const [registerError, setRegisterError] = useState("")
-  const [registerSuccess, setRegisterSuccess] = useState("")
 
-  const [userFocused, setUserFocused] = useState(false)
-  const [passFocused, setPassFocused] = useState(false)
-  const [tokenFocused, setTokenFocused] = useState(false)
+export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
+  const [loginUser, setLoginUser] = useState("");
+  const [loginPass, setLoginPass] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginFade, setLoginFade] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [registerUser, setRegisterUser] = useState("");
+  const [registerPass, setRegisterPass] = useState("");
+  const [registerError, setRegisterError] = useState("");
+  const [registerSuccess, setRegisterSuccess] = useState("");
+  const [registerAnim, setRegisterAnim] = useState("");
+  const [tokenContract, setTokenContract] = useState("");
+
+  const [userFocused, setUserFocused] = useState(false);
+  const [passFocused, setPassFocused] = useState(false);
+  const [tokenFocused, setTokenFocused] = useState(false);
 
   return (
     <>
@@ -91,40 +93,40 @@ export default function Login() {
             }}
           >
             <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                const user = loginUser.trim().toLowerCase();
-                const pass = loginPass.trim();
-                const token = tokenContract.trim();
-                setLoginError("");
+              onSubmit={async e => {
+              e.preventDefault();
+              const user = loginUser.trim().toLowerCase();
+              const pass = loginPass.trim();
+              const token = tokenContract.trim();
+              setLoginError("");
 
-                try {
-                  const res = await fetch("http://127.0.0.1:5000/login", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      username: user,
-                      password: pass,
-                      tokenContract: token,
-                    }),
-                  });
+              try {
+                const res = await fetch("http://127.0.0.1:5000/login", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    email: user,
+                    password: pass,
+                    token_contract: token,
+                  }),
+                });
 
-                  const data = await res.json();
-                  if (res.ok && data.success) {
-                    setLoginFade(true);
-                    setTimeout(() => {
-                      setIsLoggedIn(true);
-                      setLoginFade(false);
-                    }, 700);
-                  } else {
-                    setLoginError(
-                      data.error || "Usuario o contraseña incorrectos"
-                    );
-                  }
-                } catch (err) {
-                  setLoginError("No se pudo conectar con el backend");
+                const data = await res.json();
+                if (res.ok && data.accessToken) {
+                  localStorage.setItem("accessToken", data.accessToken);
+                  localStorage.setItem("tokenContract", token);
+                  handleLogin({ email: user }); // <--- aquí
+                  setIsLoggedIn(true);
+                  setLoginFade(false);
+                } else {
+                  setLoginError(
+                    data.error || "Usuario o contraseña incorrectos"
+                  );
                 }
-              }}
+              } catch (err) {
+                setLoginError("No se pudo conectar con el backend");
+              }
+            }}
               style={{
                 display: showRegister ? "none" : "flex",
                 flexDirection: "column",
@@ -166,9 +168,7 @@ export default function Login() {
                 <input
                   type="text"
                   value={loginUser}
-                  onChange={(e) => setLoginUser(e.target.value)}
-                  onFocus={() => setUserFocused(true)}
-                  onBlur={() => setUserFocused(false)}
+                  onChange={e => setLoginUser(e.target.value)}
                   style={{
                     width: "93%",
                     background: "#f8f9fa",
@@ -206,9 +206,7 @@ export default function Login() {
                 <input
                   type="password"
                   value={loginPass}
-                  onChange={(e) => setLoginPass(e.target.value)}
-                  onFocus={() => setPassFocused(true)}
-                  onBlur={() => setPassFocused(false)}
+                  onChange={e => setLoginPass(e.target.value)}
                   style={{
                     width: "93%",
                     background: "#f8f9fa",
@@ -245,9 +243,7 @@ export default function Login() {
                 <input
                   type="text"
                   value={tokenContract}
-                  onChange={(e) => setTokenContract(e.target.value)}
-                  onFocus={() => setTokenFocused(true)}
-                  onBlur={() => setTokenFocused(false)}
+                  onChange={e => setTokenContract(e.target.value)}
                   style={{
                     width: "93%",
                     background: "#f8f9fa",
@@ -260,6 +256,7 @@ export default function Login() {
                     outline: "none",
                     boxShadow: tokenFocused ? "0 0 0 3px rgba(74, 144, 226, 0.2)" : "none",
                   }}
+                  required
                 />
               </div>
 

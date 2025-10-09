@@ -49,6 +49,7 @@ function PanelPrincipal() {
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
       setUser(JSON.parse(savedUser));
+      setIsLoggedIn(true);
     }
   }, []);
 
@@ -66,6 +67,7 @@ function PanelPrincipal() {
   // Función para manejar login (yo digo que crear un json para ese usuario)
   const handleLogin = (userData) => {
     setUser(userData);
+    setIsLoggedIn(true);
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
@@ -128,7 +130,11 @@ function PanelPrincipal() {
 return (
   <>
     {!isLoggedIn ? (
-      <Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+      <Login
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        handleLogin={handleLogin}
+      />
     ) : (
       <div
         className={`app-container${loginFade ? ' fade' : ''}`}
@@ -145,6 +151,7 @@ return (
         >
           {isHistoryOpen ? "✖" : "☰"}
         </button>
+        
         <h1>MicroServicios</h1>
         <button
           style={{
@@ -216,7 +223,7 @@ return (
           >
             <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-              {loginUser || 'Invitado'}
+              {user?.username || 'Invitado'}
             </div>
             <button
               style={{
@@ -236,8 +243,6 @@ return (
                 setTimeout(() => {
                   setShowUserPanel(false);
                   setUserPanelFade(false);
-                  setLoginUser("");
-                  setLoginPass("");
                   setUser(null);
                   localStorage.removeItem("user");
                 }, 350);
