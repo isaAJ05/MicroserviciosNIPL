@@ -260,7 +260,8 @@ return (
 
       <aside className={`side-menu${isHistoryOpen ? " open" : ""}`}>
         {/* Puedes agregar aquí enlaces o menú lateral si lo necesitas */}
-      </aside>
+
+</aside>
 
       <div className="panel-content">
         <div className="panel-header-row">
@@ -304,7 +305,7 @@ return (
                       style={{
                         display: 'inline-block',
                         background: '#1a73e8',
-                        color: '#fff',
+                        color: '#ffffffff',
                         padding: '7px 16px',
                         borderRadius: 6,
                         fontWeight: 600,
@@ -329,6 +330,38 @@ return (
             ))}
           </tbody>
         </table>
+
+           {/* AVISO DOCKER AQUÍ */}
+  <div
+    style={{
+      margin: "20px auto 20px auto",
+      background: dockerActive ? "#1aaf5d" : "#b91c1c",
+      color: "#ffffffff",
+      padding: "8px 0px",
+      borderRadius: 12,
+      boxShadow: "0 4px 16px #0003",
+      fontWeight: 600,
+      fontSize: 16,
+      display: "flex",
+      alignItems: "center",
+      gap: 10,
+      minWidth: 180,
+      maxWidth: 210,
+      justifyContent: "center"
+    }}
+  >
+
+    <span style={{ fontSize: 20 }}>
+      {dockerActive === null ? "⏳" : dockerActive ? "🐳" : "❌"}
+    </span>
+    Docker:{" "}
+    {dockerActive === null
+      ? "Verificando..."
+      : dockerActive
+      ? "Conectado"
+      : "No conectado"}
+    </div>     
+
       </div>
       </div>
 
@@ -368,44 +401,17 @@ return (
         </div>
       )}
 
-{/* Footer */}
-<footer className="footer">
-  <div>
-    MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
-  </div>
-  <div>
-    <span>Contacto: microservicios@uninorte.edu.co</span>
-  </div>
-  <div
-    style={{
-      background: dockerActive ? "#1aaf5d" : "#b91c1c",
-      color: "#fff",
-      padding: "8px 16px",
-      borderRadius: 8,
-      fontWeight: 600,
-      fontSize: 15,
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 10,
-      marginTop: 8,
-      minWidth: 160,
-      boxShadow: "0 2px 8px #0002",
-    }}
-  >
-    <span style={{ fontSize: 18 }}>
-      {dockerActive === null ? "⏳" : dockerActive ? "🐳" : "❌"}
-    </span>
-    Docker:{" "}
-    {dockerActive === null
-      ? "Verificando..."
-      : dockerActive
-      ? "Conectado"
-      : "No conectado"}
-  </div>
-</footer>
+      {/* Footer */}
+      <footer className="footer">
+        <div>
+          MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
+        </div>
+        <div>
+          <span>Contacto: microservicios@uninorte.edu.co</span>
+        </div>
+      </footer>
       </div>
     )}
-
 
   </>
 );

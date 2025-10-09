@@ -53,5 +53,16 @@
     "port": "32795",
     "status": "created",
     "code": "# Microservicio Consulta Tabla Roble (usa token recibido por header y token_contract por parámetro)\ndef main(data=None):\n    \"\"\"\n    Consulta una tabla en Roble usando el token recibido por header y el token_contract recibido por parámetro.\n    \"\"\"\n    import requests\n    try:\n        # El token de Roble viene en data['roble_token']\n        token = data.get(\"roble_token\")\n        if not token:\n            return {\"status\": \"error\", \"message\": \"Token de autenticación no recibido\"}\n\n        # El token_contract viene en los parámetros\n        token_contract = data.get(\"token_contract\")\n        if not token_contract:\n            return {\"status\": \"error\", \"message\": \"Token contract no recibido\"}\n\n        table_name = data.get(\"tableName\", \"inventario\")\n\n        # Puedes agregar más parámetros de filtro si lo deseas\n        params = {\"tableName\": table_name}\n        for k, v in (data or {}).items():\n            if k not in [\"roble_token\", \"token_contract\", \"tableName\"]:\n                params[k] = v\n\n        # Consulta la tabla en Roble\n        res = requests.get(\n            f\"https://roble-api.openlab.uninorte.edu.co/database/{token_contract}/read\",\n            headers={\"Authorization\": f\"Bearer {token}\"},\n            params=params\n        )\n        if res.status_code == 200:\n            return {\"status\": \"success\", \"roble_data\": res.json()}\n        elif res.status_code == 401:\n            return {\"status\": \"error\", \"message\": \"Token inválido o expirado\", \"code\": 401}\n        elif res.status_code == 403:\n            return {\"status\": \"error\", \"message\": \"Acceso denegado\", \"code\": 403}\n        else:\n            return {\"status\": \"error\", \"message\": f\"Roble error: {res.status_code}\", \"details\": res.text}\n    except Exception as e:\n        return {\"status\": \"error\", \"message\": f\"Error: {str(e)}\"}\n"
+  },
+  {
+    "id": "7e5f5885b0de",
+    "name": "m1",
+    "processing_type": "Other",
+    "endpoint": "m1",
+    "image_name": "m1",
+    "folder_name": "m1_20251009150817",
+    "port": "32773",
+    "status": "created",
+    "code": "# Microservicio Hola Mundo\n\ndef main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\",\n        \"data\": data\n    }\n\nif __name__ == \"__main__\":\n    print(main())"
   }
 ]
