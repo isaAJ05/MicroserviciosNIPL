@@ -1,8 +1,10 @@
 
 import React, { useEffect, useState } from 'react';
 import './App.css';
+import Login from "./Login";
 import AgregarMicroservicio from './AgregarMicroservicio';
 import EditarMicroservicio from './EditarMicroservicio';
+
 function PanelPrincipal() {
   const [microservices, setMicroservices] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -122,237 +124,20 @@ function PanelPrincipal() {
   );
 }
 
- // Login visual simple
-  return (
-    <>
-      {/* Fondo oscuro fijo para toda la app y transición */}
-      <div style={{
-        position: 'fixed',
-        inset: 0,
-        minHeight: '100vh',
-        minWidth: '100vw',
-        background: 'radial-gradient(ellipse, #3e4863 10%, #181c27 100%)',
-        zIndex: 0,
-        pointerEvents: 'none',
-      }} />
-      <div className={`login-bg${loginFade ? ' fade-out' : ''}`} style={{ minHeight: '100vh', position: 'fixed', inset: 0, zIndex: 10, display: isLoggedIn ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center', background: 'none' }}>
-        <form
-          className={`login-form${!showRegister ? ' login-fade-in' : ''}`}
-          style={{
-            background: '#181c27',
-            border: '2px solid #9b0018',
-            borderRadius: 10,
-            boxShadow: '0 0 24px #000a',
-            padding: 36,
-            minWidth: 320,
-            display: showRegister ? 'none' : 'flex',
-            flexDirection: 'column',
-            gap: 18,
-            color: '#fff',
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 20
-          }}
-          onSubmit={async e => {
-            e.preventDefault();
-            const user = loginUser.trim().toLowerCase();
-            const pass = loginPass.trim();
-            const tokenContract = loginTokenContract.trim();
-            setLoginError("");
-            try {
-              const res = await fetch("http://127.0.0.1:5000/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: user, password: pass, token_contract: tokenContract }) // Envía el token contract
-              });
-              const data = await res.json();
-              if (res.ok && data.accessToken) {
-                // Guarda el token y el token contract en localStorage
-                localStorage.setItem("accessToken", data.accessToken);
-                localStorage.setItem("tokenContract", tokenContract);
-                setIsLoggedIn(true);
-                setLoginFade(false);
-                setUser({ email: user });
-              } else {
-                setLoginError(data.error || "Usuario o contraseña incorrectos");
-              }
-            } catch (err) {
-              setLoginError("No se pudo conectar con el backend");
-            }
-          }}
-        >
-          <h2 style={{ color: '#fff', marginBottom: 8, textAlign: 'center', letterSpacing: 1 }}>Iniciar sesión</h2>
-          <label style={{ color: '#fff' }}>Usuario</label>
-          <input
-            type="text"
-            value={loginUser}
-            onChange={e => setLoginUser(e.target.value)}
-            placeholder="Usuario"
-            style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
-            autoFocus
-          />
-          <label style={{ color: '#fff' }}>Contraseña</label>
-          <input
-            type="password"
-            value={loginPass}
-            onChange={e => setLoginPass(e.target.value)}
-            placeholder="Contraseña"
-            style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
-          /><label style={{ color: '#fff' }}>Token Contract</label>
-            <input
-              type="text"
-              value={loginTokenContract}
-              onChange={e => setLoginTokenContract(e.target.value)}
-              placeholder="Token Contract"
-              style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
-              required
-            />
-          {loginError && <div style={{ color: '#ff1744', background: '#4f1f1f', borderRadius: 5, padding: 8, marginBottom: 8, textAlign: 'center' }}>{loginError}</div>}
-          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
-            <button
-              type="submit"
-              style={{ flex: 1, background: '#9b0018', color: '#fff', border: 'none', borderRadius: 6, height: 40, fontSize: 17, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}
-              onMouseOver={e => (e.currentTarget.style.background = '#680010')}
-              onMouseOut={e => (e.currentTarget.style.background = '#9b0018')}
-            >
-              Entrar
-            </button>
-            <button
-              type="button"
-              style={{ flex: 1, background: '#9b0018', color: '#fff', border: 'none', borderRadius: 6, height: 40, fontSize: 17, fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s' }}
-              onClick={() => {
-                setIsLoggedIn(true);
-                setLoginError("");
-              }}
-              onMouseOver={e => (e.currentTarget.style.background = '#680010')}
-              onMouseOut={e => (e.currentTarget.style.background = '#9b0018')}
-            >
-            Invitado
-            </button>
-          </div>
-        
-          <button
-            type="button"
-            style={{ background: 'none', color: '#75baff', border: 'none', marginTop: 8, cursor: 'pointer', textDecoration: 'underline', fontSize: 15 }}
-            onClick={() => {
-              setRegisterAnim("show-register");
-              setShowRegister(true);
-              setRegisterError("");
-              setRegisterSuccess("");
-            }}
-          >
-            Crear una cuenta
-          </button>
+// LOGIN
+return (
+  <>
+    {!isLoggedIn ? (
+      <Login isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+    ) : (
+      <div
+        className={`app-container${loginFade ? ' fade' : ''}`}
+        style={{
+          opacity: loginFade ? 0 : 1,
+          transition: 'opacity 0.7s ease',
+        }}
+      >
 
-        </form>
-        {/* Registro */}
-        {showRegister && (
-          <form
-            className={`login-form ${registerAnim}`}
-            style={{
-              background: '#181c27',
-              border: '2px solid #9b0018',
-              borderRadius: 10,
-              boxShadow: '0 0 24px #000',
-              padding: 36,
-              minWidth: 320,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 18,
-              color: '#fff',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              zIndex: 20
-            }}
-            onAnimationEnd={() => {
-              if (registerAnim === "hide-register") {
-                setShowRegister(false);
-              }
-              setRegisterAnim("");
-            }}
-            onSubmit={async e => {
-              e.preventDefault();
-              if (!registerUser.trim() || !registerPass.trim()) {
-                setRegisterError('Completa todos los campos');
-                setRegisterSuccess("");
-                return;
-              }
-              // Nuevo: petición al backend para registrar usuario
-              try {
-                const res = await fetch("http://127.0.0.1:5000/register", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ username: registerUser.trim().toLowerCase(), password: registerPass })
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                  setRegisterSuccess('Cuenta creada');
-                  setRegisterError("");
-                  setRegisterUser("");
-                  setRegisterPass("");
-                  setTimeout(() => setShowRegister(false), 1500);
-                } else {
-                  setRegisterError(data.error || 'No se pudo crear la cuenta');
-                  setRegisterSuccess("");
-                }
-              } catch (err) {
-                setRegisterError('No se pudo conectar con el backend');
-                setRegisterSuccess("");
-              }
-            }}
-          >
-            <h2 style={{ color: '#fff', marginBottom: 8, textAlign: 'center', letterSpacing: 1 }}>Crear cuenta</h2>
-            <label style={{ color: '#fff' }}>Usuario</label>
-            <input
-              type="text"
-              value={registerUser}
-              onChange={e => setRegisterUser(e.target.value)}
-              placeholder="Usuario nuevo"
-              style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
-              autoFocus
-            />
-            <label style={{ color: '#fff' }}>Contraseña</label>
-            <input
-              type="password"
-              value={registerPass}
-              onChange={e => setRegisterPass(e.target.value)}
-              placeholder="Contraseña nueva"
-              style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
-            />
-            {registerError && <div style={{ color: '#ff1744', background: '#4f1f1f', borderRadius: 5, padding: 8, marginBottom: 8, textAlign: 'center' }}>{registerError}</div>}
-            {registerSuccess && <div style={{ color: '#00e676', background: '#1f4f2f', borderRadius: 5, padding: 8, marginBottom: 8, textAlign: 'center' }}>{registerSuccess}</div>}
-            <button
-              type="submit"
-              style={{ background: '#9b0018', color: '#fff', border: 'none', borderRadius: 6, padding: '12px 0', fontSize: 17, fontWeight: 600, cursor: 'pointer', marginTop: 8, transition: 'background 0.2s' }}
-              onMouseOver={e => (e.currentTarget.style.background = '#680010')}
-              onMouseOut={e => (e.currentTarget.style.background = '#9b0018')}
-            >
-              Crear cuenta
-            </button>
-            <button
-              type="button"
-              style={{ background: 'none', color: '#75baff', border: 'none', marginTop: 8, cursor: 'pointer', textDecoration: 'underline', fontSize: 15 }}
-              onClick={() => {
-                setRegisterAnim("hide-register");
-                }}
-              >
-                Cancelar
-              </button>
-              </form>
-            )}
-            </div>
-            <div className={`app-container${loginFade || !isLoggedIn ? '' : ' main-fade-in'}${isHistoryOpen ? ' history-open' : ''}`}
-            style={{
-              opacity: loginFade || !isLoggedIn ? 0 : 1,
-              pointerEvents: loginFade || !isLoggedIn ? 'none' : 'auto',
-              transition: 'opacity 0.7s cubic-bezier(0.4,0,0.2,1)',
-              position: 'relative',
-              zIndex: 1
-            }}>
       <nav className="navbar">
         <button
           className="toggle-history-btn"
@@ -503,66 +288,30 @@ function PanelPrincipal() {
                   </span>
                 </td>
                 <td>
-                <button
-                  style={{
-                    display: 'inline-block',
-                    background: '#1a73e8',
-                    color: '#fff',
-                    padding: '7px 16px',
-                    borderRadius: 6,
-                    fontWeight: 600,
-                    fontSize: 14,
-                    textDecoration: 'none',
-                    boxShadow: '0 2px 8px #0002',
-                    transition: 'background 0.2s',
-                    border: 'none',
-                    cursor: 'pointer'
-                  }}
-                    onClick={async () => {
-  const token = (localStorage.getItem('accessToken')).trim();
-  console.log("Token usado:", token);
-  const tokenContract = (localStorage.getItem('tokenContract')).trim();
-  let url = `http://localhost:${microservice.port}/${microservice.endpoint}`;
-  if (microservice.processing_type === "Roble") {
-    url += `?tableName=inventario&token_contract=${encodeURIComponent(tokenContract)}`;
-  }
-  // Permitir al usuario editar la URL antes de hacer la petición
-  const customUrl = window.prompt("Edita la URL del endpoint antes de probar:", url);
-  if (!customUrl) return; // Si cancela, no hace nada
-
-  try {
-    const res = await fetch(customUrl, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
-    const data = await res.json();
-    // Mostrar en nueva pestaña
-    const win = window.open("", "_blank");
-    win.document.write(`
-      <div style="background:#23263a;color:#fff;padding:18px 24px;font-family:monospace">
-        <div style="font-size:17px;font-weight:600;margin-bottom:12px;">
-          <span style="color:#75baff">GET</span> <span style="color:#ffb300">${customUrl}</span>
-        </div>
-        <pre style="font-size:15px;line-height:1.4;background:#181c27;color:#fff;padding:24px;border-radius:8px">${JSON.stringify(data, null, 2)}</pre>
-      </div>
-    `);
-    win.document.title = "Respuesta del Microservicio";
-  } catch (err) {
-    alert("Error al conectar con el microservicio: " + err.message);
-  }
-}}
-
-                  onMouseOver={e => (e.currentTarget.style.background = '#1761c7')}
-                  onMouseOut={e => (e.currentTarget.style.background = '#1a73e8')}
-                >
-                  Probar Endpoint
-                </button>
-              </td>
+                    <a
+                      href={`http://localhost:${microservice.port}/${microservice.endpoint}?a=5&b=7`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-block',
+                        background: '#1a73e8',
+                        color: '#fff',
+                        padding: '7px 16px',
+                        borderRadius: 6,
+                        fontWeight: 600,
+                        fontSize: 14,
+                        textDecoration: 'none',
+                        boxShadow: '0 2px 8px #0002',
+                        transition: 'background 0.2s',
+                        border: 'none',
+                        cursor: 'pointer'
+                      }}
+                      onMouseOver={e => (e.currentTarget.style.background = '#1761c7')}
+                      onMouseOut={e => (e.currentTarget.style.background = '#1a73e8')}
+                    >
+                      Ver Endpoint
+                    </a>
+                </td>
                 <td>
                   <button className="action-btn" title="Editar" onClick={() => setEditId(microservice.id)}>✏️</button>
                   <button className="action-btn" title="Eliminar" onClick={() => handleDelete(microservice.id)}>🗑️</button>
@@ -588,7 +337,7 @@ function PanelPrincipal() {
                 required
               />
               <input
-                type="text"
+                type="text"s
                 placeholder="Tipo de procesamiento"
                 value={newMicroservice.processing_type}
                 onChange={e => setNewMicroservice({ ...newMicroservice, processing_type: e.target.value })}
@@ -620,9 +369,10 @@ function PanelPrincipal() {
         </div>
       </footer>
       </div>
-    </>
-  );
+    )}
+  </>
+);
+//}
 }
-
 
 export default PanelPrincipal;
