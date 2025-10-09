@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import docker
 import requests
 from dotenv import load_dotenv
 import os
@@ -21,6 +22,20 @@ ROBLE_PASSWORD = os.getenv("password")
 
 app = Flask(__name__)
 CORS(app)
+
+# VERIFICACIÓN DE DOCKER
+@app.route('/is_docker_active')
+def is_docker_active():
+    try:
+        result = subprocess.run(
+            ["docker", "info"],
+            capture_output=True,
+            text=True,
+            timeout=3
+        )
+        return jsonify({"active": result.returncode == 0})
+    except Exception:
+        return jsonify({"active": False})
 
 #ENDPOINTS ROBLE
 @app.route('/login', methods=['POST'])
@@ -112,46 +127,40 @@ def add_microservice():
 # GET -> LISTAR MICROSERVICIOS
 @app.route('/microservices', methods=['GET'])
 def get_microservices():
-    microservices = load_microservices()
-    for ms in microservices:
-        # 1. Verifica si el contenedor existe en Docker
-        inspect_proc = subprocess.run(
-            ["docker", "inspect", ms["id"]],
-            capture_output=True, text=True
-        )
-        if inspect_proc.returncode != 0:
-            # El contenedor no existe, intenta reconstruirlo y levantarlo
-            folder_path = os.path.join("historial", ms.get("folder_name", ""))
-            if os.path.exists(folder_path):
-                # Construir la imagen si no existe
-                subprocess.run([
-                    "docker", "build", "-t", ms["image_name"], folder_path
-                ], check=True)
-                # Crear el contenedor
-                run_proc = subprocess.run([
-                    "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
-                ], capture_output=True, text=True)
-                if run_proc.returncode == 0:
-                    new_id = run_proc.stdout.strip()[:12]
-                    ms["id"] = new_id
-                    # Actualizar el JSON con el nuevo ID
-                    save_microservices(microservices)
-            else:
-                ms["status"] = "error: carpeta no encontrada"
-                continue
+    if not is_docker_active():
+        print("DOCKER NO SIRVE")
+        return jsonify({"error": "Docker no está activo. Por favor, inicie el servicio Docker."}), 500
+    else:
+        print("DOCKER SI SIRVE")
+        microservices = load_microservices()
+        for ms in microservices:
+            # 1. Verifica si el contenedor existe en Docker
+            inspect_proc = subprocess.run(
+                ["docker", "inspect", ms["id"]],
+                capture_output=True, text=True
+            )
+            if inspect_proc.returncode != 0:
+                # El contenedor no existe, intenta reconstruirlo y levantarlo
+                folder_path = os.path.join("historial", ms.get("folder_name", ""))
+                if os.path.exists(folder_path):
+                    # Construir la imagen si no existe
+                    subprocess.run([
+                        "docker", "build", "-t", ms["image_name"], folder_path
+                    ], check=True)
+                    # Crear el contenedor
+                    run_proc = subprocess.run([
+                        "docker", "run", "-d", "-P", "--name", ms["image_name"], ms["image_name"]
+                    ], capture_output=True, text=True)
+                    if run_proc.returncode == 0:
+                        new_id = run_proc.stdout.strip()[:12]
+                        ms["id"] = new_id
+                        # Actualizar el JSON con el nuevo ID
+                        save_microservices(microservices)
+                else:
+                    ms["status"] = "error: carpeta no encontrada"
+                    continue
 
-        # Estado
-        ps_cmd = [
-            "docker", "ps", "--filter", f"id={ms['id']}",
-            "--format", "{{.Status}}"
-        ]
-        status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
-        ms["status"] = status_result.stdout.strip() or "stopped"
-
-        # Si está detenido, intenta iniciarlo
-        if ms["status"] == "stopped":
-            subprocess.run(["docker", "start", ms["id"]], check=False)
-            # Vuelve a consultar el estado
+            # Estado
             ps_cmd = [
                 "docker", "ps", "--filter", f"id={ms['id']}",
                 "--format", "{{.Status}}"
@@ -159,33 +168,48 @@ def get_microservices():
             status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
             ms["status"] = status_result.stdout.strip() or "stopped"
 
-        # Puerto
-        inspect_cmd = [
-            "docker", "inspect",
-            "--format", "{{(index (index .NetworkSettings.Ports \"8000/tcp\") 0).HostPort}}",
-            ms["id"]
-        ]
-        port_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
-        ms["port"] = port_result.stdout.strip() or ms.get("port")
-    return jsonify({"microservices": microservices}), 200
+            # Si está detenido, intenta iniciarlo
+            if ms["status"] == "stopped":
+                subprocess.run(["docker", "start", ms["id"]], check=False)
+                # Vuelve a consultar el estado
+                ps_cmd = [
+                    "docker", "ps", "--filter", f"id={ms['id']}",
+                    "--format", "{{.Status}}"
+                ]
+                status_result = subprocess.run(ps_cmd, capture_output=True, text=True)
+                ms["status"] = status_result.stdout.strip() or "stopped"
+
+            # Puerto
+            inspect_cmd = [
+                "docker", "inspect",
+                "--format", "{{(index (index .NetworkSettings.Ports \"8000/tcp\") 0).HostPort}}",
+                ms["id"]
+            ]
+            port_result = subprocess.run(inspect_cmd, capture_output=True, text=True)
+            ms["port"] = port_result.stdout.strip() or ms.get("port")
+        return jsonify({"microservices": microservices}), 200
+    
 # DELETE -> ELIMINAR MICROSERVICIO
 @app.route('/microservices/<string:container_id>', methods=['DELETE'])
 def delete_microservice(container_id):
-    microservices = load_microservices()
-    ms = next((m for m in microservices if m["id"] == container_id), None)
-    if not ms:
-        return jsonify({"error": "Microservicio no encontrado"}), 404
+    if not is_docker_active():
+        return jsonify({"error": "Docker no está activo. Por favor, inicie el servicio Docker."}), 500
+    else:
+        microservices = load_microservices()
+        ms = next((m for m in microservices if m["id"] == container_id), None)
+        if not ms:
+            return jsonify({"error": "Microservicio no encontrado"}), 404
 
-    image_name = ms["image_name"]
-    try:
-        subprocess.run(["docker", "rm", "-f", container_id], check=True)
-        subprocess.run(["docker", "rmi", image_name], check=True)
-        # Elimina del JSON y la carpeta física
-        delete_microservice_by_id(container_id)
-    except Exception as e:
-        return jsonify({"error": f"Error al eliminar el contenedor Docker: {e}"}), 500
+        image_name = ms["image_name"]
+        try:
+            subprocess.run(["docker", "rm", "-f", container_id], check=True)
+            subprocess.run(["docker", "rmi", image_name], check=True)
+            # Elimina del JSON y la carpeta física
+            delete_microservice_by_id(container_id)
+        except Exception as e:
+            return jsonify({"error": f"Error al eliminar el contenedor Docker: {e}"}), 500
 
-    return jsonify({"success": True}), 200
+        return jsonify({"success": True}), 200
 
 # PUT -> EDITAR MICROSERVICIO
 @app.route('/microservices/<string:container_id>', methods=['PUT'])

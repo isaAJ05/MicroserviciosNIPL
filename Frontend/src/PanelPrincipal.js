@@ -23,20 +23,10 @@ function PanelPrincipal() {
     processing_type: "",
     code: ""
   });
-  
+  const [dockerActive, setDockerActive] = useState(null); // verificacion
   // Estados de autenticación
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loginUser, setLoginUser] = useState("");
-  const [loginPass, setLoginPass] = useState("");
-  const [loginError, setLoginError] = useState("");
   const [loginFade, setLoginFade] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-  const [registerUser, setRegisterUser] = useState("");
-  const [registerPass, setRegisterPass] = useState("");
-  const [registerError, setRegisterError] = useState("");
-  const [registerSuccess, setRegisterSuccess] = useState("");
-  const [registerAnim, setRegisterAnim] = useState("");
-  const [loginTokenContract, setLoginTokenContract] = useState(""); // Nuevo estado para el token contract
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/microservices')
@@ -63,6 +53,20 @@ function PanelPrincipal() {
     localStorage.setItem("lightTheme", lightTheme);
   }, [lightTheme]);
 
+    // Consulta el estado de Docker al montar el componente
+ useEffect(() => {
+  console.log("Consultando estado de Docker...");
+  fetch('http://127.0.0.1:5000/is_docker_active')
+    .then(res => res.json())
+    .then(data => {
+      console.log("Respuesta Docker:", data);
+      setDockerActive(data.active);
+    })
+    .catch((err) => {
+      console.error("Error consultando Docker:", err);
+      setDockerActive(false);
+    });
+}, []);
 
   // Función para manejar login (yo digo que crear un json para ese usuario)
   const handleLogin = (userData) => {
@@ -364,20 +368,48 @@ return (
         </div>
       )}
 
-      {/* Footer */}
-      <footer className="footer">
-        <div>
-          MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
-        </div>
-        <div>
-          <span>Contacto: microservicios@uninorte.edu.co</span>
-        </div>
-      </footer>
+{/* Footer */}
+<footer className="footer">
+  <div>
+    MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
+  </div>
+  <div>
+    <span>Contacto: microservicios@uninorte.edu.co</span>
+  </div>
+  <div
+    style={{
+      background: dockerActive ? "#1aaf5d" : "#b91c1c",
+      color: "#fff",
+      padding: "8px 16px",
+      borderRadius: 8,
+      fontWeight: 600,
+      fontSize: 15,
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 10,
+      marginTop: 8,
+      minWidth: 160,
+      boxShadow: "0 2px 8px #0002",
+    }}
+  >
+    <span style={{ fontSize: 18 }}>
+      {dockerActive === null ? "⏳" : dockerActive ? "🐳" : "❌"}
+    </span>
+    Docker:{" "}
+    {dockerActive === null
+      ? "Verificando..."
+      : dockerActive
+      ? "Conectado"
+      : "No conectado"}
+  </div>
+</footer>
       </div>
     )}
+
+
   </>
 );
-//}
+
 }
 
 export default PanelPrincipal;
