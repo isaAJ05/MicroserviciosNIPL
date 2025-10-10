@@ -1,9 +1,10 @@
 /* General container */
 /* PanelPrincipal: tabla de microservicios */
+/*  */
 .panel-content {
   padding: 32px 24px;
   flex: 1;
-  background:  #181c27;
+  background:  #131313; /* #262627 */
   padding-bottom: 0 !important;
   margin-bottom: 0 !important;
   flex-grow: 1;
@@ -11,13 +12,13 @@
   transition: margin-left 0.3s ease;
   width: 96.05%;
 
-  /*background: radial-gradient(ellipse, #3e4863 10%, #181c27 100%); DEGRADADO DE BRITO*/
+  /*background: radial-gradient(ellipse, #3e4863 10%, #131313 100%); DEGRADADO DE BRITO*/
 }
 
 .microservices-table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #0f131c;
+  background-color: #1c1c1c;
   color: #fff;
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(60, 165, 108, 0.2);
@@ -35,16 +36,16 @@
 }
 
 .microservices-table th {
-  background-color: #181c27;
+  background-color: #131313;
   color: #fff;
 }
 
 .microservices-table tr:nth-child(even) {
-  background-color: #181c27;
+  background-color: #131313;
 }
 
 .microservices-table tr:hover {
-  background-color: #23263a;
+  background-color: #323232;
 }
 
 .action-btn {
@@ -69,16 +70,16 @@
 
 .light-theme .microservices-table {
   background-color: #fff !important;
-  color: #23263a !important;
+  color: #323232 !important;
   border: 1px solid #f7b2b2;
   box-shadow: 0 0 8px #f7b2b222;
 }
 .light-theme .microservices-table th {
   background-color: #f7e0e0 !important;
-  color: #23263a !important;
+  color: #323232 !important;
 }
 .light-theme .microservices-table td {
-  color: #23263a !important;
+  color: #323232 !important;
 }
 
 .light-theme .action-btn {
@@ -207,7 +208,7 @@
   display: flex;
   overflow: hidden;
   border-top: 1px solid #333;
-  background: radial-gradient(ellipse, #3e4863 10%, #181c27 100%);
+  background: radial-gradient(ellipse, #3e4863 10%, #131313 100%);
   transition: margin-left 0.7s cubic-bezier(0.77,0,0.175,1);
 }
 
@@ -242,7 +243,7 @@
 
 /* Query Section (left) */
 .query-input {
-  background-color: rgba(0, 0, 0, 0);
+  background-color: #131313;
   flex: 1;
   border-right: 1px solid #333;
   padding: 10px;
@@ -263,7 +264,7 @@
 /* Personalización de CodeMirror dentro de .sql-editor-container */
 .sql-editor-container .cm-editor {
   height: 800px;
-  background-color: #0f131c;
+  background-color: #1c1c1c;
   color: #ffffff;
   font-family: 'Segoe UI', sans-serif;
   font-size: 17px;
@@ -287,7 +288,7 @@
 
 .light-theme .sql-editor-container .cm-gutterElement.cm-activeLineGutter {
   background: #eaeaea !important;
-  color: #23263a !important;
+  color: #323232 !important;
   font-weight: bold;
 }
 
@@ -367,7 +368,7 @@
   box-sizing: border-box;
   overflow-x: auto;
   overflow-y: auto;
-  background-color: #0f131c; 
+  background-color: #1c1c1c; 
   border: 1px solid #9b0018;
   border-radius: 8px;
   margin: 10px 10px 0 10px;
@@ -394,7 +395,7 @@
 }
 
 .results-panel th {
-  background-color: #181c27;
+  background-color: #131313;
 }
 
 /* Panel de errores */
@@ -404,7 +405,7 @@
   padding: 15px;
   box-sizing: border-box;
   overflow-y: auto;
-  background-color: #0f131c;
+  background-color: #1c1c1c;
   border: 1px solid #9b0018;
   border-radius: 8px;
   margin: 10px;
@@ -506,7 +507,7 @@
   justify-content: center;
 }
 .modal {
-  background: #181c27;
+  background: #131313;
   color: #fff;
   border-radius: 10px;
   box-shadow: 0 0 24px #000a;
@@ -538,14 +539,14 @@
   padding: 7px 10px;
   border-radius: 5px;
   border: 1px solid #333;
-  background: #23263a;
+  background: #323232;
   color: #fff !important;
   margin-bottom: 10px;
   font-size: 1em;
   box-sizing: border-box;
 }
 .modal input[type="file"] {
-  background: #23263a !important;
+  background: #323232 !important;
   color: #fff !important;
   border: 1px solid #333;
   border-radius: 5px;
@@ -588,7 +589,7 @@
   padding: 7px 10px;
   border-radius: 5px;
   border: 1px solid #333;
-  background: #23263a;
+  background: #323232;
   color: #fff;
   margin-bottom: 10px;
   font-size: 1em;
@@ -629,7 +630,7 @@
   box-sizing: border-box;
   padding: 7px 10px;
   font-size: 1em;
-  background: #23263a;
+  background: #323232;
   color: #fff;
   border: 1.5px solid #9b0018;
   border-radius: 5px;
@@ -788,18 +789,18 @@ body, .app-container, .navbar, .side-menu, .main-content, .results-panel, .error
 /* Tema claro */
 body.light-theme, .app-container.light-theme {
   background-color: #e5e6ea !important; /* blanco grisáceo más oscuro */
-  color: #23263a !important;
+  color: #323232 !important;
 }
 
 .light-theme .side-menu {
   background-color: #fff !important;
-  color: #23263a !important;
+  color: #323232 !important;
   border-right: 2px solid #e0e0e0;
   box-shadow: 4px 0 24px 0 #000a; /* sombra oscura */
 }
 
 .light-theme .side-menu h3 {
-  color: #23263a !important;
+  color: #323232 !important;
   border-bottom: 1.5px solid #f7b2b2;
   text-shadow: none;
 }
@@ -811,16 +812,16 @@ body.light-theme, .app-container.light-theme {
 
 .light-theme .results-panel {
   background-color: #fff !important;
-  color: #23263a !important;
+  color: #323232 !important;
   border: 1px solid #f7b2b2;
   box-shadow: 0 0 8px #f7b2b222;
 }
 .light-theme .results-panel th {
   background-color: #f7e0e0 !important;
-  color: #23263a !important;
+  color: #323232 !important;
 }
 .light-theme .results-panel td {
-  color: #23263a !important;
+  color: #323232 !important;
 }
 
 .light-theme .errors-panel {
@@ -831,7 +832,7 @@ body.light-theme, .app-container.light-theme {
 
 .light-theme .sql-editor-container .cm-editor {
   background-color: #fff !important;
-  color: #23263a !important;
+  color: #323232 !important;
   border: 1px solid #f7b2b2;
 }
 
@@ -847,18 +848,18 @@ body.light-theme, .app-container.light-theme {
 
 .light-theme .modal {
   background: #fff !important;
-  color: #23263a !important;
+  color: #323232 !important;
   border: 2px solid #f7b2b2;
 }
 .light-theme .modal h3,
 .light-theme .modal label {
-  color: #23263a !important;
+  color: #323232 !important;
 }
 .light-theme .modal input,
 .light-theme .modal select,
 .light-theme .modal textarea {
   background: #f7f7fa !important;
-  color: #23263a !important;
+  color: #323232 !important;
   border: 1px solid #e0e0e0 !important;
 }
 .light-theme .modal input:focus,
@@ -936,7 +937,7 @@ body.light-theme, .app-container.light-theme {
 
 /* Personaliza el tooltip nativo (solo para navegadores modernos) */
 .sidebar-col-tooltip::-webkit-tooltip {
-  background: #181c27;
+  background: #131313;
   color: #b6f2c5;
   border-radius: 6px;
   border: 1px solid #9b0018;
@@ -955,7 +956,7 @@ body.light-theme, .app-container.light-theme {
   position: fixed;
   left: 0;
   top: 0;
-  background: #181c27;
+  background: #131313;
   color: #fff;
   border-radius: 6px;
   border: 1.5px solid #9b0018;
@@ -1023,7 +1024,7 @@ body.light-theme, .app-container.light-theme {
   margin-top: 10px;
   border-radius: 12px;
   overflow: hidden;
-  background: #181c27;
+  background: #131313;
   box-shadow: 0 2px 16px #0002;
   padding-bottom: 10 !important;
   margin-bottom: 0 !important;
@@ -1040,11 +1041,11 @@ body.light-theme, .app-container.light-theme {
 }
 .status-yellow {
   background: #ffb300;
-  color: #23263a;
+  color: #323232;
 }
 .status-green {
   background: #00e676;
-  color: #23263a;
+  color: #323232;
 }
 
 .modal-bg {
@@ -1057,7 +1058,7 @@ body.light-theme, .app-container.light-theme {
   justify-content: center;
 }
 .modal {
-  background: #181c27;
+  background: #131313;
   color: #fff;
   border-radius: 12px;
   padding: 32px 28px;
@@ -1068,11 +1069,11 @@ body.light-theme, .app-container.light-theme {
 
 .footer {
   width: 100%;
-  background: #181c27;
+  background: #131313;
   padding: 18px 0 8px 0;
   text-align: center;
   font-size: 1em;
-  border-top: 2px solid #23263a;
+  border-top: 0px solid #0022ff;
   margin-top: 3px;
   position: relative;
   z-index: 10;
@@ -1091,7 +1092,7 @@ body.light-theme, .app-container.light-theme {
 }
 
 .login-form {
-  background: #181c27;
+  background: #131313;
   border: 2px solid #9b0018;
   border-radius: 10px;
   box-shadow: 0 0 24px #000a;
@@ -1109,7 +1110,7 @@ body.light-theme, .app-container.light-theme {
 }
 
 .register-form {
-  background: #181c27;
+  background: #131313;
   border: 2px solid #9b0018;
   border-radius: 10px;
   box-shadow: 0 0 24px #000;
@@ -1137,7 +1138,7 @@ body.light-theme, .app-container.light-theme {
   min-height: 400px;
   border: 2px solid #9b0018;
   border-radius: 8px;
-  background: #181c27;
+  background: #131313;
 }
 
 .python-editor-container .cm-editor {
@@ -1194,7 +1195,7 @@ body.light-theme, .app-container.light-theme {
   left: -220px;
   width: 220px;
   height: 100vh;
-  background: #1b1f2a;
+  background: #1c1c1c;
   color: white;
   padding: 14px;
   transition: left 0.3s ease, width 0.3s ease;
@@ -1227,7 +1228,7 @@ body.light-theme, .app-container.light-theme {
 }
 
 .sidebar-controls button {
-  background: #23263a;
+  background: #323232;
   color: white;
   border: none;
   border-radius: 8px;

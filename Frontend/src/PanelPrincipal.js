@@ -199,12 +199,18 @@ function PanelPrincipal() {
               {isHistoryOpen ? "☰" : "☰"}
             </button>
 
-            <h1>MicroServicios</h1>
+            <img
+              src="/red_logo_OSWIDTH.png"
+              alt="Logo MicroServicios"
+              style={{ height: 44, marginLeft: 10, marginRight: 14, borderRadius: 12 }}
+            />
+            <h1>Microservicios</h1>
+            {/*
             <button
               style={{
                 marginLeft: "auto",
-                background: lightTheme ? "#fff" : "#181c27",
-                color: lightTheme ? "#23263a" : "#fff",
+                background: lightTheme ? "#fff" : "#131313",
+                color: lightTheme ? "#323232" : "#fff",
                 border: "none",
                 borderRadius: 6,
                 padding: 8,
@@ -226,13 +232,14 @@ function PanelPrincipal() {
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
               )}
             </button>
+            */}
             <button
               style={{
-                marginLeft: 12,
-                background: lightTheme ? "#fff" : "#181c27",
-                color: lightTheme ? "#23263a" : "#fff",
+                marginLeft: "auto",
+                background: lightTheme ? "#fff" : "#131313",
+                color: lightTheme ? "#323232" : "#fff",
                 border: "none",
-                borderRadius: 6,
+                borderRadius: 50,
                 padding: 8,
                 fontWeight: 600,
                 fontSize: 18,
@@ -246,6 +253,8 @@ function PanelPrincipal() {
               }}
               onClick={() => setShowUserPanel(v => !v)}
               title="Usuario"
+              onMouseOver={e => (e.currentTarget.style.background = '#1c1c1c')}
+              onMouseOut={e => (e.currentTarget.style.background = '#131313')}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 4-7 8-7s8 3 8 7" /></svg>
             </button>
@@ -255,8 +264,8 @@ function PanelPrincipal() {
                   position: "absolute",
                   top: 48,
                   right: 0,
-                  background: lightTheme ? "#fff" : "#181c27",
-                  color: lightTheme ? "#23263a" : "#fff",
+                  background: lightTheme ? "#fff" : "#131313",
+                  color: lightTheme ? "#323232" : "#fff",
                   border: `1.5px solid ${lightTheme ? '#9b0018' : '#fff'}`,
                   borderRadius: 8,
                   boxShadow: "0 4px 24px #000a",
@@ -277,8 +286,8 @@ function PanelPrincipal() {
                 </div>
                 <button
                   style={{
-                    background: '#1a73e8',
-                    color: '#fff',
+                    background: '#ff9696',
+                    color: '#131313',
                     border: 'none',
                     borderRadius: 6,
                     padding: '8px 0',
@@ -289,6 +298,8 @@ function PanelPrincipal() {
                     marginBottom: 8
                   }}
                   onClick={() => setShowRenewTokenModal(true)}
+                  onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+                  onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
                 >
                   Renovar token
                 </button>
@@ -314,7 +325,10 @@ function PanelPrincipal() {
                       localStorage.removeItem("user");
                     }, 350);
                   }}
+                  onMouseOver={e => (e.currentTarget.style.background = '#680010')}
+                  onMouseOut={e => (e.currentTarget.style.background = '#9b0018')}
                 >
+
                   Cerrar sesión
                 </button>
               </div>
@@ -335,9 +349,9 @@ function PanelPrincipal() {
 
             {isHistoryOpen && (
               <ul className="sidebar-list">
-                <li>🏠 Inicio</li>
-                <li>⚙️ Configuración</li>
-                <li>📜 Historial</li>
+                <li>
+                  <span role="img" aria-label="info" style={{ fontSize: 22 }}>🛈</span> Información
+                </li>
               </ul>
             )}
           </aside>
@@ -354,7 +368,7 @@ function PanelPrincipal() {
               top: 32,
               left: '50%',
               transform: 'translateX(-50%)',
-              background: lightTheme ? '#1aaf5d' : '#23263a',
+              background: lightTheme ? '#1aaf5d' : '#323232',
               color: '#fff',
               padding: '14px 32px',
               borderRadius: 10,
@@ -377,7 +391,7 @@ function PanelPrincipal() {
               top: 80,
               left: '50%',
               transform: 'translateX(-50%)',
-              background: lightTheme ? '#1aaf5d' : '#23263a',
+              background: lightTheme ? '#1aaf5d' : '#323232',
               color: '#fff',
               padding: '14px 32px',
               borderRadius: 10,
@@ -446,8 +460,8 @@ function PanelPrincipal() {
                         <button
                           style={{
                             display: 'inline-block',
-                            background: '#1a73e8',
-                            color: '#fff',
+                            background: '#ff9696',
+                            color: '#000000ff',
                             padding: '7px 16px',
                             borderRadius: 6,
                             fontWeight: 600,
@@ -469,8 +483,8 @@ function PanelPrincipal() {
                             setShowEditEndpointUrlModal(true);
                           }}
 
-                          onMouseOver={e => (e.currentTarget.style.background = '#1761c7')}
-                          onMouseOut={e => (e.currentTarget.style.background = '#1a73e8')}
+                          onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+                          onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
                         >
                           Probar Endpoint
                         </button>
@@ -505,7 +519,7 @@ function PanelPrincipal() {
                             justifyContent: 'center',
                             background: lightTheme
                               ? 'rgba(255,255,255,0.65)'
-                              : 'rgba(30,34,45,0.45)',
+                              : 'transparent',
                             backdropFilter: 'blur(2.5px)',
                             WebkitBackdropFilter: 'blur(2.5px)'
                           }}>
@@ -526,10 +540,15 @@ function PanelPrincipal() {
                                 </button>
                                 <button
                                   className="action-btn"
-                                  style={{ background: '#23263a', minWidth: 90 }}
+                                  style={{ background: '#1c1c1c', minWidth: 90 }}
                                   onClick={() => { setShowDeleteModal(false); setMicroserviceToDelete(null); }}
+                                  onMouseOver={e => (e.currentTarget.style.background = '#323232')}
+                                  onMouseOut={e => (e.currentTarget.style.background = '#1c1c1c')}
+
                                 >
+
                                   Cancelar
+
                                 </button>
                               </div>
                             </div>
@@ -575,7 +594,6 @@ function PanelPrincipal() {
             </div>
 
           </div>
-
           {/* Modal para respuesta de endpoint */}
           {showEndpointModal && (
             <div className="modal-bg" style={{
@@ -589,8 +607,43 @@ function PanelPrincipal() {
               backdropFilter: 'blur(2.5px)',
               WebkitBackdropFilter: 'blur(2.5px)'
             }}>
-              <div className="modal" style={{ width: 600, maxWidth: '90vw', minWidth: 350, padding: 28 }}>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <div
+                className="modal"
+                style={{
+                  width: 600,
+                  maxWidth: '500',
+                  minWidth: 500,
+                  paddingTop: 0,
+                  paddingRight: 28,
+                  paddingLeft: 28,
+                  paddingBottom: 28,
+                  position: "relative"
+                }}
+              >
+                {/* Botón X en la esquina superior derecha */}
+
+                <div className="sidebar-controls">
+                  <button
+                    className="action-btn"
+                    style={{
+                      position: "absolute",
+                      top: 30,
+                      right: 40,
+                      color: lightTheme ? "#1c1c1c" : "#fff",
+                      border: "none",
+                      fontSize: 16,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      lineHeight: 2,
+                      lineWidth: 2
+                    }}
+                    title="Cerrar"
+                    onClick={() => setShowEndpointModal(false)}
+                  >
+                    ❌
+                  </button>
+                </div>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 0 }}>
                   <span role="img" aria-label="Respuesta">🔗</span> Respuesta del Endpoint
                 </h3>
                 <div style={{
@@ -605,11 +658,11 @@ function PanelPrincipal() {
                   wordBreak: 'break-all',
                   overflowWrap: 'anywhere'
                 }}>
-                  <span style={{ color: lightTheme ? '#1a73e8' : '#75baff', whiteSpace: 'nowrap' }}>GET</span>
+                  <span style={{ color: lightTheme ? '#ff9696' : '#75baff', whiteSpace: 'nowrap' }}>GET</span>
                   <span style={{ color: lightTheme ? '#ffb300' : '#ffb300', wordBreak: 'break-all', overflowWrap: 'anywhere', minWidth: 0 }}>{endpointUrl}</span>
                 </div>
                 <pre style={{
-                  background: lightTheme ? '#fff' : '#0d1117',
+                  background: lightTheme ? '#fff' : '#1c1c1c',
                   color: lightTheme ? '#1f2328' : '#e6edf3',
                   padding: 18,
                   borderRadius: 8,
@@ -619,20 +672,18 @@ function PanelPrincipal() {
                   marginBottom: 18,
                   fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace',
                   lineHeight: '1.45',
-                  minHeight: '100%',
+                  minHeight: 0,
                   boxSizing: 'border-box',
                   width: '100%'
-                }}>{typeof endpointResponse === 'string' ? endpointResponse : JSON.stringify(endpointResponse, null, 2)}</pre>
-                <button
-                  className="action-btn"
-                  style={{ background: '#23263a', marginLeft: 'auto', display: 'block' }}
-                  onClick={() => setShowEndpointModal(false)}
-                >
-                  Cerrar
-                </button>
+                }}>
+                  {typeof endpointResponse === 'string'
+                    ? endpointResponse
+                    : JSON.stringify(endpointResponse, null, 2)}
+                </pre>
               </div>
             </div>
           )}
+
           {/* Modal para ver código */}
           {showCodeModal && (
             <div className="modal-bg" style={{
@@ -643,30 +694,48 @@ function PanelPrincipal() {
               backdropFilter: 'blur(2.5px)',
               WebkitBackdropFilter: 'blur(2.5px)'
             }}>
-              <div className="modal" style={{ maxWidth: 700, minWidth: 350 }}>
+              <div className="modal" style={{ maxWidth: 700, minWidth: 350, position: "relative", paddingTop: 5, }}>
+                {/* Botón X en la esquina superior derecha */}
+                <div className="sidebar-controls">
+                  <button
+                    className="action-btn"
+                    style={{
+                      position: "absolute",
+                      top: 30,
+                      right: 40,
+                      color: lightTheme ? "#1c1c1c" : "#fff",
+                      border: "none",
+                      fontSize: 16,
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      lineHeight: 2,
+                      lineWidth: 2
+                    }}
+                    title="Cerrar"
+                    onClick={() => setShowCodeModal(false)}
+                  >
+                    ❌
+                  </button>
+                </div>
+
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span role="img" aria-label="Ver código">👁️</span> Código del Microservicio
                 </h3>
                 <pre style={{
-                  background: lightTheme ? '#fff' : '#0d1117',
+                  background: lightTheme ? '#fff' : '#1c1c1c',
                   color: lightTheme ? '#1f2328' : '#e6edf3',
-                  padding: 18,
+                  padding: 0,
                   borderRadius: 8,
                   fontSize: 15,
-                  maxHeight: 400,
+                  maxHeight: 350,
                   overflow: 'auto',
                   marginBottom: 18,
                   fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace',
                   lineHeight: '1.45',
-                  minHeight: '100%'
+                  minHeight: 0,
+                  boxSizing: 'border-box',
+                  width: '100%'
                 }}>{codeToShow}</pre>
-                <button
-                  className="action-btn"
-                  style={{ background: '#23263a', marginLeft: 'auto', display: 'block' }}
-                  onClick={() => setShowCodeModal(false)}
-                >
-                  Cerrar
-                </button>
               </div>
             </div>
           )}
@@ -705,7 +774,7 @@ function PanelPrincipal() {
                   />
                   <div style={{ display: 'flex', gap: 10 }}>
                     <button type="submit" className="action-btn">Guardar</button>
-                    <button type="button" className="action-btn" style={{ background: '#23263a' }} onClick={() => setShowAddModal(false)}>Cancelar</button>
+                    <button type="button" className="action-btn" style={{ background: '#323232' }} onClick={() => setShowAddModal(false)}>Cancelar</button>
                   </div>
                 </form>
               </div>
@@ -788,14 +857,16 @@ function PanelPrincipal() {
                       value={renewTokenPassword}
                       onChange={e => setRenewTokenPassword(e.target.value)}
                       required
-                      style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc', background: '#fff', color: '#23263a' }}
+                      style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc', background: '#fff', color: '#323232' }}
                     />
                   </div>
                   <div style={{ display: 'flex', gap: 10, marginTop: 8, justifyContent: 'center' }}>
                     <button type="submit" className="action-btn">
                       Renovar
                     </button>
-                    <button type="button" className="action-btn" style={{ background: '#23263a' }} onClick={() => { setShowRenewTokenModal(false); setRenewTokenPassword(""); setRenewTokenProjectId(localStorage.getItem('tokenContract') || ""); }}>
+                    <button type="button" className="action-btn" style={{ background: '#323232' }} onClick={() => { setShowRenewTokenModal(false); setRenewTokenPassword(""); setRenewTokenProjectId(localStorage.getItem('tokenContract') || ""); }}
+                      onMouseOver={e => (e.currentTarget.style.background = '#323232')}
+                      onMouseOut={e => (e.currentTarget.style.background = '#1c1c1c')}>
                       Cancelar
                     </button>
                   </div>
@@ -858,7 +929,10 @@ function PanelPrincipal() {
                     <button type="submit" className="action-btn">
                       Probar Endpoint
                     </button>
-                    <button type="button" className="action-btn" style={{ background: '#23263a' }} onClick={() => setShowEditEndpointUrlModal(false)}>
+                    <button type="button" className="action-btn" style={{ background: '#1c1c1c' }} onClick={() => setShowEditEndpointUrlModal(false)}
+                      onMouseOver={e => (e.currentTarget.style.background = '#323232')}
+                      onMouseOut={e => (e.currentTarget.style.background = '#1c1c1c')}
+                    >
                       Cancelar
                     </button>
                   </div>
@@ -869,10 +943,10 @@ function PanelPrincipal() {
           {/* Footer */}
           <footer className="footer">
             <div>
-              MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
+              Oak Services &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
             </div>
             <div>
-              <span>Contacto: microservicios@uninorte.edu.co</span>
+              <span>Contacto: oakservices@uninorte.edu.co</span>
             </div>
           </footer>
         </div>

@@ -19,15 +19,15 @@ import TooltipPortal from "./TooltipPortal";
 const myTheme = createTheme({
   theme: 'light',
   settings: {
-    background: '#181c27',
+    background: '#131313',
     backgroundImage: '',
     foreground: '#75baff',
     caret: '#ffffff',
     selection: '#036dd626',
     selectionMatch: '#036dd626',
-    lineHighlight: '#181c27', 
+    lineHighlight: '#131313',
     gutterBorder: 'transparent', // Elimina la línea blanca en el gutter
-    gutterBackground: '#181c27', // Cambia el fondo de la columna de enumerado
+    gutterBackground: '#131313', // Cambia el fondo de la columna de enumerado
     gutterForeground: '#9b0018', // Cambia el color de los números de línea
   },
   styles: [
@@ -166,62 +166,62 @@ function App() {
     }
   }, []);
 
-  
-
-    function GoogleLoginButton({ onLogin }) {
-      const divRef = useRef(null);
-
-      useEffect(() => {
-        if (window.google && divRef.current) {
-          window.google.accounts.id.initialize({
-            client_id: '',
-            callback: handleCredentialResponse,
-          });
-
-          window.google.accounts.id.renderButton(divRef.current, {
-            theme: 'outline',
-            size: 'large',
-            width: '100%',
-          });
-        }
-      }, []);
-
-      const handleCredentialResponse = (response) => {
-        // Enviar el token al backend
-        fetch('http://localhost:5000/google-login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ credential: response.credential }),
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data.success) {
-              onLogin(data.user);
-            } else {
-              alert("Error de login con Google");
-            }
-          });
-      };
-
-      return <div ref={divRef}></div>;
-    }
 
 
-// Función para cargar columnas de una tabla
-const handleShowColumns = (db, table) => {
-  fetch(`http://127.0.0.1:5000/columns?db=${db}&table=${table}`)
-    .then(res => res.json())
-    .then(data => {
-      setSelectedTableColumns(data.columns || []);
-      setSelectedTable(table);
-      setSelectedDb(db);
-    })
-    .catch(() => {
-      setSelectedTableColumns([]);
-      setSelectedTable(table);
-      setSelectedDb(db);
-    });
-};
+  function GoogleLoginButton({ onLogin }) {
+    const divRef = useRef(null);
+
+    useEffect(() => {
+      if (window.google && divRef.current) {
+        window.google.accounts.id.initialize({
+          client_id: '',
+          callback: handleCredentialResponse,
+        });
+
+        window.google.accounts.id.renderButton(divRef.current, {
+          theme: 'outline',
+          size: 'large',
+          width: '100%',
+        });
+      }
+    }, []);
+
+    const handleCredentialResponse = (response) => {
+      // Enviar el token al backend
+      fetch('http://localhost:5000/google-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential: response.credential }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            onLogin(data.user);
+          } else {
+            alert("Error de login con Google");
+          }
+        });
+    };
+
+    return <div ref={divRef}></div>;
+  }
+
+
+  // Función para cargar columnas de una tabla
+  const handleShowColumns = (db, table) => {
+    fetch(`http://127.0.0.1:5000/columns?db=${db}&table=${table}`)
+      .then(res => res.json())
+      .then(data => {
+        setSelectedTableColumns(data.columns || []);
+        setSelectedTable(table);
+        setSelectedDb(db);
+      })
+      .catch(() => {
+        setSelectedTableColumns([]);
+        setSelectedTable(table);
+        setSelectedDb(db);
+      });
+  };
 
   // Efecto para aplicar el tema claro/oscuro
   useEffect(() => {
@@ -244,67 +244,67 @@ const handleShowColumns = (db, table) => {
   }, []);
 
   useEffect(() => {
-  if (!expandedDb || tablesByDb[expandedDb]) return;
+    if (!expandedDb || tablesByDb[expandedDb]) return;
 
-  setLoadingTables(prev => ({ ...prev, [expandedDb]: true }));
+    setLoadingTables(prev => ({ ...prev, [expandedDb]: true }));
 
-  fetch(`http://127.0.0.1:5000/tables?db=${expandedDb}`)
-    .then(res => res.json())
-    .then(data => {
-      setTablesByDb(prev => ({ ...prev, [expandedDb]: data.tables || [] }));
-      setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
-    })
-    .catch(() => {
-      setTablesByDb(prev => ({ ...prev, [expandedDb]: [] }));
-      setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
-    });
-}, [expandedDb, tablesByDb]);
+    fetch(`http://127.0.0.1:5000/tables?db=${expandedDb}`)
+      .then(res => res.json())
+      .then(data => {
+        setTablesByDb(prev => ({ ...prev, [expandedDb]: data.tables || [] }));
+        setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
+      })
+      .catch(() => {
+        setTablesByDb(prev => ({ ...prev, [expandedDb]: [] }));
+        setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
+      });
+  }, [expandedDb, tablesByDb]);
 
 
-    // Obtener tablas de una base de datos al expandirla
+  // Obtener tablas de una base de datos al expandirla
   const handleExpandDb = (db) => {
-  setExpandedDb(prev => (prev === db ? null : db));
-};
+    setExpandedDb(prev => (prev === db ? null : db));
+  };
 
 
   const handleUploadCsv = async () => {
-  const dbToUse = newDb || selectedDb;
-  if (!dbToUse || !tableName || !csvFile) {
-    setError("Debes seleccionar o crear una base, poner nombre de tabla y elegir archivo.");
-    return;
-  }
-  const formData = new FormData();
-  formData.append("db", dbToUse);
-  formData.append("table", tableName);
-  formData.append("file", csvFile);
+    const dbToUse = newDb || selectedDb;
+    if (!dbToUse || !tableName || !csvFile) {
+      setError("Debes seleccionar o crear una base, poner nombre de tabla y elegir archivo.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("db", dbToUse);
+    formData.append("table", tableName);
+    formData.append("file", csvFile);
 
-  const res = await fetch("http://127.0.0.1:5000/upload_csv", {
-    method: "POST",
-    body: formData,
-  });
-  const data = await res.json();
-  if (!res.ok) setError(data.error || "Error al subir CSV");
-  else setResult(data);
-  setShowUpload(false);
-  // Refresca la lista de bases y tablas tras subir CSV
-  refreshDatabases(dbToUse);
-};
+    const res = await fetch("http://127.0.0.1:5000/upload_csv", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) setError(data.error || "Error al subir CSV");
+    else setResult(data);
+    setShowUpload(false);
+    // Refresca la lista de bases y tablas tras subir CSV
+    refreshDatabases(dbToUse);
+  };
 
-// Función para refrescar la lista de bases de datos y tablas
-const refreshDatabases = async (dbToRefresh = null) => {
-  // Actualiza bases de datos
-  fetch('http://127.0.0.1:5000/databases')
-    .then(res => res.json())
-    .then(data => setDatabases(data.databases || []))
-    .catch(() => setDatabases([]));
-  // Si se pasa una base, refresca sus tablas
-  if (dbToRefresh) {
-    fetch(`http://127.0.0.1:5000/tables?db=${dbToRefresh}`)
+  // Función para refrescar la lista de bases de datos y tablas
+  const refreshDatabases = async (dbToRefresh = null) => {
+    // Actualiza bases de datos
+    fetch('http://127.0.0.1:5000/databases')
       .then(res => res.json())
-      .then(data => setTablesByDb(prev => ({ ...prev, [dbToRefresh]: data.tables || [] })))
-      .catch(() => setTablesByDb(prev => ({ ...prev, [dbToRefresh]: [] })));
-  }
-};
+      .then(data => setDatabases(data.databases || []))
+      .catch(() => setDatabases([]));
+    // Si se pasa una base, refresca sus tablas
+    if (dbToRefresh) {
+      fetch(`http://127.0.0.1:5000/tables?db=${dbToRefresh}`)
+        .then(res => res.json())
+        .then(data => setTablesByDb(prev => ({ ...prev, [dbToRefresh]: data.tables || [] })))
+        .catch(() => setTablesByDb(prev => ({ ...prev, [dbToRefresh]: [] })));
+    }
+  };
 
   const handleExtract = async () => {
     setError('');
@@ -386,23 +386,23 @@ const refreshDatabases = async (dbToRefresh = null) => {
   }, [isDragging]);
 
   // Mensajes temporales en el output
-useEffect(() => {
-  if (error) {
-    setFadeError(false);
-    const fadeTimer = setTimeout(() => setFadeError(true), 7500);
-    const clearTimer = setTimeout(() => setError(''), 8000);
-    return () => { clearTimeout(fadeTimer); clearTimeout(clearTimer); };
-  }
-}, [error]);
+  useEffect(() => {
+    if (error) {
+      setFadeError(false);
+      const fadeTimer = setTimeout(() => setFadeError(true), 7500);
+      const clearTimer = setTimeout(() => setError(''), 8000);
+      return () => { clearTimeout(fadeTimer); clearTimeout(clearTimer); };
+    }
+  }, [error]);
 
-useEffect(() => {
-  if (result && result.message) {
-    setFadeSuccess(false);
-    const fadeTimer = setTimeout(() => setFadeSuccess(true), 7500);
-    const clearTimer = setTimeout(() => setResult(null), 8000);
-    return () => { clearTimeout(fadeTimer); clearTimeout(clearTimer); };
-  }
-}, [result]);
+  useEffect(() => {
+    if (result && result.message) {
+      setFadeSuccess(false);
+      const fadeTimer = setTimeout(() => setFadeSuccess(true), 7500);
+      const clearTimer = setTimeout(() => setResult(null), 8000);
+      return () => { clearTimeout(fadeTimer); clearTimeout(clearTimer); };
+    }
+  }, [result]);
 
   // Login visual simple
   return (
@@ -413,7 +413,7 @@ useEffect(() => {
         inset: 0,
         minHeight: '100vh',
         minWidth: '100vw',
-        background: 'radial-gradient(ellipse, #3e4863 10%, #181c27 100%)',
+        background: 'radial-gradient(ellipse, #3e4863 10%, #131313 100%)',
         zIndex: 0,
         pointerEvents: 'none',
       }} />
@@ -421,7 +421,7 @@ useEffect(() => {
         <form
           className={`login-form${!showRegister ? ' login-fade-in' : ''}`}
           style={{
-            background: '#181c27',
+            background: '#131313',
             border: '2px solid #9b0018',
             borderRadius: 10,
             boxShadow: '0 0 24px #000a',
@@ -471,7 +471,7 @@ useEffect(() => {
             value={loginUser}
             onChange={e => setLoginUser(e.target.value)}
             placeholder="Usuario"
-            style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
+            style={{ background: '#323232', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
             autoFocus
           />
           <label style={{ color: '#fff' }}>Contraseña</label>
@@ -480,7 +480,7 @@ useEffect(() => {
             value={loginPass}
             onChange={e => setLoginPass(e.target.value)}
             placeholder="Contraseña"
-            style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
+            style={{ background: '#323232', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
           />
           {loginError && <div style={{ color: '#ff1744', background: '#4f1f1f', borderRadius: 5, padding: 8, marginBottom: 8, textAlign: 'center' }}>{loginError}</div>}
           <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
@@ -502,7 +502,7 @@ useEffect(() => {
               onMouseOver={e => (e.currentTarget.style.background = '#680010')}
               onMouseOut={e => (e.currentTarget.style.background = '#9b0018')}
             >
-            Invitado
+              Invitado
             </button>
           </div>
           <GoogleLoginButton onLogin={(user) => {
@@ -528,7 +528,7 @@ useEffect(() => {
           <form
             className={`login-form ${registerAnim}`}
             style={{
-              background: '#181c27',
+              background: '#131313',
               border: '2px solid #9b0018',
               borderRadius: 10,
               boxShadow: '0 0 24px #000',
@@ -588,7 +588,7 @@ useEffect(() => {
               value={registerUser}
               onChange={e => setRegisterUser(e.target.value)}
               placeholder="Usuario nuevo"
-              style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
+              style={{ background: '#323232', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
               autoFocus
             />
             <label style={{ color: '#fff' }}>Contraseña</label>
@@ -597,7 +597,7 @@ useEffect(() => {
               value={registerPass}
               onChange={e => setRegisterPass(e.target.value)}
               placeholder="Contraseña nueva"
-              style={{ background: '#23263a', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
+              style={{ background: '#323232', color: '#fff', border: '1.5px solid #9b0018', borderRadius: 5, padding: '10px 12px', fontSize: 16, marginBottom: 8 }}
             />
             {registerError && <div style={{ color: '#ff1744', background: '#4f1f1f', borderRadius: 5, padding: 8, marginBottom: 8, textAlign: 'center' }}>{registerError}</div>}
             {registerSuccess && <div style={{ color: '#00e676', background: '#1f4f2f', borderRadius: 5, padding: 8, marginBottom: 8, textAlign: 'center' }}>{registerSuccess}</div>}
@@ -614,149 +614,155 @@ useEffect(() => {
               style={{ background: 'none', color: '#75baff', border: 'none', marginTop: 8, cursor: 'pointer', textDecoration: 'underline', fontSize: 15 }}
               onClick={() => {
                 setRegisterAnim("hide-register");
-                }}
-              >
-                Cancelar
-              </button>
-              </form>
-            )}
-            </div>
-            <div className={`app-container${loginFade || !isLoggedIn ? '' : ' main-fade-in'}${isHistoryOpen ? ' history-open' : ''}`}
-            style={{
-              opacity: loginFade || !isLoggedIn ? 0 : 1,
-              pointerEvents: loginFade || !isLoggedIn ? 'none' : 'auto',
-              transition: 'opacity 0.7s cubic-bezier(0.4,0,0.2,1)',
-              position: 'relative',
-              zIndex: 1
-            }}
+              }}
             >
-            <nav className="navbar">
-              <button
-              className="toggle-history-btn"
-              onClick={() => setIsHistoryOpen(!isHistoryOpen)}
-              >
-              {isHistoryOpen ? "✖" : "☰"}
-              </button>
-              <h1>MicroServicios</h1>
-              <button
-                style={{
-                  marginLeft: "auto",
-                  background: lightTheme ? "#fff" : "#181c27",
-                  color: lightTheme ? "#23263a" : "#fff",
-                  border: "none",
-                  borderRadius: 6,
-                  padding: 8,
-                  fontWeight: 600,
-                  fontSize: 18,
-                  cursor: "pointer",
-                  boxShadow: "none",
-                  transition: "background 0.3s, color 0.3s",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-                onClick={() => setLightTheme((v) => !v)}
-                title={lightTheme ? "Cambiar a tema oscuro" : "Cambiar a tema claro"}
-              >
-                {lightTheme ? (
-                  // Moon icon SVG
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
-                ) : (
-                  // Sun icon SVG
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                )}
-              </button>
-              <button
-                style={{
-                  marginLeft: 12,
-                  background: lightTheme ? "#fff" : "#181c27",
-                  color: lightTheme ? "#23263a" : "#fff",
-                  border: "none",
-                  borderRadius: 6,
-                  padding: 8,
-                  fontWeight: 600,
-                  fontSize: 18,
-                  cursor: "pointer",
-                  boxShadow: "none",
-                  transition: "background 0.3s, color 0.3s",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative"
-                }}
-                onClick={() => setShowUserPanel(v => !v)}
-                title="Usuario"
-              >
-                {/* Person icon SVG */}
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-              </button>
-              {/* User panel dropdown */}
-              {showUserPanel && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 48,
-                    right: 0,
-                    background: lightTheme ? "#fff" : "#181c27",
-                    color: lightTheme ? "#23263a" : "#fff",
-                    border: `1.5px solid ${lightTheme ? '#9b0018' : '#fff'}`,
-                    borderRadius: 8,
-                    boxShadow: "0 4px 24px #000a",
-                    minWidth: 180,
-                    zIndex: 100,
-                    padding: 18,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 10,
-                    animationName: userPanelFade ? "fadeOutMsg" : "fadeInMsg",
-                    animationDuration: "0.35s",
-                    animationFillMode: "forwards"
-                  }}
-                >
-                  <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-7 8-7s8 3 8 7"/></svg>
-                    {loginUser || 'Invitado'}
-                  </div>
-                  <button
-                    style={{
-                      background: '#9b0018',
-                      color: '#fff',
-                      border: 'none',
-                      borderRadius: 6,
-                      padding: '8px 0',
-                      fontWeight: 600,
-                      fontSize: 15,
-                      cursor: 'pointer',
-                      transition: 'background 0.2s'
-                    }}
-                    onClick={() => {
-                      setIsLoggedIn(false);
-                      setUserPanelFade(true);
-                      setTimeout(() => {
-                        setShowUserPanel(false);
-                        setUserPanelFade(false);
-                        setLoginUser("");
-                        setLoginPass("");
-                      }, 350);
-                    }}
-                  >
-                    Cerrar sesión
-                  </button>
-                </div>
-              )}
-            </nav>
+              Cancelar
+            </button>
+          </form>
+        )}
+      </div>
+      <div className={`app-container${loginFade || !isLoggedIn ? '' : ' main-fade-in'}${isHistoryOpen ? ' history-open' : ''}`}
+        style={{
+          opacity: loginFade || !isLoggedIn ? 0 : 1,
+          pointerEvents: loginFade || !isLoggedIn ? 'none' : 'auto',
+          transition: 'opacity 0.7s cubic-bezier(0.4,0,0.2,1)',
+          position: 'relative',
+          zIndex: 1
+        }}
+      >
+        <nav className="navbar">
+          <button
+            className="toggle-history-btn"
+            onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+          >
+            {isHistoryOpen ? "✖" : "☰"}
+          </button>
 
-            <aside className={`side-menu ${isHistoryOpen ? "open" : ""}`}>
-              {/* Título principal */}
-              <div style={{ color: lightTheme ? "#23263a" : "#fff", marginBottom: 30 }}>
-              <h1 style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span>🖥️</span>
-                <span style={{ color: lightTheme ? "#23263a" : "#fff", transition: "color 0.3s" }}>Historial</span>
-                <button
+          <img
+            src="/red_logo_OSWIDTH.png"
+            alt="Logo MicroServicios"
+            style={{ height: 44, marginLeft: 12, borderRadius: 12 }}
+          />
+
+          <button
+            style={{
+              marginLeft: "auto",
+              background: lightTheme ? "#fff" : "#131313",
+              color: lightTheme ? "#323232" : "#fff",
+              border: "none",
+              borderRadius: 6,
+              padding: 8,
+              fontWeight: 600,
+              fontSize: 18,
+              cursor: "pointer",
+              boxShadow: "none",
+              transition: "background 0.3s, color 0.3s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            onClick={() => setLightTheme((v) => !v)}
+            title={lightTheme ? "Cambiar a tema oscuro" : "Cambiar a tema claro"}
+          >
+            {lightTheme ? (
+              // Moon icon SVG
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z" /></svg>
+            ) : (
+              // Sun icon SVG
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
+            )}
+          </button>
+          <button
+            style={{
+              marginLeft: 12,
+              background: lightTheme ? "#fff" : "#131313",
+              color: lightTheme ? "#323232" : "#fff",
+              border: "none",
+              borderRadius: 6,
+              padding: 8,
+              fontWeight: 600,
+              fontSize: 18,
+              cursor: "pointer",
+              boxShadow: "none",
+              transition: "background 0.3s, color 0.3s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              position: "relative"
+            }}
+            onClick={() => setShowUserPanel(v => !v)}
+            title="Usuario"
+          >
+            {/* Person icon SVG */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 4-7 8-7s8 3 8 7" /></svg>
+          </button>
+          {/* User panel dropdown */}
+          {showUserPanel && (
+            <div
+              style={{
+                position: "absolute",
+                top: 48,
+                right: 0,
+                background: lightTheme ? "#fff" : "#131313",
+                color: lightTheme ? "#323232" : "#fff",
+                border: `1.5px solid ${lightTheme ? '#9b0018' : '#fff'}`,
+                borderRadius: 8,
+                boxShadow: "0 4px 24px #000a",
+                minWidth: 180,
+                zIndex: 100,
+                padding: 18,
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                animationName: userPanelFade ? "fadeOutMsg" : "fadeInMsg",
+                animationDuration: "0.35s",
+                animationFillMode: "forwards"
+              }}
+            >
+              <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 4-7 8-7s8 3 8 7" /></svg>
+                {loginUser || 'Invitado'}
+              </div>
+              <button
+                style={{
+                  background: '#9b0018',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 6,
+                  padding: '8px 0',
+                  fontWeight: 600,
+                  fontSize: 15,
+                  cursor: 'pointer',
+                  transition: 'background 0.2s'
+                }}
+                onClick={() => {
+                  setIsLoggedIn(false);
+                  setUserPanelFade(true);
+                  setTimeout(() => {
+                    setShowUserPanel(false);
+                    setUserPanelFade(false);
+                    setLoginUser("");
+                    setLoginPass("");
+                  }, 350);
+                }}
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          )}
+        </nav>
+
+        <aside className={`side-menu ${isHistoryOpen ? "open" : ""}`}>
+          {/* Título principal */}
+          <div style={{ color: lightTheme ? "#323232" : "#fff", marginBottom: 30 }}>
+            <h1 style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span>🖥️</span>
+              <span style={{ color: lightTheme ? "#323232" : "#fff", transition: "color 0.3s" }}>Historial</span>
+              <button
                 style={{
                   background: "none",
                   border: "none",
-                  color: lightTheme ? "#23263a" : "#fff",
+                  color: lightTheme ? "#323232" : "#fff",
                   cursor: "pointer",
                   padding: 4,
                   borderRadius: "50%",
@@ -767,49 +773,49 @@ useEffect(() => {
                 }}
                 title="Refrescar bases de datos"
                 onClick={() => {
-                fetch('http://127.0.0.1:5000/databases')
-                  .then(res => res.json())
-                  .then(data => setDatabases(data.databases || []))
-                  .catch(() => setDatabases([]));
-                fetch(`http://127.0.0.1:5000/tables?db=${expandedDb}`)
-                  .then(res => res.json())
-                  .then(data => {
-                    setTablesByDb(prev => ({ ...prev, [expandedDb]: data.tables || [] }));
-                    setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
-                  })
-                  .catch(() => {
-                    setTablesByDb(prev => ({ ...prev, [expandedDb]: [] }));
-                    setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
-                  });
+                  fetch('http://127.0.0.1:5000/databases')
+                    .then(res => res.json())
+                    .then(data => setDatabases(data.databases || []))
+                    .catch(() => setDatabases([]));
+                  fetch(`http://127.0.0.1:5000/tables?db=${expandedDb}`)
+                    .then(res => res.json())
+                    .then(data => {
+                      setTablesByDb(prev => ({ ...prev, [expandedDb]: data.tables || [] }));
+                      setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
+                    })
+                    .catch(() => {
+                      setTablesByDb(prev => ({ ...prev, [expandedDb]: [] }));
+                      setLoadingTables(prev => ({ ...prev, [expandedDb]: false }));
+                    });
                   // Si hay una tabla seleccionada, refresca sus columnas
-                    if (selectedDb && selectedTable) {
-                      fetch(`http://127.0.0.1:5000/columns?db=${selectedDb}&table=${selectedTable}`)
-                        .then(res => res.json())
-                        .then(data => {
-                          setSelectedTableColumns(data.columns || []);
-                        })
-                        .catch(() => {
-                          setSelectedTableColumns([]);
-                        });
-                    } else {
-                      // Si no hay tabla seleccionada, limpia columnas
-                      setSelectedTableColumns([]);
-                      setSelectedTable(null);
-                      setSelectedDb(null);
-                    }
-                  }}
-              onMouseOver={e => e.currentTarget.style.background = "#23263a"}
-              onMouseOut={e => e.currentTarget.style.background = "none"}
-            >
-              <img
-                src="https://img.icons8.com/ios-filled/24/ffffff/refresh--v1.png"
-                alt="Refrescar"
-                style={{ width: 18, height: 18, display: "block" }}
-              />
-            </button>
-          </h1>
-        </div>
-        
+                  if (selectedDb && selectedTable) {
+                    fetch(`http://127.0.0.1:5000/columns?db=${selectedDb}&table=${selectedTable}`)
+                      .then(res => res.json())
+                      .then(data => {
+                        setSelectedTableColumns(data.columns || []);
+                      })
+                      .catch(() => {
+                        setSelectedTableColumns([]);
+                      });
+                  } else {
+                    // Si no hay tabla seleccionada, limpia columnas
+                    setSelectedTableColumns([]);
+                    setSelectedTable(null);
+                    setSelectedDb(null);
+                  }
+                }}
+                onMouseOver={e => e.currentTarget.style.background = "#323232"}
+                onMouseOut={e => e.currentTarget.style.background = "none"}
+              >
+                <img
+                  src="https://img.icons8.com/ios-filled/24/ffffff/refresh--v1.png"
+                  alt="Refrescar"
+                  style={{ width: 18, height: 18, display: "block" }}
+                />
+              </button>
+            </h1>
+          </div>
+
 
           {/* Carpeta Databases */}
           <button
@@ -832,33 +838,33 @@ useEffect(() => {
 
           {/* Lista de bases de datos y tablas */}
           {isDbListOpen && (
-          <div style={{ marginLeft: 16, borderLeft: "2px solid #333", paddingLeft: 8 }}>
-            {databases.length === 0 ? (
-              <p style={{ fontSize: "0.95em" }}>No hay bases de datos.</p>
-            ) : (
-              databases.map((db) => (
-                <div key={db}>
-                  <button
-                    className="history-btn"
-                    style={{
-                      fontWeight: expandedDb === db ? "bold" : "normal",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6
-                    }}
-                    onClick={() => setExpandedDb(expandedDb === db ? null : db)}
-                    title={`Ver tablas de ${db}`}
-                  >
-                    <span style={{ fontSize: 16 }}>
-                      {expandedDb === db ? "📂" : "📁"}
-                    </span>
-                    {db}
-                  </button>
-                  {expandedDb === db && (
-                  <div style={{ marginLeft: 16, borderLeft: "2px solid #333", paddingLeft: 8 }}>
-                    {loadingTables[db] ? (
-                      <p style={{ fontSize: "0.9em" }}>Cargando tablas...</p>
-                    ) : tablesByDb[db] && tablesByDb[db].length > 0 ? (
+            <div style={{ marginLeft: 16, borderLeft: "2px solid #333", paddingLeft: 8 }}>
+              {databases.length === 0 ? (
+                <p style={{ fontSize: "0.95em" }}>No hay bases de datos.</p>
+              ) : (
+                databases.map((db) => (
+                  <div key={db}>
+                    <button
+                      className="history-btn"
+                      style={{
+                        fontWeight: expandedDb === db ? "bold" : "normal",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6
+                      }}
+                      onClick={() => setExpandedDb(expandedDb === db ? null : db)}
+                      title={`Ver tablas de ${db}`}
+                    >
+                      <span style={{ fontSize: 16 }}>
+                        {expandedDb === db ? "📂" : "📁"}
+                      </span>
+                      {db}
+                    </button>
+                    {expandedDb === db && (
+                      <div style={{ marginLeft: 16, borderLeft: "2px solid #333", paddingLeft: 8 }}>
+                        {loadingTables[db] ? (
+                          <p style={{ fontSize: "0.9em" }}>Cargando tablas...</p>
+                        ) : tablesByDb[db] && tablesByDb[db].length > 0 ? (
                           tablesByDb[db].map((table) => (
                             <div key={table}>
                               <button
@@ -915,15 +921,15 @@ useEffect(() => {
                         ) : (
                           <p style={{ fontSize: "0.9em" }}>No hay tablas.</p>
                         )}
+                      </div>
+                    )}
+
+
                   </div>
-                )}
-
-
-                </div>
-              ))
-            )}
-          </div>
-        )}
+                ))
+              )}
+            </div>
+          )}
 
         </aside>
 
@@ -936,7 +942,7 @@ useEffect(() => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v18l15-9-15-9z" /></svg>
 
                 </button>
-                <label  
+                <label
                   className="upload-btn"
                   style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}
                   onClick={() => {
@@ -947,12 +953,12 @@ useEffect(() => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" /></svg>
 
                 </label>
-                
-                
+
+
                 {showUpload && (
                   <div className="modal-bg">
                     <div className={`modal modal-appear${uploadAnim ? " " + uploadAnim : ""}`}
-      onAnimationEnd={() => setUploadAnim("")}
+                      onAnimationEnd={() => setUploadAnim("")}
                     >
                       <h3>Subir CSV</h3>
                       <div>
@@ -1060,7 +1066,7 @@ useEffect(() => {
                 {error ? (
                   <div className={`message-error${fadeError ? ' fade-out-msg' : ''} fade-in-msg`}>{error}</div>
                 ) : result && (result.rows_affected !== undefined || result.execution_time !== undefined || result.source === "cache") ? (
-                  <div className="message-success fade-in-msg" style={result.source === "cache" ? { background: "#23263a", color: "#00e676", fontWeight: 600 } : {}}>
+                  <div className="message-success fade-in-msg" style={result.source === "cache" ? { background: "#323232", color: "#00e676", fontWeight: 600 } : {}}>
                     {result.source === "cache" && (
                       <span>Resultado obtenido del cache<br /></span>
                     )}

@@ -9,7 +9,7 @@ function createEditorTheme(lightTheme) {
     "&": {
       height: "100%",
       border: "none",
-      background: lightTheme ? "#fff" : "#0d1117",
+      background: lightTheme ? "#fff" : "#1c1c1c",
       fontSize: "14px",
     },
     ".cm-content": {
@@ -24,7 +24,7 @@ function createEditorTheme(lightTheme) {
     ".cm-editor": { height: "100%" },
     ".cm-focused": { outline: "none" },
     ".cm-gutters": {
-      backgroundColor: lightTheme ? "#f6f8fa" : "#0d1117",
+      backgroundColor: lightTheme ? "#f6f8fa" : "#1c1c1c",
       color: lightTheme ? "#656d76" : "#7d8590",
       border: "none",
       paddingRight: "16px",
@@ -118,7 +118,7 @@ function PythonEditor({ code, setCode, lightTheme }) {
       style={{
         height: "100%",
         width: "100%",
-        background: lightTheme ? "#fff" : "#0d1117",
+        background: lightTheme ? "#fff" : "#1c1c1c",
         overflow: "hidden",
       }}
     />
@@ -211,26 +211,26 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
   };
 
   if (!microservice) return (
-  <div style={{
-    height: '100vh',
-    background: lightTheme ? '#f8f9fa' : '#23263a',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: lightTheme ? '#23263a' : '#fff',
-    fontSize: 22,
-    fontWeight: 600
-  }}>
-    Cargando...
-  </div>
-);
+    <div style={{
+      height: '100vh',
+      background: lightTheme ? '#f8f9fa' : '#323232',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: lightTheme ? '#323232' : '#fff',
+      fontSize: 22,
+      fontWeight: 600
+    }}>
+      Cargando...
+    </div>
+  );
 
   return (
     <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{
       height: '100vh',
       display: 'flex',
       flexDirection: 'column',
-      background: lightTheme ? '#f8f9fa' : '#23263a'
+      background: lightTheme ? '#f8f9fa' : '#323232'
     }}>
       <nav className="navbar">
         <button
@@ -242,7 +242,11 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
           </svg>
-          MicroServicios
+          <img
+            src="/red_logo_OSWIDTH.png"
+            alt="Logo MicroServicios"
+            style={{ height: 44, marginLeft: 12, borderRadius: 12 }}
+          />
         </button>
         <h1>Editar Microservicio</h1>
       </nav>
@@ -251,8 +255,8 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
         {/* Panel izquierdo - Configuración */}
         <div style={{
           width: '380px',
-          background: lightTheme ? '#fff' : '#181c27',
-          borderRight: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+          background: lightTheme ? '#fff' : '#131313',
+          borderRight: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
           padding: '20px 16px',
           overflow: 'hidden',
           flexShrink: 0,
@@ -265,20 +269,20 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
             gap: 12,
             marginBottom: 16,
             paddingBottom: 12,
-            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
             flexShrink: 0
           }}>
             <div style={{
               width: 28,
               height: 28,
               borderRadius: '50%',
-              background: '#4285f4',
+              background: '#ff9696',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fff',
+              color: '#131313',
               fontSize: 13,
-              fontWeight: 600
+              fontWeight: 700
             }}>
               1
             </div>
@@ -312,9 +316,9 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                   style={{
                     width: '100%',
                     padding: '7px 10px',
-                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4,
-                    background: lightTheme ? '#fff' : '#0d1117',
+                    background: lightTheme ? '#fff' : '#1c1c1c',
                     color: lightTheme ? '#1f2328' : '#e6edf3',
                     fontSize: 13,
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace'
@@ -341,9 +345,9 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                   style={{
                     width: '100%',
                     padding: '7px 10px',
-                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4,
-                    background: lightTheme ? '#fff' : '#0d1117',
+                    background: lightTheme ? '#fff' : '#1c1c1cff',
                     color: lightTheme ? '#1f2328' : '#e6edf3',
                     fontSize: 13
                   }}
@@ -358,33 +362,33 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                   fontSize: 13,
                   color: lightTheme ? '#656d76' : '#8b949e'
                 }}> <div style={{ marginBottom: 16 }}>
-                      <label style={{
-                        display: 'block',
-                        marginBottom: 6,
-                        fontWeight: 500,
-                        fontSize: 13,
-                        color: lightTheme ? '#656d76' : '#8b949e'
-                      }}>
-                        Puerto *
-                      </label>
-                      <input
-                        type="number"
-                        name="port"
-                        value={form.port}
-                        onChange={handleChange}
-                        placeholder="Ej: 32779"
-                        style={{
-                          width: '100%',
-                          padding: '7px 10px',
-                          border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
-                          borderRadius: 4,
-                          background: lightTheme ? '#fff' : '#0d1117',
-                          color: lightTheme ? '#1f2328' : '#e6edf3',
-                          fontSize: 13
-                        }}
-                        required
-                      />
-                    </div>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: 6,
+                      fontWeight: 500,
+                      fontSize: 13,
+                      color: lightTheme ? '#656d76' : '#8b949e'
+                    }}>
+                      Puerto *
+                    </label>
+                    <input
+                      type="number"
+                      name="port"
+                      value={form.port}
+                      onChange={handleChange}
+                      placeholder="Ej: 32779"
+                      style={{
+                        width: '100%',
+                        padding: '7px 10px',
+                        border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
+                        borderRadius: 4,
+                        background: lightTheme ? '#fff' : '#1c1c1c',
+                        color: lightTheme ? '#1f2328' : '#e6edf3',
+                        fontSize: 13
+                      }}
+                      required
+                    />
+                  </div>
                   Endpoint *
                 </label>
                 <input
@@ -396,9 +400,9 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                   style={{
                     width: '100%',
                     padding: '7px 10px',
-                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4,
-                    background: lightTheme ? '#fff' : '#0d1117',
+                    background: lightTheme ? '#fff' : '#1c1c1c',
                     color: lightTheme ? '#1f2328' : '#e6edf3',
                     fontSize: 13
                   }}
@@ -447,8 +451,8 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '14px 20px',
-            background: lightTheme ? '#fff' : '#181c27',
-            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+            background: lightTheme ? '#fff' : '#131313',
+            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
             flexShrink: 0
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -456,13 +460,13 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                 width: 28,
                 height: 28,
                 borderRadius: '50%',
-                background: '#4285f4',
+                background: '#ff9696',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#fff',
+                color: '#131313',
                 fontSize: 13,
-                fontWeight: 600
+                fontWeight: 700
               }}>
                 2
               </div>
@@ -477,20 +481,22 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
             <button
               onClick={handleTestCode}
               style={{
-                background: '#1a73e8',
-                color: '#fff',
+                background: '#ff9696',
+                color: '#131313',
                 border: 'none',
                 borderRadius: 4,
                 padding: '7px 14px',
                 fontSize: 13,
-                fontWeight: 500,
+                fontWeight: 600,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6
               }}
+              onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+              onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
             >
-              PROBAR FUNCIÓN
+              Probar Función
             </button>
           </div>
           <div style={{
@@ -509,8 +515,8 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '14px 20px',
-            background: lightTheme ? '#f6f8fa' : '#0d1117',
-            borderTop: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+            background: lightTheme ? '#f6f8fa' : '#131313',
+            borderTop: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
             flexShrink: 0
           }}>
             <div></div>
@@ -518,34 +524,38 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
               <button
                 onClick={onBack}
                 style={{
-                  background: 'transparent',
-                  color: lightTheme ? '#656d76' : '#8b949e',
-                  border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                  background: '#1c1c1c',
+                  color: lightTheme ? '#e0e0e0ff' : '#e0e0e0ff',
+                  border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                   borderRadius: 4,
                   padding: '7px 14px',
                   fontSize: 13,
                   fontWeight: 500,
                   cursor: 'pointer'
                 }}
+                onMouseOver={e => (e.currentTarget.style.background = '#323232')}
+                onMouseOut={e => (e.currentTarget.style.background = '#1c1c1c')}
               >
-                CANCELAR
+                Cancelar
               </button>
               <button
                 onClick={handleSubmit}
                 disabled={isLoading}
                 style={{
-                  background: isLoading ? '#6c757d' : '#1a73e8',
-                  color: '#fff',
+                  background: isLoading ? '#6c757d' : '#ff9696',
+                  color: '#131313',
                   border: 'none',
                   borderRadius: 4,
                   padding: '7px 14px',
                   fontSize: 13,
-                  fontWeight: 500,
+                  fontWeight: 600,
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6
                 }}
+                onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+                onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
               >
                 {isLoading ? (
                   <>
@@ -557,10 +567,10 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                       borderRadius: '50%',
                       animation: 'spin 1s linear infinite'
                     }} />
-                    EDITANDO...
+                    Editando...
                   </>
                 ) : (
-                  'EDITAR'
+                  'Editar'
                 )}
               </button>
             </div>
@@ -569,10 +579,10 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
       </div>
       <footer className="footer" style={{ margin: 0 }}>
         <div>
-          MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
+          Oak Services &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
         </div>
         <div>
-          <span>Contacto: microservicios@uninorte.edu.co</span>
+          <span>Contacto: oakservices@uninorte.edu.co</span>
         </div>
       </footer>
     </div>

@@ -50,7 +50,11 @@ function PanelPrincipal() {
   return (
     <div className="panel-principal">
       <nav className="navbar">
-        <h1>Microservicios</h1>
+        <img
+  src="/red_logo_OSWIDTH.png"
+  alt="Logo MicroServicios"
+  style={{ height: 44, marginLeft: 12, borderRadius: 12}}
+/>
         {/* Aquí puedes incluir el botón para el modo oscuro y el panel de usuario */}
       </nav>
       <aside className="side-menu">

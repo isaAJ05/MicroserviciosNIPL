@@ -7,8 +7,6 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
   const [loginError, setLoginError] = useState("");
   const [loginFade, setLoginFade] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
-  const [registerUser, setRegisterUser] = useState("");
-  const [registerPass, setRegisterPass] = useState("");
   const [registerError, setRegisterError] = useState("");
   const [registerSuccess, setRegisterSuccess] = useState("");
   const [registerAnim, setRegisterAnim] = useState("");
@@ -27,7 +25,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
           inset: 0,
           minHeight: "100vh",
           minWidth: "100vw",
-          background: "#02082d",
+          background: "#131313",
           zIndex: 0,
           pointerEvents: "none",
         }}
@@ -44,7 +42,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
           alignItems: "center",
           justifyContent: "center",
           background: "none",
-          padding: "20px",
+          padding: "5px",
         }}
       >
         <div
@@ -56,7 +54,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
             flexDirection: "row",
             background: "transparent",
             borderRadius: 16,
-            boxShadow: "0 0 25px 4px #a5e7cc, 0 8px 32px rgba(0, 0, 0, 0.3)",
+            boxShadow: "0 0 25px 4px #9b0018, 0 8px 32px rgba(0, 0, 0, 0.3)",
             overflow: "hidden",
             minHeight: 420,
           }}
@@ -64,7 +62,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
           <div
             style={{
               flex: "0 0 40%",
-              background: "#02082d",
+              background: "#131313",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -72,7 +70,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
             }}
           >
             <img
-              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo_OS%2B-eTsH40UWH7thMEZ8oOYipCUGYd51r3.png"
+              src="/red_logo_OS.png"
               alt="OAK Services Logo"
               style={{
                 maxWidth: "100%",
@@ -136,7 +134,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
             >
               <h2
                 style={{
-                  color: "#02082d",
+                  color: "#131313",
                   marginBottom: 14,
                   marginTop: 8,
                   textAlign: "center",
@@ -240,7 +238,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                     transition: "color 0.2s",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.color = "#02082d"
+                    e.currentTarget.style.color = "#131313"
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.color = "#6b7280"
@@ -338,7 +336,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                   type="submit"
                   style={{
                     flex: 1,
-                    background: "#02082d",
+                    background: "#9b0018",
                     color: "#fff",
                     border: "none",
                     borderRadius: 8,
@@ -349,10 +347,10 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                     transition: "background 0.2s, transform 0.1s",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "#030b3d"
+                    e.currentTarget.style.background = "#680010"
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "#02082d"
+                    e.currentTarget.style.background = "#9b0018"
                   }}
                 >
                   Entrar
@@ -390,24 +388,20 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
               </div>
 
               <div style={{ textAlign: "center", marginTop: 6 }}>
-                <span style={{ color: "#6b7280", fontSize: 12 }}>¿No tienes cuenta? </span>
+                <span style={{ color: "#6b7280", fontWeight: 450, fontSize: 12 }}>Autenticación de Roble. </span>
                 <button
                   type="button"
                   style={{
                     background: "none",
-                    color: "#02082d",
+                    color: "#131313",
                     border: "none",
                     cursor: "pointer",
                     textDecoration: "none",
                     fontSize: 12,
-                    fontWeight: 600,
                     padding: 0,
                   }}
                   onClick={() => {
-                    setRegisterAnim("show-register")
-                    setShowRegister(true)
-                    setRegisterError("")
-                    setRegisterSuccess("")
+                    window.open("https://roble.openlab.uninorte.edu.co/", "_blank", "noopener,noreferrer")
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.textDecoration = "underline"
@@ -416,7 +410,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                     e.currentTarget.style.textDecoration = "none"
                   }}
                 >
-                  Crear una cuenta
+                  Ingresar aquí.
                 </button>
               </div>
             </form>

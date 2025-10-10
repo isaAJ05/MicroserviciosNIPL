@@ -11,7 +11,7 @@ function createEditorTheme(lightTheme) {
     "&": {
       height: "100%",
       border: "none",
-      background: lightTheme ? "#fff" : "#0d1117",
+      background: lightTheme ? "#fff" : "#1c1c1c",
       fontSize: "14px",
     },
     ".cm-content": {
@@ -26,7 +26,7 @@ function createEditorTheme(lightTheme) {
     ".cm-editor": { height: "100%" },
     ".cm-focused": { outline: "none" },
     ".cm-gutters": {
-      backgroundColor: lightTheme ? "#f6f8fa" : "#0d1117",
+      backgroundColor: lightTheme ? "#f6f8fa" : "#1c1c1c",
       color: lightTheme ? "#656d76" : "#7d8590",
       border: "none",
       paddingRight: "16px",
@@ -120,7 +120,7 @@ function PythonEditor({ code, setCode, lightTheme }) {
       style={{
         height: "100%",
         width: "100%",
-        background: lightTheme ? "#fff" : "#0d1117",
+        background: lightTheme ? "#fff" : "#1c1c1c",
         overflow: "hidden",
       }}
     />
@@ -261,20 +261,20 @@ if __name__ == "__main__":
   }, [microservice]);
   const [ejemploSeleccionado, setEjemploSeleccionado] = useState("");
 
-const handleEjemploChange = (e) => {
-  const value = e.target.value;
-  setEjemploSeleccionado(value);
-  if (ejemplosCodigo[value]) {
-    setMicroservice(prev => ({ ...prev, code: ejemplosCodigo[value] }));
-  }
-};
+  const handleEjemploChange = (e) => {
+    const value = e.target.value;
+    setEjemploSeleccionado(value);
+    if (ejemplosCodigo[value]) {
+      setMicroservice(prev => ({ ...prev, code: ejemplosCodigo[value] }));
+    }
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!microservice.name.trim() || !microservice.processing_type.trim() || !microservice.code.trim()) {
       setError("El nombre, tipo de procesamiento y código son obligatorios");
       return;
@@ -286,10 +286,10 @@ const handleEjemploChange = (e) => {
 
     try {
       const token = localStorage.getItem('accessToken');
-      
+
       const res = await fetch('http://127.0.0.1:5000/microservices', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -302,9 +302,9 @@ const handleEjemploChange = (e) => {
           code: microservice.code
         })
       });
-      
+
       const data = await res.json();
-      
+
       if (res.ok) {
         setSuccess("¡Microservicio creado exitosamente!");
         setTimeout(() => {
@@ -320,32 +320,32 @@ const handleEjemploChange = (e) => {
     }
   };
 
-const handleTestCode = async () => {
-  setError("");
-  setSuccess("");
-  try {
-    const res = await fetch('http://127.0.0.1:5000/test-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: microservice.code })
-    });
-    const data = await res.json();
-    if (res.ok) {
-      setSuccess("Salida:\n" + (data.output || "") + (data.error ? "\nError:\n" + data.error : ""));
-    } else {
-      setError(data.error || "Error al probar el código");
+  const handleTestCode = async () => {
+    setError("");
+    setSuccess("");
+    try {
+      const res = await fetch('http://127.0.0.1:5000/test-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: microservice.code })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Salida:\n" + (data.output || "") + (data.error ? "\nError:\n" + data.error : ""));
+      } else {
+        setError(data.error || "Error al probar el código");
+      }
+    } catch (err) {
+      setError("No se pudo conectar con el servidor");
     }
-  } catch (err) {
-    setError("No se pudo conectar con el servidor");
-  }
-};
+  };
 
   return (
-    <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{ 
+    <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{
       height: '100vh', // Cambiado de minHeight a height
       display: 'flex',
       flexDirection: 'column',
-      background: lightTheme ? '#f8f9fa' : '#23263a' 
+      background: lightTheme ? '#f8f9fa' : '#323232'
     }}>
       <nav className="navbar">
         <button
@@ -357,21 +357,25 @@ const handleTestCode = async () => {
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
           </svg>
-          MicroServicios
+          <img
+            src="/red_logo_OSWIDTH.png"
+            alt="Logo MicroServicios"
+            style={{ height: 44, marginLeft: 12, borderRadius: 12 }}
+          />
         </button>
         <h1>Crear Microservicio</h1>
       </nav>
 
-      <div style={{ 
-        display: 'flex', 
+      <div style={{
+        display: 'flex',
         flex: 1,
         overflow: 'hidden'
       }}>
         {/* Panel izquierdo - Configuración */}
-        <div style={{ 
+        <div style={{
           width: '380px', // Aumentado de 340px a 380px
-          background: lightTheme ? '#fff' : '#181c27',
-          borderRight: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+          background: lightTheme ? '#fff' : '#131313',
+          borderRight: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
           padding: '20px 16px', // Reducido padding
           overflow: 'hidden', // Sin scroll
           flexShrink: 0,
@@ -379,31 +383,31 @@ const handleTestCode = async () => {
           flexDirection: 'column'
         }}>
           {/* Header de configuración - más compacto */}
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 12, 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
             marginBottom: 16, // Reducido
             paddingBottom: 12, // Reducido
-            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
             flexShrink: 0
           }}>
             <div style={{
               width: 28, // Reducido
               height: 28, // Reducido
               borderRadius: '50%',
-              background: '#4285f4',
+              background: '#ff9696',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#fff',
+              color: '#131313',
               fontSize: 13, // Reducido
-              fontWeight: 600
+              fontWeight: 700
             }}>
               1
             </div>
-            <span style={{ 
-              fontWeight: 600, 
+            <span style={{
+              fontWeight: 600,
               fontSize: 15, // Reducido
               color: lightTheme ? '#1f2328' : '#fff'
             }}>
@@ -430,10 +434,10 @@ const handleTestCode = async () => {
             <form onSubmit={handleSubmit}>
               {/* Nombre del microservicio */}
               <div style={{ marginBottom: 16 }}> {/* Reducido */}
-                <label style={{ 
-                  display: 'block', 
+                <label style={{
+                  display: 'block',
                   marginBottom: 6, // Reducido
-                  fontWeight: 500, 
+                  fontWeight: 500,
                   fontSize: 13, // Reducido
                   color: lightTheme ? '#656d76' : '#8b949e'
                 }}>
@@ -450,16 +454,16 @@ const handleTestCode = async () => {
                   style={{
                     width: '100%',
                     padding: '7px 10px', // Reducido
-                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4, // Reducido
-                    background: lightTheme ? '#fff' : '#0d1117',
+                    background: lightTheme ? '#fff' : '#1c1c1c',
                     color: lightTheme ? '#1f2328' : '#e6edf3',
                     fontSize: 13, // Reducido
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace'
                   }}
                   required
                 />
-                <div style={{ 
+                <div style={{
                   marginTop: 4, // Reducido
                   color: lightTheme ? '#656d76' : '#8b949e',
                   fontSize: 11 // Reducido
@@ -470,88 +474,88 @@ const handleTestCode = async () => {
 
               {/* Tipo de procesamiento */}
               <div style={{ marginBottom: 16 }}>
-  <label style={{ 
-    display: 'block', 
-    marginBottom: 6,
-    fontWeight: 500, 
-    fontSize: 13,
-    color: lightTheme ? '#656d76' : '#8b949e'
-  }}>
-    Tipo de Procesamiento *
-  </label>
-  <select
-    value={microservice.processing_type}
-    onChange={e => setMicroservice(prev => ({
-      ...prev,
-      processing_type: e.target.value,
-      use_roble_auth: e.target.value === "Roble" // Si selecciona Roble, activa el flag
-    }))}
-    style={{
-      width: '100%',
-      padding: '7px 10px',
-      border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
-      borderRadius: 4,
-      background: lightTheme ? '#fff' : '#0d1117',
-      color: lightTheme ? '#1f2328' : '#e6edf3',
-      fontSize: 13
-    }}
-    required
-  >
-    <option value="">Seleccionar tipo</option>
-    <option value="Data Processing">Procesamiento de Datos</option>
-    <option value="Image Processing">Procesamiento de Imágenes</option>
-    <option value="Text Processing">Procesamiento de Texto</option>
-    <option value="API Service">Servicio API REST</option>
-    <option value="Machine Learning">Machine Learning</option>
-    <option value="File Processing">Procesamiento de Archivos</option>
-    <option value="Web Scraping">Web Scraping</option>
-    <option value="Database Operations">Operaciones de Base de Datos</option>
-    <option value="Roble">Roble</option>
-    <option value="Batch Processing">Procesamiento por Lotes</option>
-    <option value="Real-time Processing">Procesamiento en Tiempo Real</option>
-    <option value="Authentication Service">Servicio de Autenticación</option>
-    <option value="Notification Service">Servicio de Notificaciones</option>
-    <option value="Other">Otro</option>
-  </select>
-  <div style={{
-    marginTop: 4,
-    color: lightTheme ? '#656d76' : '#8b949e',
-    fontSize: 11
-  }}>
-    Selecciona "Roble" si tu microservicio consulta o modifica datos en Roble.
-  </div>
-</div>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 6,
+                  fontWeight: 500,
+                  fontSize: 13,
+                  color: lightTheme ? '#656d76' : '#8b949e'
+                }}>
+                  Tipo de Procesamiento *
+                </label>
+                <select
+                  value={microservice.processing_type}
+                  onChange={e => setMicroservice(prev => ({
+                    ...prev,
+                    processing_type: e.target.value,
+                    use_roble_auth: e.target.value === "Roble" // Si selecciona Roble, activa el flag
+                  }))}
+                  style={{
+                    width: '100%',
+                    padding: '7px 10px',
+                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
+                    borderRadius: 4,
+                    background: lightTheme ? '#fff' : '#1c1c1c',
+                    color: lightTheme ? '#1f2328' : '#e6edf3',
+                    fontSize: 13
+                  }}
+                  required
+                >
+                  <option value="">Seleccionar tipo</option>
+                  <option value="Data Processing">Procesamiento de Datos</option>
+                  <option value="Image Processing">Procesamiento de Imágenes</option>
+                  <option value="Text Processing">Procesamiento de Texto</option>
+                  <option value="API Service">Servicio API REST</option>
+                  <option value="Machine Learning">Machine Learning</option>
+                  <option value="File Processing">Procesamiento de Archivos</option>
+                  <option value="Web Scraping">Web Scraping</option>
+                  <option value="Database Operations">Operaciones de Base de Datos</option>
+                  <option value="Roble">Roble</option>
+                  <option value="Batch Processing">Procesamiento por Lotes</option>
+                  <option value="Real-time Processing">Procesamiento en Tiempo Real</option>
+                  <option value="Authentication Service">Servicio de Autenticación</option>
+                  <option value="Notification Service">Servicio de Notificaciones</option>
+                  <option value="Other">Otro</option>
+                </select>
+                <div style={{
+                  marginTop: 4,
+                  color: lightTheme ? '#656d76' : '#8b949e',
+                  fontSize: 11
+                }}>
+                  Selecciona "Roble" si tu microservicio consulta o modifica datos en Roble.
+                </div>
+              </div>
 
               {/* Selector de ejemplo de código */}
-<div style={{ marginBottom: 16 }}>
-  <label style={{
-    display: 'block',
-    marginBottom: 6,
-    fontWeight: 500,
-    fontSize: 13,
-    color: lightTheme ? '#656d76' : '#8b949e'
-  }}>
-    Ejemplo de código
-  </label>
-  <select
-    value={ejemploSeleccionado}
-    onChange={handleEjemploChange}
-    style={{
-      width: '100%',
-      padding: '7px 10px',
-      border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
-      borderRadius: 4,
-      background: lightTheme ? '#fff' : '#0d1117',
-      color: lightTheme ? '#1f2328' : '#e6edf3',
-      fontSize: 13
-    }}
-  >
-    <option value="">Selecciona un ejemplo</option>
-    <option value="hola_mundo">Hola Mundo</option>
-    <option value="suma">Suma</option>
-    <option value="consulta_roble">Consulta a Roble</option>
-  </select>
-</div>
+              <div style={{ marginBottom: 16 }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 6,
+                  fontWeight: 500,
+                  fontSize: 13,
+                  color: lightTheme ? '#656d76' : '#8b949e'
+                }}>
+                  Ejemplo de código
+                </label>
+                <select
+                  value={ejemploSeleccionado}
+                  onChange={handleEjemploChange}
+                  style={{
+                    width: '100%',
+                    padding: '7px 10px',
+                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
+                    borderRadius: 4,
+                    background: lightTheme ? '#fff' : '#1c1c1c',
+                    color: lightTheme ? '#1f2328' : '#e6edf3',
+                    fontSize: 13
+                  }}
+                >
+                  <option value="">Selecciona un ejemplo</option>
+                  <option value="hola_mundo">Hola Mundo</option>
+                  <option value="suma">Suma</option>
+                  <option value="consulta_roble">Consulta a Roble</option>
+                </select>
+              </div>
               {/* Mensajes de estado */}
               {error && (
                 <div style={{
@@ -585,9 +589,9 @@ const handleTestCode = async () => {
         </div>
 
         {/* Panel derecho - Editor de código */}
-        <div style={{ 
-          flex: 1, 
-          display: 'flex', 
+        <div style={{
+          flex: 1,
+          display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden'
         }}>
@@ -597,8 +601,8 @@ const handleTestCode = async () => {
             alignItems: 'center',
             justifyContent: 'space-between',
             padding: '14px 20px', // Reducido
-            background: lightTheme ? '#fff' : '#181c27',
-            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+            background: lightTheme ? '#fff' : '#131313',
+            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#131313'}`,
             flexShrink: 0
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -606,47 +610,49 @@ const handleTestCode = async () => {
                 width: 28, // Reducido
                 height: 28, // Reducido
                 borderRadius: '50%',
-                background: '#4285f4',
+                background: '#ff9696',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#fff',
+                color: '#131313',
                 fontSize: 13, // Reducido
-                fontWeight: 600
+                fontWeight: 700
               }}>
                 2
               </div>
-              <span style={{ 
-                fontWeight: 600, 
+              <span style={{
+                fontWeight: 600,
                 fontSize: 15, // Reducido
                 color: lightTheme ? '#1f2328' : '#fff'
               }}>
                 Código
               </span>
             </div>
-            
-            <button 
+
+            <button
               onClick={handleTestCode}
               style={{
-                background: '#1a73e8',
-                color: '#fff',
+                background: '#ff9696',
+                color: '#131313',
                 border: 'none',
                 borderRadius: 4,
                 padding: '7px 14px', // Reducido
                 fontSize: 13, // Reducido
-                fontWeight: 500,
+                fontWeight: 600,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6
               }}
+              onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+              onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
             >
-              PROBAR FUNCIÓN
+              Probar Función
             </button>
           </div>
 
           {/* Editor */}
-          <div style={{ 
+          <div style={{
             flex: 1,
             position: 'relative',
             overflow: 'hidden'
@@ -664,8 +670,8 @@ const handleTestCode = async () => {
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '14px 20px', // Reducido
-            background: lightTheme ? '#f6f8fa' : '#0d1117',
-            borderTop: `1px solid ${lightTheme ? '#e1e4e8' : '#30363d'}`,
+            background: lightTheme ? '#f6f8fa' : '#131313',
+            borderTop: `1px solid ${lightTheme ? '#e1e4e8' : '#1C1C1C'}`,
             flexShrink: 0
           }}>
             <div></div>
@@ -673,35 +679,39 @@ const handleTestCode = async () => {
               <button
                 onClick={onBack}
                 style={{
-                  background: 'transparent',
-                  color: lightTheme ? '#656d76' : '#8b949e',
-                  border: `1px solid ${lightTheme ? '#d1d9e0' : '#30363d'}`,
+                  background: '#1c1c1c',
+                  color: lightTheme ? '#e0e0e0ff' : '#e0e0e0ff',
+                  border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                   borderRadius: 4,
                   padding: '7px 14px', // Reducido
                   fontSize: 13, // Reducido
-                  fontWeight: 500,
+                  fontWeight: 600,
                   cursor: 'pointer'
                 }}
+                onMouseOver={e => (e.currentTarget.style.background = '#323232')}
+                onMouseOut={e => (e.currentTarget.style.background = '#1c1c1c')}
               >
-                CANCELAR
+                Cancelar
               </button>
-              
+
               <button
                 onClick={handleSubmit}
                 disabled={isLoading}
                 style={{
-                  background: isLoading ? '#6c757d' : '#1a73e8',
-                  color: '#fff',
+                  background: isLoading ? '#6c757d' : '#ff9696',
+                  color: '#131313',
                   border: 'none',
                   borderRadius: 4,
                   padding: '7px 14px', // Reducido
                   fontSize: 13, // Reducido
-                  fontWeight: 500,
+                  fontWeight: 600,
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 6
                 }}
+                onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+                onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
               >
                 {isLoading ? (
                   <>
@@ -713,10 +723,10 @@ const handleTestCode = async () => {
                       borderRadius: '50%',
                       animation: 'spin 1s linear infinite'
                     }} />
-                    CREANDO...
+                    Creando...
                   </>
                 ) : (
-                  'CREAR'
+                  'Crear'
                 )}
               </button>
             </div>
@@ -727,10 +737,10 @@ const handleTestCode = async () => {
       {/* Footer - sin margenes adicionales */}
       <footer className="footer" style={{ margin: 0 }}>
         <div>
-          MicroServicios NIPL &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
+          Oak Services &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
         </div>
         <div>
-          <span>Contacto: microservicios@uninorte.edu.co</span>
+          <span>Contacto: oakservices@uninorte.edu.co</span>
         </div>
       </footer>
     </div>
