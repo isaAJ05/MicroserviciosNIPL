@@ -24,8 +24,6 @@ function PanelPrincipal() {
     code: ""
   });
   const [dockerActive, setDockerActive] = useState(null); // verificacion
-  const [showCodeModal, setShowCodeModal] = useState(false);
-  const [codeToShow, setCodeToShow] = useState("");
   // Estados de autenticación
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginFade, setLoginFade] = useState(false);
@@ -401,25 +399,7 @@ return (
                                     Probar Endpoint
                                     </button>
                                   </td>
-                <td style={{ display: 'flex', gap: 6 }}>
-                  <button
-                    className="action-btn"
-                    title="Ver código"
-                    onClick={async () => {
-                      setCodeToShow("Cargando...");
-                      setShowCodeModal(true);
-                      try {
-                        const res = await fetch(`http://127.0.0.1:5000/microservices/${microservice.id}/mainpy`);
-                        if (!res.ok) throw new Error("No se pudo obtener el código");
-                        const data = await res.json();
-                        setCodeToShow(data.code || "Sin código disponible");
-                      } catch (err) {
-                        setCodeToShow("Error al obtener el código: " + err.message);
-                      }
-                    }}
-                  >
-                    <span role="img" aria-label="Ver código">👁️</span>
-                  </button>
+                <td>
                   <button className="action-btn" title="Editar" onClick={() => setEditId(microservice.id)}>✏️</button>
                   <button className="action-btn" title="Eliminar" onClick={() => handleDelete(microservice.id)}>🗑️</button>
                 </td>
@@ -463,33 +443,6 @@ return (
       
       </div>
 
-      {/* Modal para ver código */}
-      {showCodeModal && (
-        <div className="modal-bg" style={{ zIndex: 200 }}>
-          <div className="modal" style={{ maxWidth: 700, minWidth: 350 }}>
-            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span role="img" aria-label="Ver código">👁️</span> Código del Microservicio
-            </h3>
-            <pre style={{
-              background: lightTheme ? '#f5f5f5' : '#181c27',
-              color: lightTheme ? '#23263a' : '#fff',
-              padding: 18,
-              borderRadius: 8,
-              fontSize: 15,
-              maxHeight: 400,
-              overflow: 'auto',
-              marginBottom: 18
-            }}>{codeToShow}</pre>
-            <button
-              className="action-btn"
-              style={{ background: '#23263a', marginLeft: 'auto', display: 'block' }}
-              onClick={() => setShowCodeModal(false)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
       {/* Modal para agregar microservicio */}
       {showAddModal && (
         <div className="modal-bg">

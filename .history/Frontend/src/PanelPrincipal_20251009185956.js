@@ -401,21 +401,13 @@ return (
                                     Probar Endpoint
                                     </button>
                                   </td>
-                <td style={{ display: 'flex', gap: 6 }}>
+                <td style={{ display: 'flex', gap: 5 }}>
                   <button
                     className="action-btn"
                     title="Ver código"
-                    onClick={async () => {
-                      setCodeToShow("Cargando...");
+                    onClick={() => {
+                      setCodeToShow(microservice.code || "Sin código disponible");
                       setShowCodeModal(true);
-                      try {
-                        const res = await fetch(`http://127.0.0.1:5000/microservices/${microservice.id}/mainpy`);
-                        if (!res.ok) throw new Error("No se pudo obtener el código");
-                        const data = await res.json();
-                        setCodeToShow(data.code || "Sin código disponible");
-                      } catch (err) {
-                        setCodeToShow("Error al obtener el código: " + err.message);
-                      }
                     }}
                   >
                     <span role="img" aria-label="Ver código">👁️</span>
