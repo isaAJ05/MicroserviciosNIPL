@@ -1,5 +1,9 @@
 
 import React, { useEffect, useState, useRef } from 'react';
+  // Modal personalizado para editar la URL del endpoint
+  const [showEditUrlModal, setShowEditUrlModal] = useState(false);
+  const [urlToEdit, setUrlToEdit] = useState("");
+  const [pendingEndpoint, setPendingEndpoint] = useState(null);
 import './App.css';
 import Login from "./Login";
 import AgregarMicroservicio from './AgregarMicroservicio';
@@ -40,14 +44,8 @@ function PanelPrincipal() {
   // Para modal personalizado de eliminar
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [microserviceToDelete, setMicroserviceToDelete] = useState(null);
-  // Para toast de éxito (eliminación)
+  // Para toast de éxito
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-  // Para toast de éxito (renovación de token)
-  const [showRenewTokenToast, setShowRenewTokenToast] = useState(false);
-    // Estado para modal de renovar token
-  const [showRenewTokenModal, setShowRenewTokenModal] = useState(false);
-  const [renewTokenPassword, setRenewTokenPassword] = useState("");
-  const [renewTokenProjectId, setRenewTokenProjectId] = useState(localStorage.getItem('tokenContract') || "");
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/microservices')
@@ -119,45 +117,113 @@ function PanelPrincipal() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMicroservice)
     });
-    if (res.ok) {
-      setShowAddModal(false);
-      setNewMicroservice({ name: "", processing_type: "", code: "" });
-      // Refresca la lista
-      refreshMicroservices();
-    }
-  };
+                  <button
+                    style={{
+                      display: 'inline-block',
+                      background: '#1a73e8',
+                      color: '#fff',
+                      padding: '7px 16px',
+                      borderRadius: 6,
+                      fontWeight: 600,
+                      fontSize: 14,
+                      textDecoration: 'none',
+                      boxShadow: '0 2px 8px #0002',
+                      transition: 'background 0.2s',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                      const tokenContract = (localStorage.getItem('tokenContract') || '').trim();
+                      let url = `http://localhost:${microservice.port}/${microservice.endpoint}`;
+                      if (microservice.processing_type === "Roble") {
+                        url += `?tableName=inventario&token_contract=${encodeURIComponent(tokenContract)}`;
+                      }
+                      setUrlToEdit(url);
+                      setPendingEndpoint({
+                        microservice,
+                        token: (localStorage.getItem('accessToken') || '').trim()
+                      });
+                      setShowEditUrlModal(true);
+                    }}
+                    onMouseOver={e => (e.currentTarget.style.background = '#1761c7')}
+                    onMouseOut={e => (e.currentTarget.style.background = '#1a73e8')}
+                  >
+                    Probar Endpoint
+                  </button>
+      {/* Modal personalizado para editar la URL del endpoint */}
+      {showEditUrlModal && (
+        <div className="modal-bg" style={{
+          zIndex: 205,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: lightTheme
+            ? 'rgba(255,255,255,0.65)'
+            : 'rgba(30,34,45,0.45)',
+          backdropFilter: 'blur(2.5px)',
+          WebkitBackdropFilter: 'blur(2.5px)'
+        }}>
+          <div className="modal" style={{ width: 480, maxWidth: '90vw', minWidth: 280, padding: 28, textAlign: 'center' }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 18 }}>
+              <span role="img" aria-label="Editar URL">🔗</span> Editar URL del Endpoint
+            </h3>
+            <div style={{ fontSize: 15, marginBottom: 18 }}>
+              Puedes modificar la URL antes de probar el endpoint:
+            </div>
+            <input
+              type="text"
+              value={urlToEdit}
+              onChange={e => setUrlToEdit(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: 6,
+                border: '1.5px solid #ccc',
+                fontSize: 15,
+                marginBottom: 18,
+                fontFamily: 'monospace',
+                background: lightTheme ? '#fff' : '#181c27',
+                color: lightTheme ? '#23263a' : '#fff'
+              }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: 16, justifyContent: 'center' }}>
+              <button
+                className="action-btn"
+                style={{ background: '#1a73e8', color: '#fff', fontWeight: 600, minWidth: 90 }}
+                onClick={async () => {
+                  setShowEditUrlModal(false);
+                  setEndpointUrl(urlToEdit);
+                  setEndpointResponse("Cargando...");
+                  setShowEndpointModal(true);
+                  try {
+                    const res = await fetch(urlToEdit, {
+                      method: 'GET',
+                      headers: {
+                        'Authorization': `Bearer ${pendingEndpoint?.token}`
+                      }
+                    });
+                    if (!res.ok) {
+                      throw new Error(`HTTP ${res.status}`);
+                    }
+                    const data = await res.json();
+                    setEndpointResponse(data);
+                  } catch (err) {
+                    setEndpointResponse("Error al conectar con el microservicio: " + err.message);
+                  }
+                }}
+              >Aceptar</button>
+              <button
+                className="action-btn"
+                style={{ background: '#23263a', minWidth: 90 }}
+                onClick={() => setShowEditUrlModal(false)}
+              >Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+      )}
 
-  // Función para refrescar la lista de microservicios
-  const refreshMicroservices = () => {
-    fetch('http://127.0.0.1:5000/microservices')
-      .then(res => res.json())
-      .then(data => setMicroservices(data.microservices || data || []))
-      .catch(err => console.error('Error fetching microservices:', err));
-  };
-
-  // CRUD: Eliminar microservicio (ahora con modal personalizado)
-  const handleDelete = async () => {
-    if (!microserviceToDelete) return;
-    await fetch(`http://127.0.0.1:5000/microservices/${microserviceToDelete}`, { method: 'DELETE' });
-    setMicroservices(microservices.filter(m => m.id !== microserviceToDelete));
-    setShowDeleteModal(false);
-    setMicroserviceToDelete(null);
-    setShowSuccessToast(true);
-    setTimeout(() => setShowSuccessToast(false), 2000);
-  };
-
-  // Si estamos en la vista de agregar microservicio, mostrar ese componente
-  if (showAddMicroservice) {
-    return (
-      <AgregarMicroservicio 
-        onBack={() => {
-          setShowAddMicroservice(false);
-          refreshMicroservices(); // Refrescar la lista cuando regresemos
-        }}
-        lightTheme={lightTheme}
-      />
-    );
-  }
   if (editId) {
   return (
     <EditarMicroservicio
@@ -270,25 +336,8 @@ return (
               {(user && (user.username || user.name || user.email)) || 'Invitado'}
             </div>
             <div style={{ fontSize: 13, color: lightTheme ? '#656d76' : '#b3b3b3', marginBottom: 6, marginLeft: 28 }}>
-              Project ID: {localStorage.getItem('tokenContract') || 'N/A'}
+              ID del Proyecto: {localStorage.getItem('tokenContract') || 'N/A'}
             </div>
-            <button
-              style={{
-                background: '#1a73e8',
-                color: '#fff',
-                border: 'none',
-                borderRadius: 6,
-                padding: '8px 0',
-                fontWeight: 600,
-                fontSize: 15,
-                cursor: 'pointer',
-                transition: 'background 0.2s',
-                marginBottom: 8
-              }}
-              onClick={() => setShowRenewTokenModal(true)}
-            >
-              Renovar token
-            </button>
             <button
               style={{
                 background: '#9b0018',
@@ -365,29 +414,6 @@ return (
           gap: 10
         }}>
           <span role="img" aria-label="éxito">✅</span> Eliminado correctamente
-        </div>
-      )}
-      {/* Toast de éxito al renovar token */}
-      {showRenewTokenToast && (
-        <div style={{
-          position: 'fixed',
-          top: 80,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: lightTheme ? '#1aaf5d' : '#23263a',
-          color: '#fff',
-          padding: '14px 32px',
-          borderRadius: 10,
-          fontWeight: 600,
-          fontSize: 16,
-          boxShadow: '0 4px 24px #0005',
-          zIndex: 9999,
-          letterSpacing: 0.2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10
-        }}>
-          <span role="img" aria-label="éxito">✅</span> Token renovado correctamente
         </div>
       )}
       <div className="panel-content">
@@ -708,100 +734,7 @@ return (
             </form>
           </div>
         </div>
-          )}
-           {/* Modal para renovar token */}
-    {showRenewTokenModal && (
-      <div className="modal-bg" style={{
-        zIndex: 210,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: lightTheme ? 'rgba(255,255,255,0.65)' : 'rgba(30,34,45,0.45)',
-        backdropFilter: 'blur(2.5px)',
-        WebkitBackdropFilter: 'blur(2.5px)'
-      }}>
-        <div className="modal" style={{ width: 400, maxWidth: '90vw', minWidth: 280, padding: 28, textAlign: 'center' }}>
-          <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 18 }}>
-            <span role="img" aria-label="Renovar">🔑</span> Renovar Token
-          </h3>
-          <form
-            onSubmit={async e => {
-              e.preventDefault();
-              const email = (user && (user.username || user.name || user.email) || '').trim().toLowerCase();
-              const pass = renewTokenPassword.trim();
-              const token = renewTokenProjectId.trim();
-              // Opcional: podrías agregar un estado de error y loading
-              try {
-                const res = await fetch("http://127.0.0.1:5000/login", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    email,
-                    password: pass,
-                    token_contract: token,
-                  }),
-                });
-                const data = await res.json();
-                if (res.ok && data.accessToken) {
-                  localStorage.setItem("accessToken", data.accessToken);
-                  localStorage.setItem("tokenContract", token);
-                  setShowRenewTokenModal(false);
-                  setRenewTokenPassword("");
-                  setRenewTokenProjectId(token);
-                  // Feedback visual: toast de renovación
-                  setShowRenewTokenToast(true);
-                  setTimeout(() => setShowRenewTokenToast(false), 2000);
-                } else {
-                  alert(data.error || "No se pudo renovar el token");
-                }
-              } catch (err) {
-                alert("No se pudo conectar con el backend");
-              }
-            }}
-            style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-              <label style={{ fontWeight: 600 }}>Usuario</label>
-              <input
-                type="text"
-                value={user ? (user.username || user.name || user.email) : ''}
-                disabled
-                style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc' }}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-              <label style={{ fontWeight: 600 }}>ID del Proyecto</label>
-              <input
-                type="text"
-                value={renewTokenProjectId}
-                onChange={e => setRenewTokenProjectId(e.target.value)}
-                required
-                style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc' }}
-              />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
-              <label style={{ fontWeight: 600 }}>Contraseña</label>
-              <input
-                type="password"
-                value={renewTokenPassword}
-                onChange={e => setRenewTokenPassword(e.target.value)}
-                required
-                style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc', background: '#fff', color: '#23263a' }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 8, justifyContent: 'center' }}>
-              <button type="submit" className="action-btn">
-                Renovar
-              </button>
-              <button type="button" className="action-btn" style={{ background: '#23263a' }} onClick={() => { setShowRenewTokenModal(false); setRenewTokenPassword(""); setRenewTokenProjectId(localStorage.getItem('tokenContract') || ""); }}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    )}
-
+      )}
 
       {/* Footer */}
       <footer className="footer">

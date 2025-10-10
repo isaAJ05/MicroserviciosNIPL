@@ -40,10 +40,8 @@ function PanelPrincipal() {
   // Para modal personalizado de eliminar
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [microserviceToDelete, setMicroserviceToDelete] = useState(null);
-  // Para toast de éxito (eliminación)
+  // Para toast de éxito
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-  // Para toast de éxito (renovación de token)
-  const [showRenewTokenToast, setShowRenewTokenToast] = useState(false);
     // Estado para modal de renovar token
   const [showRenewTokenModal, setShowRenewTokenModal] = useState(false);
   const [renewTokenPassword, setRenewTokenPassword] = useState("");
@@ -365,29 +363,6 @@ return (
           gap: 10
         }}>
           <span role="img" aria-label="éxito">✅</span> Eliminado correctamente
-        </div>
-      )}
-      {/* Toast de éxito al renovar token */}
-      {showRenewTokenToast && (
-        <div style={{
-          position: 'fixed',
-          top: 80,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: lightTheme ? '#1aaf5d' : '#23263a',
-          color: '#fff',
-          padding: '14px 32px',
-          borderRadius: 10,
-          fontWeight: 600,
-          fontSize: 16,
-          boxShadow: '0 4px 24px #0005',
-          zIndex: 9999,
-          letterSpacing: 0.2,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10
-        }}>
-          <span role="img" aria-label="éxito">✅</span> Token renovado correctamente
         </div>
       )}
       <div className="panel-content">
@@ -732,7 +707,7 @@ return (
               const token = renewTokenProjectId.trim();
               // Opcional: podrías agregar un estado de error y loading
               try {
-                const res = await fetch("http://127.0.0.1:5000/login", {
+                const res = await fetch("http://127.0.0.1:5000/renovacion", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
@@ -748,9 +723,9 @@ return (
                   setShowRenewTokenModal(false);
                   setRenewTokenPassword("");
                   setRenewTokenProjectId(token);
-                  // Feedback visual: toast de renovación
-                  setShowRenewTokenToast(true);
-                  setTimeout(() => setShowRenewTokenToast(false), 2000);
+                  // Opcional: feedback visual
+                  setShowSuccessToast(true);
+                  setTimeout(() => setShowSuccessToast(false), 2000);
                 } else {
                   alert(data.error || "No se pudo renovar el token");
                 }
