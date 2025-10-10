@@ -33,10 +33,6 @@ function PanelPrincipal() {
   const [isPinned, setIsPinned] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const sidebarRef = useRef(null);
-  // Para modal de respuesta de endpoint
-  const [showEndpointModal, setShowEndpointModal] = useState(false);
-  const [endpointResponse, setEndpointResponse] = useState(null);
-  const [endpointUrl, setEndpointUrl] = useState("");
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/microservices')
@@ -362,16 +358,16 @@ return (
                   }}
                     onClick={async () => {
                     const token = (localStorage.getItem('accessToken')).trim();
+                    console.log("Token usado:", token);
                     const tokenContract = (localStorage.getItem('tokenContract')).trim();
                     let url = `http://localhost:${microservice.port}/${microservice.endpoint}`;
                     if (microservice.processing_type === "Roble") {
                       url += `?tableName=inventario&token_contract=${encodeURIComponent(tokenContract)}`;
                     }
+                    // Permitir al usuario editar la URL antes de hacer la petición
                     const customUrl = window.prompt("Edita la URL del endpoint antes de probar:", url);
-                    if (!customUrl) return;
-                    setEndpointUrl(customUrl);
-                    setEndpointResponse("Cargando...");
-                    setShowEndpointModal(true);
+                    if (!customUrl) return; // Si cancela, no hace nada
+
                     try {
                       const res = await fetch(customUrl, {
                         method: 'GET',
@@ -383,9 +379,19 @@ return (
                         throw new Error(`HTTP ${res.status}`);
                       }
                       const data = await res.json();
-                      setEndpointResponse(data);
+                      // Mostrar en nueva pestaña
+                      const win = window.open("", "_blank");
+                      win.document.write(`
+                        <div style="background:#23263a;color:#fff;padding:18px 24px;font-family:monospace">
+                          <div style="font-size:17px;font-weight:600;margin-bottom:12px;">
+                            <span style="color:#75baff">GET</span> <span style="color:#ffb300">${customUrl}</span>
+                          </div>
+                          <pre style="font-size:15px;line-height:1.4;background:#181c27;color:#fff;padding:24px;border-radius:8px">${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                      `);
+                      win.document.title = "Respuesta del Microservicio";
                     } catch (err) {
-                      setEndpointResponse("Error al conectar con el microservicio: " + err.message);
+                      alert("Error al conectar con el microservicio: " + err.message);
                     }
                   }}
 
@@ -395,23 +401,23 @@ return (
                                     Probar Endpoint
                                     </button>
                                   </td>
-                    <td style={{ display: 'flex', gap: 6 }}>
-                      <button
-                        className="action-btn"
-                        title="Ver código"
-                        onClick={async () => {
-                          setCodeToShow("Cargando...");
-                          setShowCodeModal(true);
-                          try {
-                            const res = await fetch(`http://127.0.0.1:5000/microservices/${microservice.id}/mainpy`);
-                            if (!res.ok) throw new Error("No se pudo obtener el código");
-                            const data = await res.json();
-                            setCodeToShow(data.code || "Sin código disponible");
-                          } catch (err) {
-                            setCodeToShow("Error al obtener el código: " + err.message);
-                          }
-                        }}
-                      >
+                <td style={{ display: 'flex', gap: 6 }}>
+                  <button
+                    className="action-btn"
+                    title="Ver código"
+                    onClick={async () => {
+                      setCodeToShow("Cargando...");
+                      setShowCodeModal(true);
+                      try {
+                        const res = await fetch(`http://127.0.0.1:5000/microservices/${microservice.id}/mainpy`);
+                        if (!res.ok) throw new Error("No se pudo obtener el código");
+                        const data = await res.json();
+                        setCodeToShow(data.code || "Sin código disponible");
+                      } catch (err) {
+                        setCodeToShow("Error al obtener el código: " + err.message);
+                      }
+                    }}
+                  >
                     <span role="img" aria-label="Ver código">👁️</span>
                   </button>
                   <button className="action-btn" title="Editar" onClick={() => setEditId(microservice.id)}>✏️</button>
@@ -457,53 +463,6 @@ return (
       
       </div>
 
-      {/* Modal para respuesta de endpoint */}
-      {showEndpointModal && (
-        <div className="modal-bg" style={{ zIndex: 201, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="modal" style={{ width: 600, maxWidth: '90vw', minWidth: 350, padding: 28 }}>
-            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <span role="img" aria-label="Respuesta">🔗</span> Respuesta del Endpoint
-            </h3>
-            <div style={{
-              marginBottom: 14,
-              fontSize: 15,
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              minWidth: 0,
-              flexWrap: 'wrap',
-              wordBreak: 'break-all',
-              overflowWrap: 'anywhere'
-            }}>
-              <span style={{ color: lightTheme ? '#1a73e8' : '#75baff', whiteSpace: 'nowrap' }}>GET</span>
-              <span style={{ color: lightTheme ? '#ffb300' : '#ffb300', wordBreak: 'break-all', overflowWrap: 'anywhere', minWidth: 0 }}>{endpointUrl}</span>
-            </div>
-            <pre style={{
-              background: lightTheme ? '#fff' : '#0d1117',
-              color: lightTheme ? '#1f2328' : '#e6edf3',
-              padding: 18,
-              borderRadius: 8,
-              fontSize: 15,
-              maxHeight: 400,
-              overflow: 'auto',
-              marginBottom: 18,
-              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace',
-              lineHeight: '1.45',
-              minHeight: '100%',
-              boxSizing: 'border-box',
-              width: '100%'
-            }}>{typeof endpointResponse === 'string' ? endpointResponse : JSON.stringify(endpointResponse, null, 2)}</pre>
-            <button
-              className="action-btn"
-              style={{ background: '#23263a', marginLeft: 'auto', display: 'block' }}
-              onClick={() => setShowEndpointModal(false)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
       {/* Modal para ver código */}
       {showCodeModal && (
         <div className="modal-bg" style={{ zIndex: 200 }}>

@@ -12,8 +12,7 @@ def main(data=None):
     """
     return {
         "status": "success",
-        "message": "Hola mundo desde el microservicio!",
-        "data": data
+        "message": "Hola mundo desde el microservicio!"
     }
 
 if __name__ == "__main__":

@@ -459,25 +459,24 @@ return (
 
       {/* Modal para respuesta de endpoint */}
       {showEndpointModal && (
-        <div className="modal-bg" style={{ zIndex: 201, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="modal" style={{ width: 600, maxWidth: '90vw', minWidth: 350, padding: 28 }}>
-            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+        <div className="modal-bg" style={{ zIndex: 201 }}>
+          <div className="modal" style={{ maxWidth: 700, minWidth: 350 }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span role="img" aria-label="Respuesta">🔗</span> Respuesta del Endpoint
             </h3>
             <div style={{
-              marginBottom: 14,
+              marginBottom: 10,
               fontSize: 15,
               fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
               gap: 8,
-              minWidth: 0,
               flexWrap: 'wrap',
-              wordBreak: 'break-all',
+              minWidth: 0,
               overflowWrap: 'anywhere'
             }}>
               <span style={{ color: lightTheme ? '#1a73e8' : '#75baff', whiteSpace: 'nowrap' }}>GET</span>
-              <span style={{ color: lightTheme ? '#ffb300' : '#ffb300', wordBreak: 'break-all', overflowWrap: 'anywhere', minWidth: 0 }}>{endpointUrl}</span>
+              <span style={{ color: lightTheme ? '#ffb300' : '#ffb300', overflowWrap: 'anywhere' }}>{endpointUrl}</span>
             </div>
             <pre style={{
               background: lightTheme ? '#fff' : '#0d1117',
@@ -490,9 +489,7 @@ return (
               marginBottom: 18,
               fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace',
               lineHeight: '1.45',
-              minHeight: '100%',
-              boxSizing: 'border-box',
-              width: '100%'
+              minHeight: '100%'
             }}>{typeof endpointResponse === 'string' ? endpointResponse : JSON.stringify(endpointResponse, null, 2)}</pre>
             <button
               className="action-btn"

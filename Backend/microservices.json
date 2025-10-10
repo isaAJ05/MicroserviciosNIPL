@@ -1,6 +1,6 @@
 [
   {
-    "id": "395ebd6effc2",
+    "id": "655e9a63b1b0",
     "name": "opalite_hola",
     "processing_type": "Data Processing",
     "endpoint": "opalite_hola",
@@ -8,7 +8,7 @@
     "folder_name": "opalite_hola_20251007222236",
     "port": "32769",
     "status": "Up Less than a second",
-    "code": "# Microservicio Hola Mundo\n\ndef main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\",\n        \"data\": data\n    }\n\nif __name__ == \"__main__\":\n    print(main())"
+    "code": "# Microservicio Hola Mundo\n\ndef main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\"\n    }\n\nif __name__ == \"__main__\":\n    print(main())"
   },
   {
     "id": "4e514c255c9c",
