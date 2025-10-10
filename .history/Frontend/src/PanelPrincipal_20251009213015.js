@@ -442,12 +442,7 @@ return (
                     cursor: 'pointer'
                   }}
                     onClick={async () => {
-                    const token = (localStorage.getItem('accessToken')).trim();
-                    const tokenContract = (localStorage.getItem('tokenContract')).trim();
-                    let url = `http://localhost:${microservice.port}/${microservice.endpoint}`;
-                    if (microservice.processing_type === "Roble") {
-                      url += `?tableName=inventario&token_contract=${encodeURIComponent(tokenContract)}`;
-                    }
+                      
                     setEditEndpointUrlValue(url);
                     setShowEditEndpointUrlModal(true);
                   }}
@@ -847,7 +842,7 @@ return (
                   </div>
                 </form>
               </div>
-            </div>  )}
+            </div>}
 
       {/* Footer */}
       <footer className="footer">

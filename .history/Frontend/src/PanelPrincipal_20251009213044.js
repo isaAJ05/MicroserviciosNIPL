@@ -847,7 +847,7 @@ return (
                   </div>
                 </form>
               </div>
-            </div>  )}
+            </div>}}
 
       {/* Footer */}
       <footer className="footer">

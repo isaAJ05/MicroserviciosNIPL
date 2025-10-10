@@ -48,9 +48,6 @@ function PanelPrincipal() {
   const [showRenewTokenModal, setShowRenewTokenModal] = useState(false);
   const [renewTokenPassword, setRenewTokenPassword] = useState("");
   const [renewTokenProjectId, setRenewTokenProjectId] = useState(localStorage.getItem('tokenContract') || "");
- // Estado para modal de edición de URL de endpoint
-  const [showEditEndpointUrlModal, setShowEditEndpointUrlModal] = useState(false);
-  const [editEndpointUrlValue, setEditEndpointUrlValue] = useState("");
 
   useEffect(() => {
     fetch('http://127.0.0.1:5000/microservices')
@@ -450,6 +447,72 @@ return (
                     }
                     setEditEndpointUrlValue(url);
                     setShowEditEndpointUrlModal(true);
+  // Estado para modal de edición de URL de endpoint
+  const [showEditEndpointUrlModal, setShowEditEndpointUrlModal] = useState(false);
+  const [editEndpointUrlValue, setEditEndpointUrlValue] = useState("");
+      {/* Modal para editar la URL del endpoint antes de probar */}
+      {showEditEndpointUrlModal && (
+        <div className="modal-bg" style={{
+          zIndex: 220,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: lightTheme ? 'rgba(255,255,255,0.65)' : 'rgba(30,34,45,0.45)',
+          backdropFilter: 'blur(2.5px)',
+          WebkitBackdropFilter: 'blur(2.5px)'
+        }}>
+          <div className="modal" style={{ width: 500, maxWidth: '90vw', minWidth: 280, padding: 28, textAlign: 'center' }}>
+            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 18 }}>
+              <span role="img" aria-label="Editar">✏️</span> Editar URL del Endpoint
+            </h3>
+            <form
+              onSubmit={async e => {
+                e.preventDefault();
+                const customUrl = editEndpointUrlValue.trim();
+                if (!customUrl) return;
+                setShowEditEndpointUrlModal(false);
+                setEndpointUrl(customUrl);
+                setEndpointResponse("Cargando...");
+                setShowEndpointModal(true);
+                try {
+                  const token = (localStorage.getItem('accessToken') || '').trim();
+                  const res = await fetch(customUrl, {
+                    method: 'GET',
+                    headers: {
+                      'Authorization': `Bearer ${token}`
+                    }
+                  });
+                  if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                  }
+                  const data = await res.json();
+                  setEndpointResponse(data);
+                } catch (err) {
+                  setEndpointResponse("Error al conectar con el microservicio: " + err.message);
+                }
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
+            >
+              <label style={{ fontWeight: 600, marginBottom: 6, textAlign: 'left' }}>URL del Endpoint</label>
+              <input
+                type="text"
+                value={editEndpointUrlValue}
+                onChange={e => setEditEndpointUrlValue(e.target.value)}
+                required
+                style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc' }}
+              />
+              <div style={{ display: 'flex', gap: 10, marginTop: 8, justifyContent: 'center' }}>
+                <button type="submit" className="action-btn">
+                  Probar Endpoint
+                </button>
+                <button type="button" className="action-btn" style={{ background: '#23263a' }} onClick={() => setShowEditEndpointUrlModal(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
                   }}
 
                                     onMouseOver={e => (e.currentTarget.style.background = '#1761c7')}
@@ -786,68 +849,7 @@ return (
         </div>
       </div>
     )}
-{/* Modal para editar la URL del endpoint antes de probar */}
-          {showEditEndpointUrlModal && (
-            <div className="modal-bg" style={{
-              zIndex: 220,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: lightTheme ? 'rgba(255,255,255,0.65)' : 'rgba(30,34,45,0.45)',
-              backdropFilter: 'blur(2.5px)',
-              WebkitBackdropFilter: 'blur(2.5px)'
-            }}>
-              <div className="modal" style={{ width: 500, maxWidth: '90vw', minWidth: 280, padding: 28, textAlign: 'center' }}>
-                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 18 }}>
-                  <span role="img" aria-label="Editar">✏️</span> Editar URL del Endpoint
-                </h3>
-                <form
-                  onSubmit={async e => {
-                    e.preventDefault();
-                    const customUrl = editEndpointUrlValue.trim();
-                    if (!customUrl) return;
-                    setShowEditEndpointUrlModal(false);
-                    setEndpointUrl(customUrl);
-                    setEndpointResponse("Cargando...");
-                    setShowEndpointModal(true);
-                    try {
-                      const token = (localStorage.getItem('accessToken') || '').trim();
-                      const res = await fetch(customUrl, {
-                        method: 'GET',
-                        headers: {
-                          'Authorization': `Bearer ${token}`
-                        }
-                      });
-                      if (!res.ok) {
-                        throw new Error(`HTTP ${res.status}`);
-                      }
-                      const data = await res.json();
-                      setEndpointResponse(data);
-                    } catch (err) {
-                      setEndpointResponse("Error al conectar con el microservicio: " + err.message);
-                    }
-                  }}
-                  style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
-                >
-                  <label style={{ fontWeight: 600, marginBottom: 6, textAlign: 'left' }}>URL del Endpoint</label>
-                  <input
-                    type="text"
-                    value={editEndpointUrlValue}
-                    onChange={e => setEditEndpointUrlValue(e.target.value)}
-                    required
-                    style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc' }}
-                  />
-                  <div style={{ display: 'flex', gap: 10, marginTop: 8, justifyContent: 'center' }}>
-                    <button type="submit" className="action-btn">
-                      Probar Endpoint
-                    </button>
-                    <button type="button" className="action-btn" style={{ background: '#23263a' }} onClick={() => setShowEditEndpointUrlModal(false)}>
-                      Cancelar
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>  )}
+
 
       {/* Footer */}
       <footer className="footer">
