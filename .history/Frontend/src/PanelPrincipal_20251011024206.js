@@ -293,16 +293,94 @@ function PanelPrincipal() {
                     transition: 'background 0.2s',
                     marginBottom: 8
                   }}
-                  onClick={async () => {
-                    try {
+                  onClick={() => try {
                       const email = (user && (user.username || user.name || user.email) || '').trim().toLowerCase();
-                      const pass = localStorage.getItem("userPassword") || ''; // Obtener la contraseña guardada
-                      const token = localStorage.getItem("tokenContract") || '';
-                      const res = await fetch("http://127.0.0.1:5000/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          email,
+                      const pass = renewTokenPassword.trim();
+                      const token = renewTokenProjectId.trim();
+                      // Opcional: podrías agregar un estado de error y loading
+                      try {
+                        const res = await fetch("http://127.0.0.1:5000/login", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            email,
+                            password: pass,
+                            token_contract: token,
+                          }),
+                        });
+                        const data = await res.json();
+                        if (res.ok && data.accessToken) {
+                          localStorage.setItem("accessToken", data.accessToken);
+                          localStorage.setItem("tokenContract", token);
+                          setShowRenewTokenModal(false);
+                          setRenewTokenPassword("");
+                          setRenewTokenProjectId(token);
+                          // Feedback visual: toast de renovación
+                          setShowRenewTokenToast(true);
+                          setTimeout(() => setShowRenewTokenToast(false), 2000);
+                        } else {
+                          alert(data.error || "No se pudo renovar el token");
+                        }
+                      } catch (err) {
+                        alert("No se pudo conectar con el backend");
+                      }
+                    }}
+                  >
+                    Renovar token
+                  </button>
+                  <button
+                    style={{
+                      background: '#9b0018',
+                      color: '#fff',
+                      border: 'none',
+                      borderRadius: 6,
+                      padding: '8px 0',
+                      fontWeight: 600,
+                      fontSize: 15,
+                      cursor: 'pointer',
+                      transition: 'background 0.2s'
+                    }}
+                    onClick={() => {
+                      setIsLoggedIn(false);
+                      setUserPanelFade(true);
+                      setTimeout(() => {
+                        setShowUserPanel(false);
+                        setUserPanelFade(false);
+                        setUser(null);
+                        localStorage.removeItem("user");
+                      }, 350);
+                    }}
+                    onMouseOver={e => (e.currentTarget.style.background = '#680010')}
+                    onMouseOut={e => (e.currentTarget.style.background = '#9b0018')}
+                  >
+
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
+            </nav>
+            <aside
+              ref={sidebarRef}
+              className={`side-menu${isHistoryOpen ? " open" : ""}`}
+            >
+              <div className="sidebar-controls">
+                <button
+                  onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+                  title={isHistoryOpen ? "Cerrar" : "Abrir"}
+                >
+                  ❌
+                </button>
+              </div>
+
+              {isHistoryOpen && (
+                <ul className="sidebar-list">
+                  <li>
+                    <span role="img" aria-label="info" style={{ fontSize: 22 }}>🛈</span> Información
+                  </li>
+                </ul>
+              )}
+            </aside>
+
                           password: pass,
                           token_contract: token,
                         }),
@@ -310,6 +388,11 @@ function PanelPrincipal() {
                       const data = await res.json();
                       if (res.ok && data.accessToken) {
                         localStorage.setItem("accessToken", data.accessToken);
+                        localStorage.setItem("tokenContract", token);
+                        setShowRenewTokenModal(false);
+                        setRenewTokenPassword("");
+                        setRenewTokenProjectId(token);
+                        // Feedback visual: toast de renovación
                         setShowRenewTokenToast(true);
                         setTimeout(() => setShowRenewTokenToast(false), 2000);
                       } else {
@@ -839,11 +922,10 @@ function PanelPrincipal() {
                           'Token-Contract': tokenContract
                         }
                       });
-                      
-                      const data = await res.json();
                       if (!res.ok) {
-                        throw new Error(data.message || `HTTP ${res.status}`);
+                        throw new Error(`HTTP ${res.status}`);
                       }
+                      const data = await res.json();
                       setEndpointResponse(data);
                     } catch (err) {
                       setEndpointResponse("Error al conectar con el microservicio: " + err.message);

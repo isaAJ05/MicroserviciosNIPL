@@ -105,17 +105,22 @@ CMD ["python", "main.py"]
 
     return microservice
 def generar_codigo_flask(codigo_usuario, endpoint):
-    match = re.search(r'def\s+(\w+)\s*\(', codigo_usuario)
-    nombre_funcion = match.group(1) if match else "main"
+    # Indentar el código del usuario para que quede dentro de la función main
+    def indent_code(code, spaces=4):
+        indent = ' ' * spaces
+        return '\n'.join(indent + line if line.strip() else '' for line in code.splitlines())
 
+    codigo_usuario_indentado = indent_code(codigo_usuario)
     return f'''
 from flask import Flask, request, jsonify
-from flask_cors import CORS
 import requests
-app = Flask(__name__)
+from flask_cors import CORS
 
+app = Flask(__name__)
 CORS(app)
-{codigo_usuario}
+
+def main(data=None):
+{codigo_usuario_indentado}
 
 @app.route('/{endpoint}', methods=['GET', 'POST'])
 def process():
@@ -127,7 +132,7 @@ def process():
     if not token:
         return jsonify({{"status": "error", "message": "Token vacío"}}), 401
 
-    token_contract = request.headers.get('Token-Contract') or request.args.get('token_contract')
+    token_contract = request.headers.get('token_contract') or request.args.get('token_contract')
     if not token_contract:
         return jsonify({{"status": "error", "message": "Token contract no recibido"}}), 400
 
@@ -137,12 +142,8 @@ def process():
         headers={{"Authorization": f"Bearer {{token}}"}}
     )
     verificacion = res.json()
-    if res.status_code == 401:
-        return jsonify({{"status": "error", "message": "Token inválido o expirado"}}), 401
-    elif res.status_code == 403:
-        return jsonify({{"status": "error", "message": "Acceso denegado"}}), 403
-    elif res.status_code != 200 or not verificacion.get("valid", True):
-        return jsonify({{"status": "error", "message": f"Error de autenticación Roble: {{res.status_code}}"}}), res.status_code
+    if res.status_code != 200 or not verificacion.get("valid", True):
+        return jsonify({{"status": "error", "message": "Token inválido"}}), 401
 
     # Construir el diccionario data para pasar a main
     if request.method == 'POST':
@@ -154,7 +155,7 @@ def process():
 
     # Ejecutar la función principal del usuario
     try:
-        resultado = {nombre_funcion}(data)
+        resultado = main(data)
         return jsonify(resultado)
     except Exception as e:
         return jsonify({{"status": "error", "message": str(e)}}), 500

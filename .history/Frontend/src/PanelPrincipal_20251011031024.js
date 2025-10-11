@@ -839,11 +839,10 @@ function PanelPrincipal() {
                           'Token-Contract': tokenContract
                         }
                       });
-                      
-                      const data = await res.json();
                       if (!res.ok) {
                         throw new Error(data.message || `HTTP ${res.status}`);
                       }
+                      const data = await res.json();
                       setEndpointResponse(data);
                     } catch (err) {
                       setEndpointResponse("Error al conectar con el microservicio: " + err.message);

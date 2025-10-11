@@ -310,6 +310,7 @@ function PanelPrincipal() {
                       const data = await res.json();
                       if (res.ok && data.accessToken) {
                         localStorage.setItem("accessToken", data.accessToken);
+                        
                         setShowRenewTokenToast(true);
                         setTimeout(() => setShowRenewTokenToast(false), 2000);
                       } else {
@@ -839,11 +840,10 @@ function PanelPrincipal() {
                           'Token-Contract': tokenContract
                         }
                       });
-                      
-                      const data = await res.json();
                       if (!res.ok) {
-                        throw new Error(data.message || `HTTP ${res.status}`);
+                        throw new Error(`HTTP ${res.status}`);
                       }
+                      const data = await res.json();
                       setEndpointResponse(data);
                     } catch (err) {
                       setEndpointResponse("Error al conectar con el microservicio: " + err.message);

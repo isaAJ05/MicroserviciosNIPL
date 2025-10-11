@@ -145,9 +145,8 @@ def main(data=None):
 `,
 
   "consulta_roble": `# Microservicio Consulta Tabla Roble
-# El nombre de la tabla se pasa en la URL (?tableName=mi_tabla)
-# Puedes agregar más parámetros de filtro si lo desea (?columna=valor)
-# El token de acceso y el token_contract se envían por header.
+# El nombre de la tabla se pasa en la URL, adicionalmente se pue (?tableName=mi_tabla&)
+# El token de acceso y el token_contract pueden venir por header o parámetro.
 
 def main(data=None):
     """
@@ -172,13 +171,13 @@ def main(data=None):
     # El nombre de la tabla viene en los parámetros (?tableName=...)
     table_name = request.args.get("tableName") or (data or {}).get("tableName", "inventario")
 
-    # Para agregar parámetros de filtro (?columna=valor)
+    # Puedes agregar más parámetros de filtro si lo deseas (?columna=valor)
     params = {"tableName": table_name}
     for k, v in (data or {}).items():
-        if k not in ["token_contract", "tableName", "roble_token"]:  
+        if k not in ["token_contract", "tableName"]:
             params[k] = v
     for k, v in request.args.items():
-        if k not in ["token_contract", "tableName", "roble_token"]:  
+        if k not in ["token_contract", "tableName"]:
             params[k] = v
 
     # Consulta la tabla en Roble
@@ -518,17 +517,6 @@ def main(data=None):
                   fontSize: 11
                 }}>
                   Selecciona un ejemplo para cargar una plantilla de código en el editor.
-                <div style={{
-                  marginTop: 8,
-                  color: lightTheme ? '#b59b00' : '#ffe066',
-                  background: lightTheme ? '#fffbe6' : '#3a3a1c',
-                  borderRadius: 4,
-                  padding: '7px 10px',
-                  fontWeight: 500,
-                  fontSize: 12
-                }}>
-                  Nota: Todos los microservicios generados validan el token de Roble automáticamente. Si el token es inválido, expirado o falta, la petición será rechazada con el mensaje y código HTTP correspondiente.
-                </div>
                 </div>
               </div>
               {/* Mensajes de estado */}

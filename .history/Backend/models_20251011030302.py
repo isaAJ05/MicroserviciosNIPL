@@ -140,7 +140,7 @@ def process():
     if res.status_code == 401:
         return jsonify({{"status": "error", "message": "Token inválido o expirado"}}), 401
     elif res.status_code == 403:
-        return jsonify({{"status": "error", "message": "Acceso denegado"}}), 403
+        return jsonify({"status": "error", "message": "Acceso denegado"}), 403
     elif res.status_code != 200 or not verificacion.get("valid", True):
         return jsonify({{"status": "error", "message": f"Error de autenticación Roble: {{res.status_code}}"}}), res.status_code
 

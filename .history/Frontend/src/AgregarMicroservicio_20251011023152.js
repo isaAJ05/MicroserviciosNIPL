@@ -173,13 +173,13 @@ def main(data=None):
     table_name = request.args.get("tableName") or (data or {}).get("tableName", "inventario")
 
     # Para agregar parámetros de filtro (?columna=valor)
-    params = {"tableName": table_name}
-    for k, v in (data or {}).items():
-        if k not in ["token_contract", "tableName", "roble_token"]:  
-            params[k] = v
-    for k, v in request.args.items():
-        if k not in ["token_contract", "tableName", "roble_token"]:  
-            params[k] = v
+params = {"tableName": table_name}
+for k, v in (data or {}).items():
+    if k not in ["token_contract", "tableName", "roble_token"]:  # <--- agrega "roble_token" aquí
+        params[k] = v
+for k, v in request.args.items():
+    if k not in ["token_contract", "tableName", "roble_token"]:  # <--- y aquí también
+        params[k] = v
 
     # Consulta la tabla en Roble
     res = requests.get(
@@ -518,17 +518,6 @@ def main(data=None):
                   fontSize: 11
                 }}>
                   Selecciona un ejemplo para cargar una plantilla de código en el editor.
-                <div style={{
-                  marginTop: 8,
-                  color: lightTheme ? '#b59b00' : '#ffe066',
-                  background: lightTheme ? '#fffbe6' : '#3a3a1c',
-                  borderRadius: 4,
-                  padding: '7px 10px',
-                  fontWeight: 500,
-                  fontSize: 12
-                }}>
-                  Nota: Todos los microservicios generados validan el token de Roble automáticamente. Si el token es inválido, expirado o falta, la petición será rechazada con el mensaje y código HTTP correspondiente.
-                </div>
                 </div>
               </div>
               {/* Mensajes de estado */}

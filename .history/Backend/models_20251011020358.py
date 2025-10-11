@@ -127,7 +127,7 @@ def process():
     if not token:
         return jsonify({{"status": "error", "message": "Token vacío"}}), 401
 
-    token_contract = request.headers.get('Token-Contract') or request.args.get('token_contract')
+    token_contract = request.headers.get('token_contract') or request.args.get('token_contract')
     if not token_contract:
         return jsonify({{"status": "error", "message": "Token contract no recibido"}}), 400
 
@@ -137,12 +137,8 @@ def process():
         headers={{"Authorization": f"Bearer {{token}}"}}
     )
     verificacion = res.json()
-    if res.status_code == 401:
-        return jsonify({{"status": "error", "message": "Token inválido o expirado"}}), 401
-    elif res.status_code == 403:
-        return jsonify({{"status": "error", "message": "Acceso denegado"}}), 403
-    elif res.status_code != 200 or not verificacion.get("valid", True):
-        return jsonify({{"status": "error", "message": f"Error de autenticación Roble: {{res.status_code}}"}}), res.status_code
+    if res.status_code != 200 or not verificacion.get("valid", True):
+        return jsonify({{"status": "error", "message": "Token inválido"}}), 401
 
     # Construir el diccionario data para pasar a main
     if request.method == 'POST':

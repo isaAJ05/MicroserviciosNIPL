@@ -841,9 +841,6 @@ function PanelPrincipal() {
                       });
                       
                       const data = await res.json();
-                      if (!res.ok) {
-                        throw new Error(data.message || `HTTP ${res.status}`);
-                      }
                       setEndpointResponse(data);
                     } catch (err) {
                       setEndpointResponse("Error al conectar con el microservicio: " + err.message);

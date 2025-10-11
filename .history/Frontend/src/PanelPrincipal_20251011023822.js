@@ -293,32 +293,7 @@ function PanelPrincipal() {
                     transition: 'background 0.2s',
                     marginBottom: 8
                   }}
-                  onClick={async () => {
-                    try {
-                      const email = (user && (user.username || user.name || user.email) || '').trim().toLowerCase();
-                      const pass = localStorage.getItem("userPassword") || ''; // Obtener la contraseña guardada
-                      const token = localStorage.getItem("tokenContract") || '';
-                      const res = await fetch("http://127.0.0.1:5000/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          email,
-                          password: pass,
-                          token_contract: token,
-                        }),
-                      });
-                      const data = await res.json();
-                      if (res.ok && data.accessToken) {
-                        localStorage.setItem("accessToken", data.accessToken);
-                        setShowRenewTokenToast(true);
-                        setTimeout(() => setShowRenewTokenToast(false), 2000);
-                      } else {
-                        alert(data.error || "No se pudo renovar el token");
-                      }
-                    } catch (err) {
-                      alert("No se pudo conectar con el backend");
-                    }
-                  }}
+                  onClick={() => setShowRenewTokenModal(true)}
                   onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
                   onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
                 >
@@ -839,11 +814,10 @@ function PanelPrincipal() {
                           'Token-Contract': tokenContract
                         }
                       });
-                      
-                      const data = await res.json();
                       if (!res.ok) {
-                        throw new Error(data.message || `HTTP ${res.status}`);
+                        throw new Error(`HTTP ${res.status}`);
                       }
+                      const data = await res.json();
                       setEndpointResponse(data);
                     } catch (err) {
                       setEndpointResponse("Error al conectar con el microservicio: " + err.message);

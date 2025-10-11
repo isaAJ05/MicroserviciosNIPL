@@ -520,11 +520,8 @@ def main(data=None):
                   Selecciona un ejemplo para cargar una plantilla de código en el editor.
                 <div style={{
                   marginTop: 8,
-                  color: lightTheme ? '#b59b00' : '#ffe066',
-                  background: lightTheme ? '#fffbe6' : '#3a3a1c',
-                  borderRadius: 4,
-                  padding: '7px 10px',
-                  fontWeight: 500,
+                  color: lightTheme ? '#b91c1c' : '#ff9696',
+                  fontWeight: 600,
                   fontSize: 12
                 }}>
                   Nota: Todos los microservicios generados validan el token de Roble automáticamente. Si el token es inválido, expirado o falta, la petición será rechazada con el mensaje y código HTTP correspondiente.

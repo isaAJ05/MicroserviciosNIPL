@@ -293,11 +293,11 @@ function PanelPrincipal() {
                     transition: 'background 0.2s',
                     marginBottom: 8
                   }}
-                  onClick={async () => {
+                  onClick={() => const email = (user && (user.username || user.name || user.email) || '').trim().toLowerCase();
+                    const pass = renewTokenPassword.trim();
+                    const token = renewTokenProjectId.trim();
+                    // Opcional: podrías agregar un estado de error y loading
                     try {
-                      const email = (user && (user.username || user.name || user.email) || '').trim().toLowerCase();
-                      const pass = localStorage.getItem("userPassword") || ''; // Obtener la contraseña guardada
-                      const token = localStorage.getItem("tokenContract") || '';
                       const res = await fetch("http://127.0.0.1:5000/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -310,6 +310,11 @@ function PanelPrincipal() {
                       const data = await res.json();
                       if (res.ok && data.accessToken) {
                         localStorage.setItem("accessToken", data.accessToken);
+                        localStorage.setItem("tokenContract", token);
+                        setShowRenewTokenModal(false);
+                        setRenewTokenPassword("");
+                        setRenewTokenProjectId(token);
+                        // Feedback visual: toast de renovación
                         setShowRenewTokenToast(true);
                         setTimeout(() => setShowRenewTokenToast(false), 2000);
                       } else {
@@ -839,11 +844,10 @@ function PanelPrincipal() {
                           'Token-Contract': tokenContract
                         }
                       });
-                      
-                      const data = await res.json();
                       if (!res.ok) {
-                        throw new Error(data.message || `HTTP ${res.status}`);
+                        throw new Error(`HTTP ${res.status}`);
                       }
+                      const data = await res.json();
                       setEndpointResponse(data);
                     } catch (err) {
                       setEndpointResponse("Error al conectar con el microservicio: " + err.message);

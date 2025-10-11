@@ -44,6 +44,10 @@ function PanelPrincipal() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   // Para toast de éxito (renovación de token)
   const [showRenewTokenToast, setShowRenewTokenToast] = useState(false);
+  // Estado para modal de renovar token
+  const [showRenewTokenModal, setShowRenewTokenModal] = useState(false);
+  const [renewTokenPassword, setRenewTokenPassword] = useState("");
+  const [renewTokenProjectId, setRenewTokenProjectId] = useState(localStorage.getItem('tokenContract') || "");
   // Estado para modal de edición de URL de endpoint
   const [showEditEndpointUrlModal, setShowEditEndpointUrlModal] = useState(false);
   const [editEndpointUrlValue, setEditEndpointUrlValue] = useState("");
@@ -293,32 +297,7 @@ function PanelPrincipal() {
                     transition: 'background 0.2s',
                     marginBottom: 8
                   }}
-                  onClick={async () => {
-                    try {
-                      const email = (user && (user.username || user.name || user.email) || '').trim().toLowerCase();
-                      const pass = localStorage.getItem("userPassword") || ''; // Obtener la contraseña guardada
-                      const token = localStorage.getItem("tokenContract") || '';
-                      const res = await fetch("http://127.0.0.1:5000/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          email,
-                          password: pass,
-                          token_contract: token,
-                        }),
-                      });
-                      const data = await res.json();
-                      if (res.ok && data.accessToken) {
-                        localStorage.setItem("accessToken", data.accessToken);
-                        setShowRenewTokenToast(true);
-                        setTimeout(() => setShowRenewTokenToast(false), 2000);
-                      } else {
-                        alert(data.error || "No se pudo renovar el token");
-                      }
-                    } catch (err) {
-                      alert("No se pudo conectar con el backend");
-                    }
-                  }}
+                  onClick={() => setShowRenewTokenModal(true)}
                   onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
                   onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
                 >
@@ -498,10 +477,12 @@ function PanelPrincipal() {
                             const tokenContract = (localStorage.getItem('tokenContract')).trim();
                             let url = `http://localhost:${microservice.port}/${microservice.endpoint}`;
                             if (microservice.processing_type === "Suma") {
-                              url += `?a=5&b=3`;
+                              url = `http://localhost:${microservice.port}/${microservice.endpoint}?a=5&b=3`;
+                            } else {
+                              
                             }
                             if (microservice.processing_type === "Consulta Roble") {
-                              url += `?tableName=inventario`;
+                              url += `?tableName=inventario&token_contract=${encodeURIComponent(tokenContract)}`;
                             }
                             setEditEndpointUrlValue(url);
                             setShowEditEndpointUrlModal(true);
@@ -804,7 +785,100 @@ function PanelPrincipal() {
               </div>
             </div>
           )}
-          
+          {/* Modal para renovar token */}
+          {showRenewTokenModal && (
+            <div className="modal-bg" style={{
+              zIndex: 210,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: lightTheme ? 'rgba(255,255,255,0.65)' : 'rgba(30,34,45,0.45)',
+              backdropFilter: 'blur(2.5px)',
+              WebkitBackdropFilter: 'blur(2.5px)'
+            }}>
+              <div className="modal" style={{ width: 400, maxWidth: '90vw', minWidth: 280, padding: 28, textAlign: 'center' }}>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center', marginBottom: 18 }}>
+                  <span role="img" aria-label="Renovar">🔑</span> Renovar Token
+                </h3>
+                <form
+                  onSubmit={async e => {
+                    e.preventDefault();
+                    const email = (user && (user.username || user.name || user.email) || '').trim().toLowerCase();
+                    const pass = renewTokenPassword.trim();
+                    const token = renewTokenProjectId.trim();
+                    // Opcional: podrías agregar un estado de error y loading
+                    try {
+                      const res = await fetch("http://127.0.0.1:5000/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          email,
+                          password: pass,
+                          token_contract: token,
+                        }),
+                      });
+                      const data = await res.json();
+                      if (res.ok && data.accessToken) {
+                        localStorage.setItem("accessToken", data.accessToken);
+                        localStorage.setItem("tokenContract", token);
+                        setShowRenewTokenModal(false);
+                        setRenewTokenPassword("");
+                        setRenewTokenProjectId(token);
+                        // Feedback visual: toast de renovación
+                        setShowRenewTokenToast(true);
+                        setTimeout(() => setShowRenewTokenToast(false), 2000);
+                      } else {
+                        alert(data.error || "No se pudo renovar el token");
+                      }
+                    } catch (err) {
+                      alert("No se pudo conectar con el backend");
+                    }
+                  }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: 14 }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+                    <label style={{ fontWeight: 600 }}>Usuario</label>
+                    <input
+                      type="text"
+                      value={user ? (user.username || user.name || user.email) : ''}
+                      disabled
+                      style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+                    <label style={{ fontWeight: 600 }}>ID del Proyecto</label>
+                    <input
+                      type="text"
+                      value={renewTokenProjectId}
+                      onChange={e => setRenewTokenProjectId(e.target.value)}
+                      required
+                      style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
+                    <label style={{ fontWeight: 600 }}>Contraseña</label>
+                    <input
+                      type="password"
+                      value={renewTokenPassword}
+                      onChange={e => setRenewTokenPassword(e.target.value)}
+                      required
+                      style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc'}}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', gap: 10, marginTop: 8, justifyContent: 'center' }}>
+                    <button type="submit" className="action-btn">
+                      Renovar
+                    </button>
+                    <button type="button" className="action-btn" style={{ background: '#323232' }} onClick={() => { setShowRenewTokenModal(false); setRenewTokenPassword(""); setRenewTokenProjectId(localStorage.getItem('tokenContract') || ""); }}
+                      onMouseOver={e => (e.currentTarget.style.background = '#323232')}
+                      onMouseOut={e => (e.currentTarget.style.background = '#1c1c1c')}>
+                      Cancelar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
           {/* Modal para editar la URL del endpoint antes de probar */}
           {showEditEndpointUrlModal && (
             <div className="modal-bg" style={{
@@ -831,19 +905,16 @@ function PanelPrincipal() {
                     setShowEndpointModal(true);
                     try {
                       const token = (localStorage.getItem('accessToken') || '').trim();
-                      const tokenContract = (localStorage.getItem('tokenContract') || '').trim();
                       const res = await fetch(customUrl, {
                         method: 'GET',
                         headers: {
-                          'Authorization': `Bearer ${token}`,
-                          'Token-Contract': tokenContract
+                          'Authorization': `Bearer ${token}`
                         }
                       });
-                      
-                      const data = await res.json();
                       if (!res.ok) {
-                        throw new Error(data.message || `HTTP ${res.status}`);
+                        throw new Error(`HTTP ${res.status}`);
                       }
+                      const data = await res.json();
                       setEndpointResponse(data);
                     } catch (err) {
                       setEndpointResponse("Error al conectar con el microservicio: " + err.message);

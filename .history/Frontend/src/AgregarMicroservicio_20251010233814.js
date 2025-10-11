@@ -107,15 +107,16 @@ function PythonEditor({ code, setCode, lightTheme }) {
   );
 }
 const ejemplosCodigo = {
-"hola_mundo": `def main(data=None):
+  "hola_mundo": `# Microservicio Hola Mundo
+
+def main(data=None):
     """
     Devuelve un saludo simple.
     """
     return {
         "status": "success",
         "message": "Hola mundo desde el microservicio!"
-    }
-`,
+    }`,
 
   "suma": `# Microservicio Suma
 # Los parámetros 'a' y 'b' se pasan en la URL como /?a=5&b=3
@@ -141,60 +142,49 @@ def main(data=None):
     return {
       "status": "error",
       "message": f"Error: {str(e)}"
-    }
-`,
+    }`,
 
-  "consulta_roble": `# Microservicio Consulta Tabla Roble
-# El nombre de la tabla se pasa en la URL (?tableName=mi_tabla)
-# Puedes agregar más parámetros de filtro si lo desea (?columna=valor)
-# El token de acceso y el token_contract se envían por header.
-
+  "consulta_roble": `# Microservicio Consulta Tabla Roble (usa token recibido por header y token_contract por parámetro)
 def main(data=None):
     """
-    Consulta una tabla en Roble usando el token recibido por header y el token_contract recibido por header o parámetro.
+    Consulta una tabla en Roble usando el token recibido por header y el token_contract recibido por parámetro.
     """
     import requests
-    from flask import request
+    try:
+        # El token de Roble viene en data['roble_token']
+        token = data.get("roble_token")
+        if not token:
+            return {"status": "error", "message": "Token de autenticación no recibido"}
 
-    # Obtener el token de acceso desde el header Authorization
-    auth_header = request.headers.get('Authorization', '')
-    if not auth_header.startswith('Bearer '):
-        return {"status": "error", "message": "Token de autenticación requerido"}
-    token = auth_header.replace('Bearer ', '').strip()
-    if not token:
-        return {"status": "error", "message": "Token vacío"}
+        # El token_contract viene en los parámetros
+        token_contract = data.get("token_contract")
+        if not token_contract:
+            return {"status": "error", "message": "Token contract no recibido"}
 
-    # Obtener el token_contract desde el header o parámetro
-    token_contract = request.headers.get('Token-Contract') or request.args.get('token_contract') or (data or {}).get("token_contract")
-    if not token_contract:
-        return {"status": "error", "message": "Token contract no recibido"}
+        table_name = data.get("tableName", "inventario")
 
-    # El nombre de la tabla viene en los parámetros (?tableName=...)
-    table_name = request.args.get("tableName") or (data or {}).get("tableName", "inventario")
+        # Puedes agregar más parámetros de filtro si lo deseas
+        params = {"tableName": table_name}
+        for k, v in (data or {}).items():
+            if k not in ["roble_token", "token_contract", "tableName"]:
+                params[k] = v
 
-    # Para agregar parámetros de filtro (?columna=valor)
-    params = {"tableName": table_name}
-    for k, v in (data or {}).items():
-        if k not in ["token_contract", "tableName", "roble_token"]:  
-            params[k] = v
-    for k, v in request.args.items():
-        if k not in ["token_contract", "tableName", "roble_token"]:  
-            params[k] = v
-
-    # Consulta la tabla en Roble
-    res = requests.get(
-        f"https://roble-api.openlab.uninorte.edu.co/database/{token_contract}/read",
-        headers={"Authorization": f"Bearer {token}"},
-        params=params
-    )
-    if res.status_code == 200:
-        return {"status": "success", "roble_data": res.json()}
-    elif res.status_code == 401:
-        return {"status": "error", "message": "Token inválido o expirado", "code": 401}
-    elif res.status_code == 403:
-        return {"status": "error", "message": "Acceso denegado", "code": 403}
-    else:
-        return {"status": "error", "message": f"Roble error: {res.status_code}", "details": res.text}
+        # Consulta la tabla en Roble
+        res = requests.get(
+            f"https://roble-api.openlab.uninorte.edu.co/database/{token_contract}/read",
+            headers={"Authorization": f"Bearer {token}"},
+            params=params
+        )
+        if res.status_code == 200:
+            return {"status": "success", "roble_data": res.json()}
+        elif res.status_code == 401:
+            return {"status": "error", "message": "Token inválido o expirado", "code": 401}
+        elif res.status_code == 403:
+            return {"status": "error", "message": "Acceso denegado", "code": 403}
+        else:
+            return {"status": "error", "message": f"Roble error: {res.status_code}", "details": res.text}
+    except Exception as e:
+        return {"status": "error", "message": f"Error: {str(e)}"}
 `
 };
 function AgregarMicroservicio({ onBack, lightTheme }) {
@@ -463,7 +453,7 @@ def main(data=None):
                   onChange={e => setMicroservice(prev => ({
                     ...prev,
                     processing_type: e.target.value,
-                    use_roble_auth: e.target.value === "Consulta Roble" // Si selecciona Consulta Roble, activa el flag
+                    use_roble_auth: e.target.value === "Roble" // Si selecciona Roble, activa el flag
                   }))}
                   style={{
                     width: '100%',
@@ -479,8 +469,16 @@ def main(data=None):
                   <option value="">Seleccionar tipo</option>
                   <option value="Hola Mundo">Hola Mundo</option>
                   <option value="Suma">Suma</option>
-                  <option value="Consulta Roble">Consulta Roble</option>
+                  <option value="Roble">Roble</option>
+                  <option value="Otro">Otro</option>
                 </select>
+                <div style={{
+                  marginTop: 4,
+                  color: lightTheme ? '#656d76' : '#8b949e',
+                  fontSize: 11
+                }}>
+                  Selecciona "Roble" si tu microservicio consulta o modifica datos en Roble.
+                </div>
               </div>
 
               {/* Selector de ejemplo de código */}
@@ -518,17 +516,6 @@ def main(data=None):
                   fontSize: 11
                 }}>
                   Selecciona un ejemplo para cargar una plantilla de código en el editor.
-                <div style={{
-                  marginTop: 8,
-                  color: lightTheme ? '#b59b00' : '#ffe066',
-                  background: lightTheme ? '#fffbe6' : '#3a3a1c',
-                  borderRadius: 4,
-                  padding: '7px 10px',
-                  fontWeight: 500,
-                  fontSize: 12
-                }}>
-                  Nota: Todos los microservicios generados validan el token de Roble automáticamente. Si el token es inválido, expirado o falta, la petición será rechazada con el mensaje y código HTTP correspondiente.
-                </div>
                 </div>
               </div>
               {/* Mensajes de estado */}
