@@ -149,7 +149,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
           // Intentar obtener el main.py completo si existe endpoint para ello
           let fullCode = ms.code;
           try {
-            const res = await fetch(`http://127.0.0.1:5000/microservices/${ms.id}/mainpy`);
+            const res = await fetch(`http://127.0.0.1:5000/microservices/${id}/main`);
             if (res.ok) {
               const data = await res.json();
               if (data.code) fullCode = data.code;
