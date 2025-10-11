@@ -167,11 +167,6 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // Validar que los campos requeridos no estén vacíos
-    if (!form.name.trim() || !form.endpoint.trim() || !form.port.toString().trim() || !form.code.trim()) {
-      setError("Todos los campos de configuración y el código son obligatorios");
-      return;
-    }
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -277,11 +272,11 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
               fontSize: 15,
               color: lightTheme ? '#1f2328' : '#fff'
             }}>
-              Editar Configuración
+              Configuración
             </span>
           </div>
 
-          <div style={{ flex: 1, overflow: 'hidden',padding: 6  }}>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: 16 }}>
                 <label style={{
@@ -364,7 +359,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                       onChange={handleChange}
                       placeholder="Ej: 32779"
                       style={{
-                        width: '95%',
+                        width: '100%',
                         padding: '7px 10px',
                         border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                         borderRadius: 4,
@@ -384,7 +379,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                   onChange={handleChange}
                   placeholder="Endpoint"
                   style={{
-                    width: '95%',
+                    width: '100%',
                     padding: '7px 10px',
                     border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4,

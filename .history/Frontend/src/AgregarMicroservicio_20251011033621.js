@@ -419,7 +419,7 @@ def main(data=None):
                 <label style={{
                   display: 'block',
                   marginBottom: 6, // Reducido
-                  fontWeight: 500,
+                  padding: 6,fontWeight: 500,
                   fontSize: 13, // Reducido
                   color: lightTheme ? '#656d76' : '#8b949e'
                 }}>
@@ -434,7 +434,7 @@ def main(data=None):
                   }}
                   placeholder="mi_microservicio"
                   style={{
-                    width: '95%',
+                    width: '100%',
                     padding: '7px 10px', // Reducido
                     border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4, // Reducido

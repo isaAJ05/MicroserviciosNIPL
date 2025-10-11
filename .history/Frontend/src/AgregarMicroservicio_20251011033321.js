@@ -354,7 +354,7 @@ def main(data=None):
           width: '380px', // Aumentado de 340px a 380px
           background: lightTheme ? '#fff' : '#131313',
           borderRight: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
-          padding: '20px 16px', // Reducido padding
+          padding: '20px 1px', // Reducido padding
           overflow: 'hidden', // Sin scroll
           flexShrink: 0,
           display: 'flex',
@@ -412,7 +412,7 @@ def main(data=None):
           </div>
 
           {/* Formulario - más compacto */}
-          <div style={{ flex: 1, overflow: 'hidden', padding: 6 }}>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
             <form onSubmit={handleSubmit}>
               {/* Nombre del microservicio */}
               <div style={{ marginBottom: 16 }}> {/* Reducido */}
@@ -434,7 +434,7 @@ def main(data=None):
                   }}
                   placeholder="mi_microservicio"
                   style={{
-                    width: '95%',
+                    width: '100%',
                     padding: '7px 10px', // Reducido
                     border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4, // Reducido

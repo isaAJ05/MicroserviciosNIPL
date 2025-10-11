@@ -11,7 +11,7 @@
     "code": "def main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\"\n    }\n"
   },
   {
-    "id": "883969bc894e",
+    "id": "e5e376c280d6",
     "name": "suma_dos_numeros",
     "processing_type": "Suma",
     "endpoint": "suma_dos_numeros",

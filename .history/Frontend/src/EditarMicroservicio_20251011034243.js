@@ -167,11 +167,6 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // Validar que los campos requeridos no estén vacíos
-    if (!form.name.trim() || !form.endpoint.trim() || !form.port.toString().trim() || !form.code.trim()) {
-      setError("Todos los campos de configuración y el código son obligatorios");
-      return;
-    }
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -277,7 +272,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
               fontSize: 15,
               color: lightTheme ? '#1f2328' : '#fff'
             }}>
-              Editar Configuración
+              Configuración
             </span>
           </div>
 
@@ -308,34 +303,6 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                     color: lightTheme ? '#1f2328' : '#e6edf3',
                     fontSize: 13,
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace'
-                  }}
-                  required
-                />
-              </div>
-              <div style={{ marginBottom: 16 }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: 6,
-                  fontWeight: 500,
-                  fontSize: 13,
-                  color: lightTheme ? '#656d76' : '#8b949e'
-                }}>
-                  Tipo de Procesamiento *
-                </label>
-                <input
-                  type="text"
-                  name="processing_type"
-                  value={form.processing_type}
-                  onChange={handleChange}
-                  placeholder="Tipo de procesamiento"
-                  style={{
-                    width: '95%',
-                    padding: '7px 10px',
-                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
-                    borderRadius: 4,
-                    background: lightTheme ? '#fff' : '#1c1c1cff',
-                    color: lightTheme ? '#1f2328' : '#e6edf3',
-                    fontSize: 13
                   }}
                   required
                 />

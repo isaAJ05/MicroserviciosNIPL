@@ -167,11 +167,6 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // Validar que los campos requeridos no estén vacíos
-    if (!form.name.trim() || !form.endpoint.trim() || !form.port.toString().trim() || !form.code.trim()) {
-      setError("Todos los campos de configuración y el código son obligatorios");
-      return;
-    }
     setIsLoading(true);
     setError("");
     setSuccess("");
@@ -277,7 +272,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
               fontSize: 15,
               color: lightTheme ? '#1f2328' : '#fff'
             }}>
-              Editar Configuración
+              Configuración
             </span>
           </div>
 

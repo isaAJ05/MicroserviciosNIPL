@@ -412,8 +412,8 @@ def main(data=None):
           </div>
 
           {/* Formulario - más compacto */}
-          <div style={{ flex: 1, overflow: 'hidden', padding: 6 }}>
-            <form onSubmit={handleSubmit}>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <form onSubmit={handleSubmit} style={{ padding: '12px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Nombre del microservicio */}
               <div style={{ marginBottom: 16 }}> {/* Reducido */}
                 <label style={{
@@ -434,7 +434,7 @@ def main(data=None):
                   }}
                   placeholder="mi_microservicio"
                   style={{
-                    width: '95%',
+                    width: '100%',
                     padding: '7px 10px', // Reducido
                     border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4, // Reducido

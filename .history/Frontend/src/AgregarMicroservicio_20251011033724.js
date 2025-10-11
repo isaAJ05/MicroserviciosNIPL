@@ -434,8 +434,8 @@ def main(data=None):
                   }}
                   placeholder="mi_microservicio"
                   style={{
-                    width: '95%',
-                    padding: '7px 10px', // Reducido
+                    width: '100%',
+                    padding: '7px 4px', // Reducido
                     border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                     borderRadius: 4, // Reducido
                     background: lightTheme ? '#fff' : '#1c1c1c',
