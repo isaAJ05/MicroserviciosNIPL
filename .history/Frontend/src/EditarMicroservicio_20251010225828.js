@@ -190,6 +190,25 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
     }
   };
 
+  const handleTestCode = async () => {
+    setError("");
+    setSuccess("");
+    try {
+      const res = await fetch('http://127.0.0.1:5000/test-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: form.code })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Salida:\n" + (data.output || "") + (data.error ? "\nError:\n" + data.error : ""));
+      } else {
+        setError(data.error || "Error al probar el código");
+      }
+    } catch {
+      setError("No se pudo conectar con el servidor");
+    }
+  };
 
   if (!microservice) return (
     <div style={{
@@ -459,7 +478,26 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                 Código
               </span>
             </div>
-            {/* Botón 'Probar Función' eliminado */}
+            <button
+              onClick={handleTestCode}
+              style={{
+                background: '#ff9696',
+                color: '#131313',
+                border: 'none',
+                borderRadius: 4,
+                padding: '7px 14px',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+              onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+              onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
+            >
+              Probar Función
+            </button>
           </div>
           <div style={{
             flex: 1,

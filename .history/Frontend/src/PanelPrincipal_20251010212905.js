@@ -857,7 +857,7 @@ function PanelPrincipal() {
                       value={renewTokenPassword}
                       onChange={e => setRenewTokenPassword(e.target.value)}
                       required
-                      style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc'}}
+                      style={{ width: '100%', borderRadius: 6, padding: 8, border: '1px solid #ccc', background: '#ff9696', color: '#323232' }}
                     />
                   </div>
                   <div style={{ display: 'flex', gap: 10, marginTop: 8, justifyContent: 'center' }}>

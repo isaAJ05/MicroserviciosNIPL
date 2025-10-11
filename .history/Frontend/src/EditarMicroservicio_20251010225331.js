@@ -79,25 +79,6 @@ function PythonEditor({ code, setCode, lightTheme }) {
         parent: editorRef.current,
       });
     }
-
-    return () => {
-      if (viewRef.current) {
-        viewRef.current.destroy();
-        viewRef.current = null;
-      }
-    };
-  }, []);
-
-  // Reconfigurar tema cuando cambia lightTheme
-  useEffect(() => {
-    if (viewRef.current) {
-      viewRef.current.dispatch({
-        effects: themeCompartment.current.reconfigure([
-          createEditorTheme(lightTheme),
-          ...(lightTheme ? [] : [oneDark]),
-        ]),
-      });
-    }
   }, [lightTheme]);
 
   // Sincronizar código externo
@@ -191,6 +172,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
   };
 
 
+
   if (!microservice) return (
     <div style={{
       height: '100vh',
@@ -205,36 +187,6 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
       Cargando...
     </div>
   );
-
-  return (
-    <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: lightTheme ? '#f8f9fa' : '#323232'
-    }}>
-      <nav className="navbar">
-        <button
-          className="toggle-history-btn"
-          onClick={onBack}
-          title="Volver al panel principal"
-          style={{ display: 'flex', alignItems: 'center', gap: 8 }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-          </svg>
-          <img
-            src="/red_logo_OSWIDTH.png"
-            alt="Logo MicroServicios"
-            style={{ height: 44, marginLeft: 12, borderRadius: 12 }}
-          />
-        </button>
-        <h1>Editar Microservicio</h1>
-      </nav>
-
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Panel izquierdo - Configuración */}
-        <div style={{
           width: '380px',
           background: lightTheme ? '#fff' : '#131313',
           borderRight: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
@@ -459,7 +411,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                 Código
               </span>
             </div>
-            {/* Botón 'Probar Función' eliminado */}
+
           </div>
           <div style={{
             flex: 1,

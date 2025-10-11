@@ -75,26 +75,7 @@ function PythonEditor({ code, setCode, lightTheme }) {
       });
 
       viewRef.current = new EditorView({
-        state,
-        parent: editorRef.current,
-      });
-    }
 
-    return () => {
-      if (viewRef.current) {
-        viewRef.current.destroy();
-        viewRef.current = null;
-      }
-    };
-  }, []);
-
-  // Reconfigurar tema cuando cambia lightTheme
-  useEffect(() => {
-    if (viewRef.current) {
-      viewRef.current.dispatch({
-        effects: themeCompartment.current.reconfigure([
-          createEditorTheme(lightTheme),
-          ...(lightTheme ? [] : [oneDark]),
         ]),
       });
     }
@@ -191,6 +172,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
   };
 
 
+
   if (!microservice) return (
     <div style={{
       height: '100vh',
@@ -203,26 +185,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
       fontWeight: 600
     }}>
       Cargando...
-    </div>
-  );
 
-  return (
-    <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      background: lightTheme ? '#f8f9fa' : '#323232'
-    }}>
-      <nav className="navbar">
-        <button
-          className="toggle-history-btn"
-          onClick={onBack}
-          title="Volver al panel principal"
-          style={{ display: 'flex', alignItems: 'center', gap: 8 }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-          </svg>
           <img
             src="/red_logo_OSWIDTH.png"
             alt="Logo MicroServicios"
@@ -459,7 +422,26 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                 Código
               </span>
             </div>
-            {/* Botón 'Probar Función' eliminado */}
+            <button
+              onClick={handleTestCode}
+              style={{
+                background: '#ff9696',
+                color: '#131313',
+                border: 'none',
+                borderRadius: 4,
+                padding: '7px 14px',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+              onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+              onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
+            >
+              Probar Función
+            </button>
           </div>
           <div style={{
             flex: 1,

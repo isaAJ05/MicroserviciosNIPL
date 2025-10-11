@@ -75,9 +75,9 @@ function PythonEditor({ code, setCode, lightTheme }) {
           }),
         ],
       });
+
       viewRef.current = new EditorView({
-        state,
-        parent: editorRef.current,
+        ]),
       });
     }
   }, [lightTheme]);
@@ -116,7 +116,10 @@ def main(data=None):
     return {
         "status": "success",
         "message": "Hola mundo desde el microservicio!"
-    }`,
+    }
+
+if __name__ == "__main__":
+    print(main())`,
 
   "suma": `# Microservicio Suma
 
@@ -141,7 +144,10 @@ def main(data=None):
         return {
             "status": "error",
             "message": f"Error: {str(e)}"
-        }`,
+        }
+
+if __name__ == "__main__":
+    print(main(main({"a": 5, "b": 3})))`,
 
   "consulta_roble": `# Microservicio Consulta Tabla Roble (usa token recibido por header y token_contract por parámetro)
 def main(data=None):
@@ -209,7 +215,8 @@ def main(data=None):
         result = {
             "status": "success",
             "message": "Microservicio ejecutado correctamente",
-            "data": data
+            "data": data,
+            "timestamp": "2025-09-24T10:00:00Z"
         }
         
         return result
@@ -218,7 +225,14 @@ def main(data=None):
         return {
             "status": "error", 
             "message": f"Error en el microservicio: {str(e)}"
-        }`
+        }
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    # Prueba local del microservicio
+    test_data = {"ejemplo": "datos de prueba"}
+    resultado = main(test_data)
+    print(resultado)`
   });
   useEffect(() => {
     console.log('[DEBUG] microservice changed:', microservice);

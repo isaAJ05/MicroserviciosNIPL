@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from 'react';
+import './App.css';
+// Importar CodeMirror para el editor de código
 import { EditorView, basicSetup } from 'codemirror';
 import { python } from '@codemirror/lang-python';
 import { oneDark } from '@codemirror/theme-one-dark';
@@ -73,29 +75,9 @@ function PythonEditor({ code, setCode, lightTheme }) {
           }),
         ],
       });
-
       viewRef.current = new EditorView({
         state,
         parent: editorRef.current,
-      });
-    }
-
-    return () => {
-      if (viewRef.current) {
-        viewRef.current.destroy();
-        viewRef.current = null;
-      }
-    };
-  }, []);
-
-  // Reconfigurar tema cuando cambia lightTheme
-  useEffect(() => {
-    if (viewRef.current) {
-      viewRef.current.dispatch({
-        effects: themeCompartment.current.reconfigure([
-          createEditorTheme(lightTheme),
-          ...(lightTheme ? [] : [oneDark]),
-        ]),
       });
     }
   }, [lightTheme]);
@@ -124,91 +106,211 @@ function PythonEditor({ code, setCode, lightTheme }) {
     />
   );
 }
+const ejemplosCodigo = {
+  "hola_mundo": `# Microservicio Hola Mundo
 
+def main(data=None):
+    """
+    Devuelve un saludo simple.
+    """
+    return {
+        "status": "success",
+        "message": "Hola mundo desde el microservicio!"
+    }
 
-function EditarMicroservicio({ id, onBack, lightTheme = false }) {
-  const [microservice, setMicroservice] = useState(null);
-  const [form, setForm] = useState({
+if __name__ == "__main__":
+    print(main())`,
+
+  "suma": `# Microservicio Suma
+
+def main(data=None):
+    """
+    Suma dos números recibidos por parámetro.
+    Args:
+        data: dict con 'a' y 'b'
+    Returns:
+        dict con el resultado de la suma
+    """
+    try:
+        a = float(data.get("a", 0))
+        b = float(data.get("b", 0))
+        resultado = a + b
+        return {
+            "status": "success",
+            "suma": resultado,
+            "inputs": {"a": a, "b": b}
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error: {str(e)}"
+        }`,
+
+  "consulta_roble": `# Microservicio Consulta Tabla Roble (usa token recibido por header y token_contract por parámetro)
+def main(data=None):
+    """
+    Consulta una tabla en Roble usando el token recibido por header y el token_contract recibido por parámetro.
+    """
+    import requests
+    try:
+        # El token de Roble viene en data['roble_token']
+        token = data.get("roble_token")
+        if not token:
+            return {"status": "error", "message": "Token de autenticación no recibido"}
+
+        # El token_contract viene en los parámetros
+        token_contract = data.get("token_contract")
+        if not token_contract:
+            return {"status": "error", "message": "Token contract no recibido"}
+
+        table_name = data.get("tableName", "inventario")
+
+        # Puedes agregar más parámetros de filtro si lo deseas
+        params = {"tableName": table_name}
+        for k, v in (data or {}).items():
+            if k not in ["roble_token", "token_contract", "tableName"]:
+                params[k] = v
+
+        # Consulta la tabla en Roble
+        res = requests.get(
+            f"https://roble-api.openlab.uninorte.edu.co/database/{token_contract}/read",
+            headers={"Authorization": f"Bearer {token}"},
+            params=params
+        )
+        if res.status_code == 200:
+            return {"status": "success", "roble_data": res.json()}
+        elif res.status_code == 401:
+            return {"status": "error", "message": "Token inválido o expirado", "code": 401}
+        elif res.status_code == 403:
+            return {"status": "error", "message": "Acceso denegado", "code": 403}
+        else:
+            return {"status": "error", "message": f"Roble error: {res.status_code}", "details": res.text}
+    except Exception as e:
+        return {"status": "error", "message": f"Error: {str(e)}"}
+`
+};
+function AgregarMicroservicio({ onBack, lightTheme }) {
+  const [microservice, setMicroservice] = useState({
     name: "",
     processing_type: "",
-    endpoint: "",
-    port: "",
-    code: ""
+    use_roble_auth: false,
+    code: `# Microservicio Python
+# Escribe tu código personalizado aquí
+
+def main(data=None):
+    """
+    Función principal del microservicio
+    
+    Args:
+        data: Datos de entrada (opcional)
+        
+    Returns:
+        dict: Resultado del procesamiento
+    """
+    try:
+        # Tu lógica de procesamiento aquí
+        result = {
+            "status": "success",
+            "message": "Microservicio ejecutado correctamente",
+            "data": data,
+            "timestamp": "2025-09-24T10:00:00Z"
+        }
+        
+        return result
+        
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Error en el microservicio: {str(e)}"
+        }`
   });
+  useEffect(() => {
+    console.log('[DEBUG] microservice changed:', microservice);
+  }, [microservice]);
+  const [ejemploSeleccionado, setEjemploSeleccionado] = useState("");
+
+  const handleEjemploChange = (e) => {
+    const value = e.target.value;
+    setEjemploSeleccionado(value);
+    if (ejemplosCodigo[value]) {
+      setMicroservice(prev => ({ ...prev, code: ejemplosCodigo[value] }));
+    }
+  };
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  useEffect(() => {
-    fetch(`http://127.0.0.1:5000/microservices`)
-      .then(res => res.json())
-      .then(data => {
-        const ms = (data.microservices || []).find(m => m.id === id);
-        if (ms) {
-          setMicroservice(ms);
-          setForm({
-            name: ms.name,
-            processing_type: ms.processing_type,
-            endpoint: ms.endpoint,
-            port: ms.port,
-            code: ms.code
-          });
-        }
-      });
-  }, [id]);
-
-  const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleCodeChange = code => {
-    setForm({ ...form, code });
-  };
-
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!microservice.name.trim() || !microservice.processing_type.trim() || !microservice.code.trim()) {
+      setError("El nombre, tipo de procesamiento y código son obligatorios");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
     setSuccess("");
+
     try {
-      const res = await fetch(`http://127.0.0.1:5000/microservices/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
+      const token = localStorage.getItem('accessToken');
+
+      const res = await fetch('http://127.0.0.1:5000/microservices', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: microservice.name,
+          endpoint: microservice.name.toLowerCase().replace(/\s+/g, '_'),
+          processing_type: microservice.processing_type,
+          description: microservice.description,
+          use_roble_auth: microservice.use_roble_auth,
+          code: microservice.code
+        })
       });
+
+      const data = await res.json();
+
       if (res.ok) {
-        setSuccess("¡Microservicio editado exitosamente!");
-        setTimeout(() => onBack(), 1500);
+        setSuccess("¡Microservicio creado exitosamente!");
+        setTimeout(() => {
+          onBack(); // Regresar al panel principal
+        }, 2000);
       } else {
-        const data = await res.json();
-        setError(data.error || "Error al editar el microservicio");
+        setError(data.error || "Error al crear el microservicio");
       }
-    } catch {
+    } catch (err) {
       setError("No se pudo conectar con el servidor");
     } finally {
       setIsLoading(false);
     }
   };
 
-
-  if (!microservice) return (
-    <div style={{
-      height: '100vh',
-      background: lightTheme ? '#f8f9fa' : '#323232',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: lightTheme ? '#323232' : '#fff',
-      fontSize: 22,
-      fontWeight: 600
-    }}>
-      Cargando...
-    </div>
-  );
+  const handleTestCode = async () => {
+    setError("");
+    setSuccess("");
+    try {
+      const res = await fetch('http://127.0.0.1:5000/test-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: microservice.code })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Salida:\n" + (data.output || "") + (data.error ? "\nError:\n" + data.error : ""));
+      } else {
+        setError(data.error || "Error al probar el código");
+      }
+    } catch (err) {
+      setError("No se pudo conectar con el servidor");
+    }
+  };
 
   return (
     <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{
-      height: '100vh',
+      height: '100vh', // Cambiado de minHeight a height
       display: 'flex',
       flexDirection: 'column',
       background: lightTheme ? '#f8f9fa' : '#323232'
@@ -229,84 +331,116 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
             style={{ height: 44, marginLeft: 12, borderRadius: 12 }}
           />
         </button>
-        <h1>Editar Microservicio</h1>
+        <h1>Crear Microservicio</h1>
       </nav>
 
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div style={{
+        display: 'flex',
+        flex: 1,
+        overflow: 'hidden'
+      }}>
         {/* Panel izquierdo - Configuración */}
         <div style={{
-          width: '380px',
+          width: '380px', // Aumentado de 340px a 380px
           background: lightTheme ? '#fff' : '#131313',
           borderRight: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
-          padding: '20px 16px',
-          overflow: 'hidden',
+          padding: '20px 16px', // Reducido padding
+          overflow: 'hidden', // Sin scroll
           flexShrink: 0,
           display: 'flex',
           flexDirection: 'column'
         }}>
+          {/* Header de configuración - más compacto */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             gap: 12,
-            marginBottom: 16,
-            paddingBottom: 12,
+            marginBottom: 16, // Reducido
+            paddingBottom: 12, // Reducido
             borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
             flexShrink: 0
           }}>
             <div style={{
-              width: 28,
-              height: 28,
+              width: 28, // Reducido
+              height: 28, // Reducido
               borderRadius: '50%',
               background: '#ff9696',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#131313',
-              fontSize: 13,
+              fontSize: 13, // Reducido
               fontWeight: 700
             }}>
               1
             </div>
             <span style={{
               fontWeight: 600,
-              fontSize: 15,
+              fontSize: 15, // Reducido
               color: lightTheme ? '#1f2328' : '#fff'
             }}>
               Configuración
             </span>
+            <div style={{
+              width: 18, // Reducido
+              height: 18, // Reducido
+              borderRadius: '50%',
+              background: '#34d399',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: 'auto'
+            }}>
+              <svg width="10" height="10" fill="#fff" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" />
+              </svg>
+            </div>
           </div>
 
+          {/* Formulario - más compacto */}
           <div style={{ flex: 1, overflow: 'hidden' }}>
             <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: 16 }}>
+              {/* Nombre del microservicio */}
+              <div style={{ marginBottom: 16 }}> {/* Reducido */}
                 <label style={{
                   display: 'block',
-                  marginBottom: 6,
+                  marginBottom: 6, // Reducido
                   fontWeight: 500,
-                  fontSize: 13,
+                  fontSize: 13, // Reducido
                   color: lightTheme ? '#656d76' : '#8b949e'
                 }}>
                   Nombre del microservicio *
                 </label>
                 <input
                   type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
+                  value={microservice.name}
+                  onChange={e => {
+                    console.log('[DEBUG] input change name:', e.target.value);
+                    setMicroservice(prev => ({ ...prev, name: e.target.value }));
+                  }}
                   placeholder="mi_microservicio"
                   style={{
                     width: '100%',
-                    padding: '7px 10px',
+                    padding: '7px 10px', // Reducido
                     border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
-                    borderRadius: 4,
+                    borderRadius: 4, // Reducido
                     background: lightTheme ? '#fff' : '#1c1c1c',
                     color: lightTheme ? '#1f2328' : '#e6edf3',
-                    fontSize: 13,
+                    fontSize: 13, // Reducido
                     fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, monospace'
                   }}
                   required
                 />
+                <div style={{
+                  marginTop: 4, // Reducido
+                  color: lightTheme ? '#656d76' : '#8b949e',
+                  fontSize: 11 // Reducido
+                }}>
+                  Nombre identificador del microservicio
+                </div>
               </div>
+
+              {/* Tipo de procesamiento */}
               <div style={{ marginBottom: 16 }}>
                 <label style={{
                   display: 'block',
@@ -317,67 +451,13 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                 }}>
                   Tipo de Procesamiento *
                 </label>
-                <input
-                  type="text"
-                  name="processing_type"
-                  value={form.processing_type}
-                  onChange={handleChange}
-                  placeholder="Tipo de procesamiento"
-                  style={{
-                    width: '100%',
-                    padding: '7px 10px',
-                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
-                    borderRadius: 4,
-                    background: lightTheme ? '#fff' : '#1c1c1cff',
-                    color: lightTheme ? '#1f2328' : '#e6edf3',
-                    fontSize: 13
-                  }}
-                  required
-                />
-              </div>
-              <div style={{ marginBottom: 16 }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: 6,
-                  fontWeight: 500,
-                  fontSize: 13,
-                  color: lightTheme ? '#656d76' : '#8b949e'
-                }}> <div style={{ marginBottom: 16 }}>
-                    <label style={{
-                      display: 'block',
-                      marginBottom: 6,
-                      fontWeight: 500,
-                      fontSize: 13,
-                      color: lightTheme ? '#656d76' : '#8b949e'
-                    }}>
-                      Puerto *
-                    </label>
-                    <input
-                      type="number"
-                      name="port"
-                      value={form.port}
-                      onChange={handleChange}
-                      placeholder="Ej: 32779"
-                      style={{
-                        width: '100%',
-                        padding: '7px 10px',
-                        border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
-                        borderRadius: 4,
-                        background: lightTheme ? '#fff' : '#1c1c1c',
-                        color: lightTheme ? '#1f2328' : '#e6edf3',
-                        fontSize: 13
-                      }}
-                      required
-                    />
-                  </div>
-                  Endpoint *
-                </label>
-                <input
-                  type="text"
-                  name="endpoint"
-                  value={form.endpoint}
-                  onChange={handleChange}
-                  placeholder="Endpoint"
+                <select
+                  value={microservice.processing_type}
+                  onChange={e => setMicroservice(prev => ({
+                    ...prev,
+                    processing_type: e.target.value,
+                    use_roble_auth: e.target.value === "Roble" // Si selecciona Roble, activa el flag
+                  }))}
                   style={{
                     width: '100%',
                     padding: '7px 10px',
@@ -388,30 +468,83 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                     fontSize: 13
                   }}
                   required
-                />
+                >
+                  <option value="">Seleccionar tipo</option>
+                  <option value="Hola Mundo">Hola Mundo</option>
+                  <option value="Suma">Suma</option>
+                  <option value="Roble">Roble</option>
+                  <option value="Otro">Otro</option>
+                </select>
+                <div style={{
+                  marginTop: 4,
+                  color: lightTheme ? '#656d76' : '#8b949e',
+                  fontSize: 11
+                }}>
+                  Selecciona "Roble" si tu microservicio consulta o modifica datos en Roble.
+                </div>
               </div>
+
+              {/* Selector de ejemplo de código */}
+              <div style={{ marginBottom: 16 }}>
+                <label style={{
+                  display: 'block',
+                  marginBottom: 6,
+                  fontWeight: 500,
+                  fontSize: 13,
+                  color: lightTheme ? '#656d76' : '#8b949e'
+                }}>
+                  Ejemplo de código
+                </label>
+                <select
+                  value={ejemploSeleccionado}
+                  onChange={handleEjemploChange}
+                  style={{
+                    width: '100%',
+                    padding: '7px 10px',
+                    border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
+                    borderRadius: 4,
+                    background: lightTheme ? '#fff' : '#1c1c1c',
+                    color: lightTheme ? '#1f2328' : '#e6edf3',
+                    fontSize: 13
+                  }}
+                >
+                  <option value="">Selecciona un ejemplo</option>
+                  <option value="hola_mundo">Hola Mundo (respuesta simple)</option>
+                  <option value="suma">Suma (dos números)</option>
+                  <option value="consulta_roble">Consulta Tabla Roble (API externa)</option>
+                </select>
+                <div style={{
+                  marginTop: 4,
+                  color: lightTheme ? '#656d76' : '#8b949e',
+                  fontSize: 11
+                }}>
+                  Selecciona un ejemplo para cargar una plantilla de código en el editor.
+                </div>
+              </div>
+              {/* Mensajes de estado */}
               {error && (
                 <div style={{
                   color: '#f85149',
                   background: lightTheme ? '#ffebe9' : '#490202',
                   border: `1px solid ${lightTheme ? '#ffb3ba' : '#f85149'}`,
-                  borderRadius: 4,
-                  padding: 10,
-                  marginBottom: 12,
-                  fontSize: 12
+                  borderRadius: 4, // Reducido
+                  padding: 10, // Reducido
+                  marginBottom: 12, // Reducido
+                  fontSize: 12 // Reducido
                 }}>
                   {error}
                 </div>
               )}
+
               {success && (
                 <div style={{
                   color: '#238636',
                   background: lightTheme ? '#dafbe1' : '#0f5132',
                   border: `1px solid ${lightTheme ? '#34d399' : '#238636'}`,
-                  borderRadius: 4,
-                  padding: 10,
-                  marginBottom: 12,
-                  fontSize: 12
+                  borderRadius: 4, // Reducido
+                  padding: 10, // Reducido
+                  marginBottom: 12, // Reducido
+                  fontSize: 12 // Reducido
                 }}>
                   {success}
                 </div>
@@ -427,62 +560,65 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
           flexDirection: 'column',
           overflow: 'hidden'
         }}>
+          {/* Header del código */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '14px 20px',
+            padding: '14px 20px', // Reducido
             background: lightTheme ? '#fff' : '#131313',
-            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
+            borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#131313'}`,
             flexShrink: 0
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{
-                width: 28,
-                height: 28,
+                width: 28, // Reducido
+                height: 28, // Reducido
                 borderRadius: '50%',
                 background: '#ff9696',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#131313',
-                fontSize: 13,
+                fontSize: 13, // Reducido
                 fontWeight: 700
               }}>
                 2
               </div>
               <span style={{
                 fontWeight: 600,
-                fontSize: 15,
+                fontSize: 15, // Reducido
                 color: lightTheme ? '#1f2328' : '#fff'
               }}>
                 Código
               </span>
             </div>
-            {/* Botón 'Probar Función' eliminado */}
           </div>
+
+          {/* Editor */}
           <div style={{
             flex: 1,
             position: 'relative',
             overflow: 'hidden'
           }}>
             <PythonEditor
-              code={form.code}
-              setCode={handleCodeChange}
+              code={microservice.code}
+              setCode={(code) => setMicroservice(prev => ({ ...prev, code }))}
               lightTheme={lightTheme}
             />
           </div>
+
+          {/* Footer con botones */}
           <div style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '14px 20px',
+            padding: '14px 20px', // Reducido
             background: lightTheme ? '#f6f8fa' : '#131313',
-            borderTop: `1px solid ${lightTheme ? '#e1e4e8' : '#1c1c1c'}`,
+            borderTop: `1px solid ${lightTheme ? '#e1e4e8' : '#1C1C1C'}`,
             flexShrink: 0
           }}>
             <div></div>
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div style={{ display: 'flex', gap: 10 }}> {/* Reducido */}
               <button
                 onClick={onBack}
                 style={{
@@ -490,9 +626,9 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                   color: lightTheme ? '#e0e0e0ff' : '#e0e0e0ff',
                   border: `1px solid ${lightTheme ? '#d1d9e0' : '#1c1c1c'}`,
                   borderRadius: 4,
-                  padding: '7px 14px',
-                  fontSize: 13,
-                  fontWeight: 500,
+                  padding: '7px 14px', // Reducido
+                  fontSize: 13, // Reducido
+                  fontWeight: 600,
                   cursor: 'pointer'
                 }}
                 onMouseOver={e => (e.currentTarget.style.background = '#323232')}
@@ -500,6 +636,7 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
               >
                 Cancelar
               </button>
+
               <button
                 onClick={handleSubmit}
                 disabled={isLoading}
@@ -508,8 +645,8 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                   color: '#131313',
                   border: 'none',
                   borderRadius: 4,
-                  padding: '7px 14px',
-                  fontSize: 13,
+                  padding: '7px 14px', // Reducido
+                  fontSize: 13, // Reducido
                   fontWeight: 600,
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   display: 'flex',
@@ -522,23 +659,25 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
                 {isLoading ? (
                   <>
                     <div style={{
-                      width: 12,
-                      height: 12,
+                      width: 12, // Reducido
+                      height: 12, // Reducido
                       border: '2px solid rgba(255,255,255,0.3)',
                       borderTop: '2px solid #fff',
                       borderRadius: '50%',
                       animation: 'spin 1s linear infinite'
                     }} />
-                    Editando...
+                    Creando...
                   </>
                 ) : (
-                  'Editar'
+                  'Crear'
                 )}
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Footer - sin margenes adicionales */}
       <footer className="footer" style={{ margin: 0 }}>
         <div>
           Oak Services &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
@@ -551,4 +690,4 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
   );
 }
 
-export default EditarMicroservicio;
+export default AgregarMicroservicio;

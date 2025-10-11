@@ -75,9 +75,29 @@ function PythonEditor({ code, setCode, lightTheme }) {
           }),
         ],
       });
+
       viewRef.current = new EditorView({
         state,
         parent: editorRef.current,
+      });
+    }
+
+    return () => {
+      if (viewRef.current) {
+        viewRef.current.destroy();
+        viewRef.current = null;
+      }
+    };
+  }, []);
+
+  // Reconfigurar tema cuando cambia lightTheme
+  useEffect(() => {
+    if (viewRef.current) {
+      viewRef.current.dispatch({
+        effects: themeCompartment.current.reconfigure([
+          createEditorTheme(lightTheme),
+          ...(lightTheme ? [] : [oneDark]),
+        ]),
       });
     }
   }, [lightTheme]);
@@ -115,8 +135,12 @@ def main(data=None):
     """
     return {
         "status": "success",
-        "message": "Hola mundo desde el microservicio!"
-    }`,
+        "message": "Hola mundo desde el microservicio!",
+        "data": data
+    }
+
+if __name__ == "__main__":
+    print(main())`,
 
   "suma": `# Microservicio Suma
 
@@ -135,13 +159,17 @@ def main(data=None):
         return {
             "status": "success",
             "suma": resultado,
-            "inputs": {"a": a, "b": b}
+            "inputs": {"a": a, "b": b},
+            "data": data
         }
     except Exception as e:
         return {
             "status": "error",
             "message": f"Error: {str(e)}"
-        }`,
+        }
+
+if __name__ == "__main__":
+    print(main(main({"a": 5, "b": 3})))`,
 
   "consulta_roble": `# Microservicio Consulta Tabla Roble (usa token recibido por header y token_contract por parámetro)
 def main(data=None):
@@ -209,7 +237,8 @@ def main(data=None):
         result = {
             "status": "success",
             "message": "Microservicio ejecutado correctamente",
-            "data": data
+            "data": data,
+            "timestamp": "2025-09-24T10:00:00Z"
         }
         
         return result
@@ -218,7 +247,14 @@ def main(data=None):
         return {
             "status": "error", 
             "message": f"Error en el microservicio: {str(e)}"
-        }`
+        }
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    # Prueba local del microservicio
+    test_data = {"ejemplo": "datos de prueba"}
+    resultado = main(test_data)
+    print(resultado)`
   });
   useEffect(() => {
     console.log('[DEBUG] microservice changed:', microservice);
@@ -469,7 +505,7 @@ def main(data=None):
                   <option value="Hola Mundo">Hola Mundo</option>
                   <option value="Suma">Suma</option>
                   <option value="Roble">Roble</option>
-                  <option value="Otro">Otro</option>
+                  <option value="Otro">Roble</option>
                 </select>
                 <div style={{
                   marginTop: 4,
@@ -505,17 +541,10 @@ def main(data=None):
                   }}
                 >
                   <option value="">Selecciona un ejemplo</option>
-                  <option value="hola_mundo">Hola Mundo (respuesta simple)</option>
-                  <option value="suma">Suma (dos números)</option>
-                  <option value="consulta_roble">Consulta Tabla Roble (API externa)</option>
+                  <option value="hola_mundo">Hola Mundo</option>
+                  <option value="suma">Suma</option>
+                  <option value="consulta_roble">Consulta a Roble</option>
                 </select>
-                <div style={{
-                  marginTop: 4,
-                  color: lightTheme ? '#656d76' : '#8b949e',
-                  fontSize: 11
-                }}>
-                  Selecciona un ejemplo para cargar una plantilla de código en el editor.
-                </div>
               </div>
               {/* Mensajes de estado */}
               {error && (
@@ -560,6 +589,7 @@ def main(data=None):
           <div style={{
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             padding: '14px 20px', // Reducido
             background: lightTheme ? '#fff' : '#131313',
             borderBottom: `1px solid ${lightTheme ? '#e1e4e8' : '#131313'}`,
@@ -588,6 +618,27 @@ def main(data=None):
                 Código
               </span>
             </div>
+
+            <button
+              onClick={handleTestCode}
+              style={{
+                background: '#ff9696',
+                color: '#131313',
+                border: 'none',
+                borderRadius: 4,
+                padding: '7px 14px', // Reducido
+                fontSize: 13, // Reducido
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6
+              }}
+              onMouseOver={e => (e.currentTarget.style.background = '#f77777')}
+              onMouseOut={e => (e.currentTarget.style.background = '#ff9696')}
+            >
+              Probar Función
+            </button>
           </div>
 
           {/* Editor */}
