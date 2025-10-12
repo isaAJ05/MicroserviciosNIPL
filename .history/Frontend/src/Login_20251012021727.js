@@ -379,7 +379,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                          email: "Invitado",
+                          email: "Invi",
                           password: "",
                           token_contract: token,
                         }),
@@ -389,7 +389,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                         localStorage.setItem("accessToken", data.accessToken);
                         localStorage.setItem("tokenContract", token);
                         localStorage.setItem("userPassword", "");
-                        handleLogin({ email: "Invitado" });
+                        handleLogin({ email: "guest" });
                         setIsLoggedIn(true);
                         setLoginFade(false);
                       } else {

@@ -293,7 +293,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                     padding: tokenFocused || tokenContract ? "0 4px" : "0",
                   }}
                 >
-                  ID del Proyecto (Token Contract)
+                  Identificador del Proyecto (Token Contract)
                 </label>
                 <input
                   type="text"
@@ -371,33 +371,9 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                     cursor: "pointer",
                     transition: "background 0.2s, border-color 0.2s",
                   }}
-                  onClick={async () => {
-                    setLoginError("");
-                    try {
-                      const token = "oak_demo_9a01cfb26f"; // Token por defecto para invitado
-                      const res = await fetch("http://127.0.0.1:5000/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          email: "Invitado",
-                          password: "",
-                          token_contract: token,
-                        }),
-                      });
-                      const data = await res.json();
-                      if (res.ok && data.accessToken) {
-                        localStorage.setItem("accessToken", data.accessToken);
-                        localStorage.setItem("tokenContract", token);
-                        localStorage.setItem("userPassword", "");
-                        handleLogin({ email: "Invitado" });
-                        setIsLoggedIn(true);
-                        setLoginFade(false);
-                      } else {
-                        setLoginError(data.error || "No se pudo iniciar sesión como invitado");
-                      }
-                    } catch (err) {
-                      setLoginError("No se pudo conectar con el backend");
-                    }
+                  onClick={() => {
+                    setIsLoggedIn(true)
+                    setLoginError("")
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = "#e5e7eb"

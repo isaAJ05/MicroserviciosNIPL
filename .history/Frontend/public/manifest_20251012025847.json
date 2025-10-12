@@ -6,12 +6,8 @@
     "src": "oak.png",
     "sizes": "64x64",
     "type": "image/png"
-  },
-{
-    "src": "oak.png",
-    "sizes": "128x128",
-    "type": "image/png"
   }
+
   ],
   "start_url": ".",
   "display": "standalone",

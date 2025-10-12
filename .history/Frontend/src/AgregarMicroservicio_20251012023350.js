@@ -206,7 +206,7 @@ if (savedUser) {
     const userObj = JSON.parse(savedUser);
     email = userObj.email || "Invitado";
   } catch (e) {
-    email = "Invitado";
+    email = "guest";
   }
 }
   const [microservice, setMicroservice] = useState({

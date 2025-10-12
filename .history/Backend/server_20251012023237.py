@@ -93,7 +93,7 @@ def get_microservices():
         print("Usuario solicitado:", user)
         microservices = load_microservices()
         # Filtrar por usuario
-        microservices = [ms for ms in microservices if (ms.get('user') or 'Invitado') == user]
+        microservices = [ms for ms in microservices if (ms.get('user') or 'guest') == user]
         for ms in microservices:
             # 1. Verifica si el contenedor existe por ID
             inspect_proc = subprocess.run(

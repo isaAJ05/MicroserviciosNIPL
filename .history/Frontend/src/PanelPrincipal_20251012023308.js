@@ -49,9 +49,9 @@ function PanelPrincipal() {
   const [editEndpointUrlValue, setEditEndpointUrlValue] = useState("");
 
   useEffect(() => {
-    // Obtener usuario actual (si no hay, usar 'Invitado')
+    // Obtener usuario actual (si no hay, usar 'guest')
     const savedUser = localStorage.getItem("user");
-    let username = "Invitado";
+    let username = "guest";
     if (savedUser) {
       try {
         const userObj = JSON.parse(savedUser);
@@ -141,9 +141,9 @@ function PanelPrincipal() {
 
   // Función para refrescar la lista de microservicios
   const refreshMicroservices = () => {
-    // Obtener usuario actual (si no hay, usar 'Invitado')
+    // Obtener usuario actual (si no hay, usar 'guest')
     const savedUser = localStorage.getItem("user");
-    let username = "Invitado";
+    let username = "guest";
     if (savedUser) {
       try {
         const userObj = JSON.parse(savedUser);

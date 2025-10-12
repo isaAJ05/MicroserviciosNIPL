@@ -49,13 +49,13 @@ function PanelPrincipal() {
   const [editEndpointUrlValue, setEditEndpointUrlValue] = useState("");
 
   useEffect(() => {
-    // Obtener usuario actual (si no hay, usar 'Invitado')
+    // Obtener usuario actual (si no hay, usar 'guest')
     const savedUser = localStorage.getItem("user");
-    let username = "Invitado";
+    let username = "guest";
     if (savedUser) {
       try {
         const userObj = JSON.parse(savedUser);
-        username = userObj.username || userObj.name || userObj.email || "Invitado";
+        username = userObj.username || userObj.name || userObj.email || "guest";
       } catch {}
     }
     fetch('http://127.0.0.1:5000/microservices', {
@@ -141,13 +141,13 @@ function PanelPrincipal() {
 
   // Función para refrescar la lista de microservicios
   const refreshMicroservices = () => {
-    // Obtener usuario actual (si no hay, usar 'Invitado')
+    // Obtener usuario actual (si no hay, usar 'guest')
     const savedUser = localStorage.getItem("user");
-    let username = "Invitado";
+    let username = "guest";
     if (savedUser) {
       try {
         const userObj = JSON.parse(savedUser);
-        username = userObj.username || userObj.name || userObj.email || "Invitado";
+        username = userObj.username || userObj.name || userObj.email || "guest";
       } catch {}
     }
     // Guardar el username usado para filtrar en localStorage
@@ -916,7 +916,7 @@ function PanelPrincipal() {
               Oak Services &copy; 2025 &nbsp;&nbsp; <span style={{ fontWeight: 600 }}></span>
             </div>
             <div>
-              <span>Contacto: oakservicesglobal@gmail.com</span>
+              <span>Contacto: oakservicesglobal</span>
             </div>
           </footer>
         </div>

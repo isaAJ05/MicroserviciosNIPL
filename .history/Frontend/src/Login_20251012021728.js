@@ -389,7 +389,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                         localStorage.setItem("accessToken", data.accessToken);
                         localStorage.setItem("tokenContract", token);
                         localStorage.setItem("userPassword", "");
-                        handleLogin({ email: "Invitado" });
+                        handleLogin({ email: "guest" });
                         setIsLoggedIn(true);
                         setLoginFade(false);
                       } else {

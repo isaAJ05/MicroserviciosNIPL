@@ -375,11 +375,12 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                     setLoginError("");
                     try {
                       const token = "oak_demo_9a01cfb26f"; // Token por defecto para invitado
+                      // const token = tokenContract.trim();
                       const res = await fetch("http://127.0.0.1:5000/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                          email: "Invitado",
+                          email: "guest",
                           password: "",
                           token_contract: token,
                         }),
@@ -389,7 +390,7 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                         localStorage.setItem("accessToken", data.accessToken);
                         localStorage.setItem("tokenContract", token);
                         localStorage.setItem("userPassword", "");
-                        handleLogin({ email: "Invitado" });
+                        handleLogin({ email: "guest" });
                         setIsLoggedIn(true);
                         setLoginFade(false);
                       } else {

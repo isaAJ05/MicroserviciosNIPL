@@ -44,8 +44,8 @@ def login():
     email = data.get('email')
     password = data.get('password')
     token_contract = data.get('token_contract')
-    # Si el usuario es 'Invitado' o vacío, usar credenciales del .env
-    if not email or email.strip().lower() == 'invitado':
+    # Si el usuario es 'invitado' o vacío, usar credenciales del .env
+    if not email or email.strip().lower() == 'inviguesttado':
         email = ROBLE_EMAIL
         password = ROBLE_PASSWORD
     res = requests.post(
@@ -54,7 +54,7 @@ def login():
     )
     login_data = res.json()
     access_token = login_data.get("accessToken")
-    print("AccessToken recibido:", access_token) # Depuración
+    print("AccessToken recibido:", access_token)  # <-- Aquí imprimes el token en consola
     if not access_token:
         return jsonify({"error": "Credenciales inválidas"}), 401
     return jsonify({"accessToken": access_token})
@@ -89,11 +89,11 @@ def get_microservices():
     else:
         print("DOCKER SI SIRVE")
         # Leer usuario del header o usar 'guest' por defecto
-        user = request.headers.get('X-User') or 'Invitado'
+        user = request.headers.get('X-User') or 'guest'
         print("Usuario solicitado:", user)
         microservices = load_microservices()
         # Filtrar por usuario
-        microservices = [ms for ms in microservices if (ms.get('user') or 'Invitado') == user]
+        microservices = [ms for ms in microservices if (ms.get('user') or 'guest') == user]
         for ms in microservices:
             # 1. Verifica si el contenedor existe por ID
             inspect_proc = subprocess.run(

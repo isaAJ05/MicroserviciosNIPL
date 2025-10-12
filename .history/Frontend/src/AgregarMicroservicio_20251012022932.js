@@ -204,9 +204,9 @@ let email = "";
 if (savedUser) {
   try {
     const userObj = JSON.parse(savedUser);
-    email = userObj.email || "Invitado";
+    email = userObj.email || "guest";
   } catch (e) {
-    email = "Invitado";
+    email = "guest";
   }
 }
   const [microservice, setMicroservice] = useState({

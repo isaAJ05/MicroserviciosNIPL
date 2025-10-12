@@ -89,11 +89,11 @@ def get_microservices():
     else:
         print("DOCKER SI SIRVE")
         # Leer usuario del header o usar 'guest' por defecto
-        user = request.headers.get('X-User') or 'Invitado'
+        user = request.headers.get('X-User') or 'guest'
         print("Usuario solicitado:", user)
         microservices = load_microservices()
         # Filtrar por usuario
-        microservices = [ms for ms in microservices if (ms.get('user') or 'Invitado') == user]
+        microservices = [ms for ms in microservices if (ms.get('user') or 'guest') == user]
         for ms in microservices:
             # 1. Verifica si el contenedor existe por ID
             inspect_proc = subprocess.run(
