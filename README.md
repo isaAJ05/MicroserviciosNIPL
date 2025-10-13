@@ -100,7 +100,7 @@ Accede a:
 2. Selecciona el **tipo de procesamiento** (p. ej. *Hola Mundo* *Suma* o *Consulta Roble*).  
 3. *(Opcional)* Escoge un **ejemplo de código predefinido**.  
 4. Escribe o modifica tu código directamente en el **editor integrado**.  
-5. Haz clic en **Confirmar** para desplegarlo en un contenedor **Docker**.
+5. Haz clic en **Crear** para desplegarlo en un contenedor **Docker**.
 
 ---
 
