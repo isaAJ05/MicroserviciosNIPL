@@ -21,9 +21,9 @@ Cada usuario puede administrar **únicamente sus propios microservicios**, los c
 ---
 
 ## 👩‍💻 Integrantes / Desarrolladores
-
+ 
+- Natalia Carpintero
 - Isabella Arrieta  
-- Natalia Carpintero  
 - Paula Núñez  
 - Luis Robles  
 
