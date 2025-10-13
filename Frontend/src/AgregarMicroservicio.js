@@ -542,7 +542,6 @@ def main(data=None):
                   Selecciona un ejemplo para cargar una plantilla de código en el editor.
                 <div style={{
                   marginTop: 8,
-                  marginBottom: 24,
                   color: lightTheme ? '#b59b00' : '#ffe066',
                   background: lightTheme ? '#fffbe6' : '#3a3a1c',
                   borderRadius: 4,

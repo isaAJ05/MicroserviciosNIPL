@@ -12,7 +12,6 @@ function PanelPrincipal() {
     const saved = localStorage.getItem("lightTheme");
     return saved === "true";
   });
-  const userPanelRef = useRef(null);
   const [showUserPanel, setShowUserPanel] = useState(false);
   const [userPanelFade, setUserPanelFade] = useState(false);
   const [user, setUser] = useState(null);
@@ -57,7 +56,7 @@ function PanelPrincipal() {
       try {
         const userObj = JSON.parse(savedUser);
         username = userObj.username || userObj.name || userObj.email || "Invitado";
-      } catch { }
+      } catch {}
     }
     fetch('http://127.0.0.1:5000/microservices', {
       headers: {
@@ -117,27 +116,6 @@ function PanelPrincipal() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isPinned]);
 
-  //CLIC FUERA DE MENU USER
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        userPanelRef.current &&
-        !userPanelRef.current.contains(event.target)
-      ) {
-        setShowUserPanel(false);
-      }
-    }
-
-    if (showUserPanel) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showUserPanel]);
-
-
   // Función para manejar login (yo digo que crear un json para ese usuario)
   const handleLogin = (userData) => {
     setUser(userData);
@@ -170,7 +148,7 @@ function PanelPrincipal() {
       try {
         const userObj = JSON.parse(savedUser);
         username = userObj.username || userObj.name || userObj.email || "Invitado";
-      } catch { }
+      } catch {}
     }
     // Guardar el username usado para filtrar en localStorage
     localStorage.setItem("usernameFiltrado", username);
@@ -314,7 +292,6 @@ function PanelPrincipal() {
             </button>
             {showUserPanel && (
               <div
-                ref={userPanelRef}
                 style={{
                   position: "absolute",
                   top: 48,
@@ -647,12 +624,7 @@ function PanelPrincipal() {
               <div
                 style={{
                   margin: "20px auto 20px auto",
-                  background:
-                    dockerActive === null
-                      ? "#eab308"
-                      : dockerActive
-                        ? "#1aaf5d"
-                        : "#b91c1c",
+                  background: dockerActive ? "#1aaf5d" : "#b91c1c",
                   color: "#ffffffff",
                   padding: "8px 0px",
                   borderRadius: 12,
@@ -868,7 +840,7 @@ function PanelPrincipal() {
               </div>
             </div>
           )}
-
+          
           {/* Modal para editar la URL del endpoint antes de probar */}
           {showEditEndpointUrlModal && (
             <div className="modal-bg" style={{
@@ -903,7 +875,7 @@ function PanelPrincipal() {
                           'Token-Contract': tokenContract
                         }
                       });
-
+                      
                       const data = await res.json();
                       if (!res.ok) {
                         throw new Error(data.message || `HTTP ${res.status}`);
