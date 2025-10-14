@@ -20,15 +20,6 @@ Cada usuario puede administrar **únicamente sus propios microservicios**, los c
 
 ---
 
-## 👩‍💻 Integrantes 
- 
-- Natalia Carpintero
-- Isabella Arrieta  
-- Paula Núñez  
-- Luis Robles  
-
----
-
 ## ⚙️ Instrucciones de uso
 
 ### 🧱 Requisitos previos
@@ -44,10 +35,7 @@ Cada usuario puede administrar **únicamente sus propios microservicios**, los c
 git clone <url-repositorio>
 cd MicroserviciosNIPL
 
-# 2️⃣ Crear archivo .env en Backend
-nano Backend/.env
-
-# 3️⃣ Construir y ejecutar contenedores
+# 2️⃣ Construir y ejecutar contenedores
 docker compose up --build
 ```
 
@@ -360,11 +348,10 @@ http://localhost:32770/roble_table?tableName=eventos_demo
 ```
 
 ---
-  
-## 📄 Licencia
+## 🤝 Créditos
 
-Este proyecto está bajo la **licencia MIT**.  
-Desarrollado con ♥️ por el equipo de **Oak Services**.
+Este proyecto fue desarrollado por Natalia Carpintero, Isabella Arrieta, Paula Nuñez y Luis Robles para la clase de Estructura del Computador II en la Universidad del Norte.
+
 
 
 
