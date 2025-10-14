@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: oakservices-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./Backend/.env
+    volumes:
+      - ./Backend:/app
+      - ./Backend/microservices.json:/app/microservices.json:ro
+    working_dir: /app
+    environment:
+      - PYTHONUNBUFFERED=1
+    # backend no depende del frontend; se ejecutan independientemente
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: oakservices-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./Frontend/public:/app/public
+      - ./Frontend/src:/app/src
+      - ./Frontend/package.json:/app/package.json
+      - ./Frontend/package-lock.json:/app/package-lock.json
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    command: ["npm", "start"]

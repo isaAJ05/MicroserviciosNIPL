@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Backend
+    container_name: oakservices-backend
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./Backend/.env
+    volumes:
+      - ./Backend/historial:/app/historial
+      - ./Backend/microservices.json:/app/microservices.json
+    networks:
+      - oak-network
+
+  frontend:
+    build:
+      context: ./Frontend
+    container_name: oakservices-frontend
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./Frontend/public:/app/public
+      - ./Frontend/src:/app/src
+      - ./Frontend/package.json:/app/package.json
+      - ./Frontend/package-lock.json:/app/package-lock.json
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_API_URL=http://backend:5000   # 👈 conexión interna al backend
+    depends_on:
+      - backend
+    networks:
+      - oak-network
+
+networks:
+  oak-network:
+    driver: bridge
