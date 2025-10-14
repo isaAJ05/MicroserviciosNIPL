@@ -95,7 +95,7 @@ Accede a:
 Diagrama de arquitectura realizado en Enterprise Architect
 ![Diagrama](./Diagrama_Arquitectura.png)
 
---.
+---
 ## 🔐 Validación automática con Roble
 
 > **¿Qué es Roble?**  
