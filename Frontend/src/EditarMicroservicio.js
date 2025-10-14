@@ -138,6 +138,43 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const userPanelRef = useRef(null)
+  const [showUserPanel, setShowUserPanel] = useState(false)
+  const [userPanelFade, setUserPanelFade] = useState(false)
+  const [user, setUser] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [showRenewTokenToast, setShowRenewTokenToast] = useState(false)
+  
+  //CLIC FUERA DE MENU USER
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (userPanelRef.current && !userPanelRef.current.contains(event.target)) {
+        setShowUserPanel(false)
+      }
+    }
+
+    if (showUserPanel) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showUserPanel])
+ useEffect(() => {
+    function handleClickOutside(event) {
+      if (userPanelRef.current && !userPanelRef.current.contains(event.target)) {
+        setShowUserPanel(false)
+      }
+    }
+
+    if (showUserPanel) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showUserPanel])
 
   useEffect(() => {
     fetch(`http://127.0.0.1:5000/microservices`)
@@ -220,6 +257,8 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
     </div>
   );
 
+ 
+
   return (
     <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{
       height: '100vh',
@@ -234,8 +273,9 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
           title="Volver al panel principal"
           style={{ display: 'flex', alignItems: 'center', gap: 8 }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          {/* Icono de casita */}
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10.5L12 3l9 7.5V21a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 21V10.5zM9 21V12h6v9" />
           </svg>
           <img
             src="/red_logo_OSWIDTH.png"
@@ -244,6 +284,166 @@ function EditarMicroservicio({ id, onBack, lightTheme = false }) {
           />
         </button>
         <h1>Editar Microservicio</h1>
+        <button
+          style={{
+            marginLeft: "auto",
+            background: lightTheme ? "#fff" : "#131313",
+            color: lightTheme ? "#323232" : "#fff",
+            border: "none",
+            borderRadius: 50,
+            padding: 8,
+            fontWeight: 600,
+            fontSize: 18,
+            cursor: "pointer",
+            boxShadow: "none",
+            transition: "background 0.3s, color 0.3s",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+          }}
+          onClick={() => setShowUserPanel((v) => !v)}
+          title="Usuario"
+          onMouseOver={(e) => (e.currentTarget.style.background = "#323232")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "#131313")}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+          </svg>
+        </button>
+        {showUserPanel && (
+          <div
+            ref={userPanelRef}
+            style={{
+              position: "absolute",
+              top: 48,
+              right: 0,
+              background: lightTheme ? "#fff" : "#131313",
+              color: lightTheme ? "#323232" : "#fff",
+              border: `1.5px solid ${lightTheme ? "#9b0018" : "#fff"}`,
+              borderRadius: 8,
+              boxShadow: "0 4px 24px #000a",
+              minWidth: 180,
+              zIndex: 100,
+              padding: 18,
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            <div
+              style={{
+                fontWeight: 600,
+                fontSize: 16,
+                marginBottom: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+              </svg>
+              {(user && (user.username || user.name || user.email)) || "Invitado"}
+            </div>
+            <div
+              style={{ fontSize: 13, color: lightTheme ? "#656d76" : "#b3b3b3", marginBottom: 6, marginLeft: 28 }}
+            >
+              Project ID: {localStorage.getItem("tokenContract") || "N/A"}
+            </div>
+            <button
+              style={{
+                background: "#ff9696",
+                color: "#131313",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 0",
+                fontWeight: 600,
+                fontSize: 15,
+                cursor: "pointer",
+                transition: "background 0.2s",
+                marginBottom: 8,
+              }}
+              onClick={async () => {
+                try {
+                  const email = ((user && (user.username || user.name || user.email)) || "").trim().toLowerCase()
+                  const pass = localStorage.getItem("userPassword") || "" // Obtener la contraseña guardada
+                  const token = localStorage.getItem("tokenContract") || ""
+                  const res = await fetch("http://127.0.0.1:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      email,
+                      password: pass,
+                      token_contract: token,
+                    }),
+                  })
+                  const data = await res.json()
+                  if (res.ok && data.accessToken) {
+                    localStorage.setItem("accessToken", data.accessToken)
+                    setShowRenewTokenToast(true)
+                    setTimeout(() => setShowRenewTokenToast(false), 2000)
+                  } else {
+                    alert(data.error || "No se pudo renovar el token")
+                  }
+                } catch (err) {
+                  alert("No se pudo conectar con el backend")
+                }
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.background = "#f77777")}
+              onMouseOut={(e) => (e.currentTarget.style.background = "#ff9696")}
+            >
+              Renovar token
+            </button>
+            <button
+              style={{
+                background: "#9b0018",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 0",
+                fontWeight: 600,
+                fontSize: 15,
+                cursor: "pointer",
+                transition: "background 0.2s",
+              }}
+              onClick={() => {
+                setIsLoggedIn(false)
+                setUserPanelFade(true)
+                setTimeout(() => {
+                  setShowUserPanel(false)
+                  setUserPanelFade(false)
+                  setUser(null)
+                  localStorage.removeItem("user")
+                }, 350)
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.background = "#680010")}
+              onMouseOut={(e) => (e.currentTarget.style.background = "#9b0018")}
+            >
+              Cerrar sesión
+            </button>
+          </div>
+        )}
       </nav>
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>

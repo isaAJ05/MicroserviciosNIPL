@@ -91,7 +91,7 @@ Accede a:
 5. Haz clic en **Crear** para desplegarlo en un contenedor **Docker**.
 
 ---
-## 📈 Diagrama de arquitectura
+## 🏗️  Diagrama de arquitectura
 Diagrama de arquitectura realizado en Enterprise Architect
 ![Diagrama](./Diagrama_Arquitectura.png)
 

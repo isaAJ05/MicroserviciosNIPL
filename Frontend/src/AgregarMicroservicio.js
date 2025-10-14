@@ -108,7 +108,7 @@ function PythonEditor({ code, setCode, lightTheme }) {
   );
 }
 const ejemplosCodigo = {
-"hola_mundo": `def main(data=None):
+  "hola_mundo": `def main(data=None):
     """
     Devuelve un saludo simple.
     """
@@ -199,16 +199,57 @@ def main(data=None):
 `
 };
 function AgregarMicroservicio({ onBack, lightTheme }) {
-    const savedUser = localStorage.getItem("user");
-let email = "";
-if (savedUser) {
-  try {
-    const userObj = JSON.parse(savedUser);
-    email = userObj.email || "Invitado";
-  } catch (e) {
-    email = "Invitado";
+  const savedUser = localStorage.getItem("user");
+  const [showInfoPage, setShowInfoPage] = useState(false)
+  const [infoSection, setInfoSection] = useState("descripcion")
+  const [microservices, setMicroservices] = useState([])
+  const [editId, setEditId] = useState(null)
+  const userPanelRef = useRef(null)
+  const [showUserPanel, setShowUserPanel] = useState(false)
+  const [userPanelFade, setUserPanelFade] = useState(false)
+  const [user, setUser] = useState(null)
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showAddMicroservice, setShowAddMicroservice] = useState(false)
+  const [newMicroservice, setNewMicroservice] = useState({
+    name: "",
+    processing_type: "",
+    code: "",
+  })
+  const [dockerActive, setDockerActive] = useState(null) // verificacion
+  const [showCodeModal, setShowCodeModal] = useState(false)
+  const [codeToShow, setCodeToShow] = useState("")
+  // Estados de autenticación
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [loginFade, setLoginFade] = useState(false)
+  // Para la sidebar
+  const [isPinned, setIsPinned] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const sidebarRef = useRef(null)
+  // Para modal de respuesta de endpoint
+  const [showEndpointModal, setShowEndpointModal] = useState(false)
+  const [endpointResponse, setEndpointResponse] = useState(null)
+  const [endpointUrl, setEndpointUrl] = useState("")
+  // Para modal personalizado de eliminar
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [microserviceToDelete, setMicroserviceToDelete] = useState(null)
+  // Para toast de éxito (eliminación)
+  const [showSuccessToast, setShowSuccessToast] = useState(false)
+  // Para toast de éxito (renovación de token)
+  const [showRenewTokenToast, setShowRenewTokenToast] = useState(false)
+  // Estado para modal de edición de URL de endpoint
+  const [showEditEndpointUrlModal, setShowEditEndpointUrlModal] = useState(false)
+  const [editEndpointUrlValue, setEditEndpointUrlValue] = useState("")
+
+  let email = "";
+  if (savedUser) {
+    try {
+      const userObj = JSON.parse(savedUser);
+      email = userObj.email || "Invitado";
+    } catch (e) {
+      email = "Invitado";
+    }
   }
-}
   const [microservice, setMicroservice] = useState({
     name: "",
     processing_type: "",
@@ -274,7 +315,7 @@ def main(data=None):
       const token = localStorage.getItem('accessToken');
 
 
-      
+
       const res = await fetch('http://127.0.0.1:5000/microservices', {
         method: 'POST',
         headers: {
@@ -332,6 +373,21 @@ def main(data=None):
   // Determinar si la configuración está completa
   const configCompleta = microservice.name.trim() && microservice.processing_type.trim() && microservice.code.trim();
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (userPanelRef.current && !userPanelRef.current.contains(event.target)) {
+        setShowUserPanel(false)
+      }
+    }
+
+    if (showUserPanel) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [showUserPanel])
+
   return (
     <div className={`app-container${lightTheme ? ' light-theme' : ''}`} style={{
       height: '100vh', // Cambiado de minHeight a height
@@ -346,8 +402,9 @@ def main(data=None):
           title="Volver al panel principal"
           style={{ display: 'flex', alignItems: 'center', gap: 8 }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          {/* Icono de casita */}
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10.5L12 3l9 7.5V21a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 21V10.5zM9 21V12h6v9" />
           </svg>
           <img
             src="/red_logo_OSWIDTH.png"
@@ -356,6 +413,167 @@ def main(data=None):
           />
         </button>
         <h1>Crear Microservicio</h1>
+        <button
+          style={{
+            marginLeft: "auto",
+            background: lightTheme ? "#fff" : "#131313",
+            color: lightTheme ? "#323232" : "#fff",
+            border: "none",
+            borderRadius: 50,
+            padding: 8,
+            fontWeight: 600,
+            fontSize: 18,
+            cursor: "pointer",
+            boxShadow: "none",
+            transition: "background 0.3s, color 0.3s",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+          }}
+          onClick={() => setShowUserPanel((v) => !v)}
+          title="Usuario"
+          onMouseOver={(e) => (e.currentTarget.style.background = "#323232")}
+          onMouseOut={(e) => (e.currentTarget.style.background = "#131313")}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+          </svg>
+        </button>
+        {showUserPanel && (
+          <div
+            ref={userPanelRef}
+            style={{
+              position: "absolute",
+              top: 48,
+              right: 0,
+              background: lightTheme ? "#fff" : "#131313",
+              color: lightTheme ? "#323232" : "#fff",
+              border: `1.5px solid ${lightTheme ? "#9b0018" : "#fff"}`,
+              borderRadius: 8,
+              boxShadow: "0 4px 24px #000a",
+              minWidth: 180,
+              zIndex: 100,
+              padding: 18,
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+            }}
+          >
+            <div
+              style={{
+                fontWeight: 600,
+                fontSize: 16,
+                marginBottom: 2,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+              </svg>
+              {(user && (user.username || user.name || user.email)) || "Invitado"}
+            </div>
+            <div
+              style={{ fontSize: 13, color: lightTheme ? "#656d76" : "#b3b3b3", marginBottom: 6, marginLeft: 28 }}
+            >
+              Project ID: {localStorage.getItem("tokenContract") || "N/A"}
+            </div>
+            <button
+              style={{
+                background: "#ff9696",
+                color: "#131313",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 0",
+                fontWeight: 600,
+                fontSize: 15,
+                cursor: "pointer",
+                transition: "background 0.2s",
+                marginBottom: 8,
+              }}
+              onClick={async () => {
+                try {
+                  const email = ((user && (user.username || user.name || user.email)) || "").trim().toLowerCase()
+                  const pass = localStorage.getItem("userPassword") || "" // Obtener la contraseña guardada
+                  const token = localStorage.getItem("tokenContract") || ""
+                  const res = await fetch("http://127.0.0.1:5000/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      email,
+                      password: pass,
+                      token_contract: token,
+                    }),
+                  })
+                  const data = await res.json()
+                  if (res.ok && data.accessToken) {
+                    localStorage.setItem("accessToken", data.accessToken)
+                    setShowRenewTokenToast(true)
+                    setTimeout(() => setShowRenewTokenToast(false), 2000)
+                  } else {
+                    alert(data.error || "No se pudo renovar el token")
+                  }
+                } catch (err) {
+                  alert("No se pudo conectar con el backend")
+                }
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.background = "#f77777")}
+              onMouseOut={(e) => (e.currentTarget.style.background = "#ff9696")}
+            >
+              Renovar token
+            </button>
+            <button
+              style={{
+                background: "#9b0018",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 0",
+                fontWeight: 600,
+                fontSize: 15,
+                cursor: "pointer",
+                transition: "background 0.2s",
+              }}
+              onClick={() => {
+                setIsLoggedIn(false)
+                setUserPanelFade(true)
+                setTimeout(() => {
+                  setShowUserPanel(false)
+                  setUserPanelFade(false)
+                  setUser(null)
+                  localStorage.removeItem("user")
+                }, 350)
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.background = "#680010")}
+              onMouseOut={(e) => (e.currentTarget.style.background = "#9b0018")}
+            >
+              Cerrar sesión
+            </button>
+          </div>
+        )}
+
       </nav>
 
       <div style={{
@@ -446,7 +664,7 @@ def main(data=None):
                     console.log('[DEBUG] input change name:', e.target.value);
                     setMicroservice(prev => ({ ...prev, name: e.target.value }));
                   }}
-                  
+
                   placeholder="mi_microservicio"
                   style={{
                     width: '95%',
@@ -540,18 +758,18 @@ def main(data=None):
                   fontSize: 11
                 }}>
                   Selecciona un ejemplo para cargar una plantilla de código en el editor.
-                <div style={{
-                  marginTop: 8,
-                  marginBottom: 24,
-                  color: lightTheme ? '#b59b00' : '#ffe066',
-                  background: lightTheme ? '#fffbe6' : '#3a3a1c',
-                  borderRadius: 4,
-                  padding: '7px 10px',
-                  fontWeight: 500,
-                  fontSize: 12
-                }}>
-                  Nota: Todos los microservicios generados validan el token de Roble automáticamente. Si el token es inválido, expirado o falta, la petición será rechazada con el mensaje y código HTTP correspondiente.
-                </div>
+                  <div style={{
+                    marginTop: 8,
+                    marginBottom: 24,
+                    color: lightTheme ? '#b59b00' : '#ffe066',
+                    background: lightTheme ? '#fffbe6' : '#3a3a1c',
+                    borderRadius: 4,
+                    padding: '7px 10px',
+                    fontWeight: 500,
+                    fontSize: 12
+                  }}>
+                    Nota: Todos los microservicios generados validan el token de Roble automáticamente. Si el token es inválido, expirado o falta, la petición será rechazada con el mensaje y código HTTP correspondiente.
+                  </div>
                 </div>
               </div>
               {/* Mensajes de estado */}

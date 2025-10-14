@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "294e4a92b7c4",
+    "name": "microserviciopruebita",
+    "processing_type": "Hola Mundo",
+    "endpoint": "microserviciopruebita",
+    "image_name": "microserviciopruebita",
+    "folder_name": "microserviciopruebita_20251014012646",
+    "port": "32768",
+    "status": "created",
+    "code": "def main(data=None):\n    \"\"\"\n    Devuelve un saludo simple.\n    \"\"\"\n    return {\n        \"status\": \"success\",\n        \"message\": \"Hola mundo desde el microservicio!\"\n    }\n",
+    "user": "bellaarrieta05@gmail.com"
+  }
+]
