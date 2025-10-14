@@ -161,7 +161,7 @@ def generar_codigo_flask(codigo_usuario, endpoint):
     if __name__ == "__main__":
         app.run(host="0.0.0.0", port=8000)
     '''
-# Función para actualizar un microservicio existente
+
 def update_microservice(container_id, name, processing_type, endpoint, code, port=None):
     microservices = load_microservices()
     ms = next((m for m in microservices if m["id"] == container_id), None)

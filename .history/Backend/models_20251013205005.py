@@ -13,13 +13,10 @@ def load_microservices():
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     return []
-
 # Guarda la lista completa de microservicios
 def save_microservices(microservices):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(microservices, f, ensure_ascii=False, indent=2)
-
-# Elimina un microservicio por su ID
 def delete_microservice_by_id(container_id):
     microservices = load_microservices()
     ms = next((m for m in microservices if m["id"] == container_id), None)
@@ -32,8 +29,6 @@ def delete_microservice_by_id(container_id):
         folder_path = os.path.join(base_dir, ms["folder_name"])
         if os.path.exists(folder_path):
             shutil.rmtree(folder_path, ignore_errors=True)
-
-# Función para crear y persistir un microservicio
 def create_and_persist_microservice(name, processing_type, endpoint, code, user):
     image_name = name.lower().replace(" ", "_")
     base_dir = "historial"
@@ -49,13 +44,13 @@ def create_and_persist_microservice(name, processing_type, endpoint, code, user)
 
     # 2. Generar Dockerfile
     dockerfile_content = f"""
-        FROM python:3.10-slim
-        WORKDIR /app
-        COPY main.py /app/main.py
-        RUN pip install flask requests flask-cors
-        EXPOSE 8000
-        CMD ["python", "main.py"]
-        """
+FROM python:3.10-slim
+WORKDIR /app
+COPY main.py /app/main.py
+RUN pip install flask requests flask-cors
+EXPOSE 8000
+CMD ["python", "main.py"]
+"""
     with open(os.path.join(ms_dir, "Dockerfile"), "w", encoding="utf-8") as f:
         f.write(dockerfile_content)
 
@@ -101,67 +96,65 @@ def create_and_persist_microservice(name, processing_type, endpoint, code, user)
     save_microservices(microservices)
 
     return microservice
-
-# Función para generar el código Flask completo
 def generar_codigo_flask(codigo_usuario, endpoint):
     match = re.search(r'def\s+(\w+)\s*\(', codigo_usuario)
     nombre_funcion = match.group(1) if match else "main"
 
     return f'''
-    from flask import Flask, request, jsonify
-    from flask_cors import CORS
-    import requests
-    app = Flask(__name__)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import requests
+app = Flask(__name__)
 
-    CORS(app)
-    {codigo_usuario}
+CORS(app)
+{codigo_usuario}
 
-    @app.route('/{endpoint}', methods=['GET', 'POST'])
-    def process():
-        # Validar token de acceso desde el header Authorization
-        auth_header = request.headers.get('Authorization', '')
-        if not auth_header.startswith('Bearer '):
-            return jsonify({{"status": "error", "message": "Token de autenticación requerido"}}), 401
-        token = auth_header.replace('Bearer ', '').strip()
-        if not token:
-            return jsonify({{"status": "error", "message": "Token vacío"}}), 401
+@app.route('/{endpoint}', methods=['GET', 'POST'])
+def process():
+    # Validar token de acceso desde el header Authorization
+    auth_header = request.headers.get('Authorization', '')
+    if not auth_header.startswith('Bearer '):
+        return jsonify({{"status": "error", "message": "Token de autenticación requerido"}}), 401
+    token = auth_header.replace('Bearer ', '').strip()
+    if not token:
+        return jsonify({{"status": "error", "message": "Token vacío"}}), 401
 
-        token_contract = request.headers.get('Token-Contract') or request.args.get('token_contract')
-        if not token_contract:
-            return jsonify({{"status": "error", "message": "Token contract no recibido"}}), 400
+    token_contract = request.headers.get('Token-Contract') or request.args.get('token_contract')
+    if not token_contract:
+        return jsonify({{"status": "error", "message": "Token contract no recibido"}}), 400
 
-        # Verificar el token con la API de Roble
-        res = requests.get(
-            f"https://roble-api.openlab.uninorte.edu.co/auth/{{token_contract}}/verify-token",
-            headers={{"Authorization": f"Bearer {{token}}"}}
-        )
-        verificacion = res.json()
-        if res.status_code == 401:
-            return jsonify({{"status": "error", "message": "Token inválido o expirado"}}), 401
-        elif res.status_code == 403:
-            return jsonify({{"status": "error", "message": "Acceso denegado"}}), 403
-        elif res.status_code != 200 or not verificacion.get("valid", True):
-            return jsonify({{"status": "error", "message": f"Error de autenticación Roble: {{res.status_code}}"}}), res.status_code
+    # Verificar el token con la API de Roble
+    res = requests.get(
+        f"https://roble-api.openlab.uninorte.edu.co/auth/{{token_contract}}/verify-token",
+        headers={{"Authorization": f"Bearer {{token}}"}}
+    )
+    verificacion = res.json()
+    if res.status_code == 401:
+        return jsonify({{"status": "error", "message": "Token inválido o expirado"}}), 401
+    elif res.status_code == 403:
+        return jsonify({{"status": "error", "message": "Acceso denegado"}}), 403
+    elif res.status_code != 200 or not verificacion.get("valid", True):
+        return jsonify({{"status": "error", "message": f"Error de autenticación Roble: {{res.status_code}}"}}), res.status_code
 
-        # Construir el diccionario data para pasar a main
-        if request.method == 'POST':
-            data = request.get_json() or {{}}
-        else:
-            data = dict(request.args)
-        data['roble_token'] = token
-        data['token_contract'] = token_contract
+    # Construir el diccionario data para pasar a main
+    if request.method == 'POST':
+        data = request.get_json() or {{}}
+    else:
+        data = dict(request.args)
+    data['roble_token'] = token
+    data['token_contract'] = token_contract
 
-        # Ejecutar la función principal del usuario
-        try:
-            resultado = {nombre_funcion}(data)
-            return jsonify(resultado)
-        except Exception as e:
-            return jsonify({{"status": "error", "message": str(e)}}), 500
+    # Ejecutar la función principal del usuario
+    try:
+        resultado = {nombre_funcion}(data)
+        return jsonify(resultado)
+    except Exception as e:
+        return jsonify({{"status": "error", "message": str(e)}}), 500
 
-    if __name__ == "__main__":
-        app.run(host="0.0.0.0", port=8000)
-    '''
-# Función para actualizar un microservicio existente
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
+'''
+
 def update_microservice(container_id, name, processing_type, endpoint, code, port=None):
     microservices = load_microservices()
     ms = next((m for m in microservices if m["id"] == container_id), None)
