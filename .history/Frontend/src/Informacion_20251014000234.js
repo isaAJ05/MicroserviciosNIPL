@@ -62,11 +62,13 @@ function Informacion({onBack}) {
                     <h3>🚀 Configuración rápida</h3>
                     <pre style={{ background: '#222', color: '#fff', padding: 12, borderRadius: 8, fontSize: 15, overflowX: 'auto' }}>
                         {`# 1️⃣ Clonar el repositorio
-git clone https://github.com/isaAJ05/Oak-Services-NIPL.git
-cd Oak-Services-NIPL
 
-# 2️⃣ Construir y ejecutar contenedores
-docker compose up --build`}
+git clone https://github.com/isaAJ05/Oak-Services-NIPL.git
+                            cd Oak-Services-NIPL
+
+                            # 2️⃣ Construir y ejecutar contenedores
+                            
+                            docker compose up --build`}
                     </pre>
                     <p>Accede a:</p>
                     <ul>
@@ -223,12 +225,12 @@ if __name__ == "__main__":
                     <b>Código:</b>
                     <pre style={{ background: '#222', color: '#fff', padding: 12, borderRadius: 8, fontSize: 14, overflowX: 'auto' }}>
 {`def main(data=None):
-    """
+    \"\"\"
     Devuelve un saludo simple.
-    """
+    \"\"\"
     return {
-        "status": "success",
-        "message": "Hola mundo desde el microservicio!"
+        \"status\": \"success\",
+        \"message\": \"Hola mundo desde el microservicio!\"
     }`}
                     </pre>
                     <b>Respuesta:</b>
@@ -241,33 +243,33 @@ http://localhost:32768/hola
 }`}
                     </pre>
                     <h4>2️⃣ Suma de dos números</h4>
-                                        <b>Código:</b>
-                                        <pre style={{ background: '#222', color: '#fff', padding: 12, borderRadius: 8, fontSize: 14, overflowX: 'auto' }}>
+                    <b>Código:</b>
+                    <pre style={{ background: '#222', color: '#fff', padding: 12, borderRadius: 8, fontSize: 14, overflowX: 'auto' }}>
 {`# Microservicio Suma
 # Los parámetros 'a' y 'b' se pasan en la URL como /?a=5&b=3
 
 def main(data=None):
-        """
-        Suma dos números recibidos por parámetro.
-        Args:
-                data: dict con 'a' y 'b'
-        Returns:
-                dict con el resultado de la suma
-        """
-        try:
-                a = float(data.get("a", 0))
-                b = float(data.get("b", 0))
-                resultado = a + b
-                return {
-                        "status": "success",
-                        "suma": resultado,
-                        "inputs": {"a": a, "b": b}
-                }
-        except Exception as e:
-                return {
-                        "status": "error",
-                        "message": f"Error: {str(e)}"
-                }`}
+  \"\"\"
+  Suma dos números recibidos por parámetro.
+  Args:
+    data: dict con 'a' y 'b'
+  Returns:
+    dict con el resultado de la suma
+  \"\"\"
+  try:
+    a = float(data.get("a", 0))
+    b = float(data.get("b", 0))
+    resultado = a + b
+    return {
+      "status": "success",
+      "suma": resultado,
+      "inputs": {"a": a, "b": b}
+    }
+  except Exception as e:
+    return {
+      "status": "error",
+      "message": f"Error: {str(e)}"
+    }`}
                     </pre>
                     <b>Respuesta:</b>
                     <pre style={{ background: '#222', color: '#fff', padding: 12, borderRadius: 8, fontSize: 14, overflowX: 'auto' }}>
@@ -291,9 +293,9 @@ http://localhost:32769/suma?a=5&b=3
 # El token de acceso y el token_contract se envían por header.
 
 def main(data=None):
-    """
+    \"\"\"
     Consulta una tabla en Roble usando el token recibido por header y el token_contract recibido por header o parámetro.
-    """
+    \"\"\"
     import requests
     from flask import request
 

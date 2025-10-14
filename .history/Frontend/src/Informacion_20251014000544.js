@@ -293,7 +293,7 @@ http://localhost:32769/suma?a=5&b=3
 def main(data=None):
     """
     Consulta una tabla en Roble usando el token recibido por header y el token_contract recibido por header o parámetro.
-    """
+    \"\"\"
     import requests
     from flask import request
 
