@@ -154,16 +154,16 @@ def process():
     data['roble_token'] = token
     data['token_contract'] = token_contract
 
-    # Ejecutar la función principal del usuario
-    try:
-        resultado = {nombre_funcion}(data)
-        return jsonify(resultado)
-    except Exception as e:
-        return jsonify({{"status": "error", "message": str(e)}}), 500
+        # Ejecutar la función principal del usuario
+        try:
+            resultado = {nombre_funcion}(data)
+            return jsonify(resultado)
+        except Exception as e:
+            return jsonify({{"status": "error", "message": str(e)}}), 500
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
-'''
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=8000)
+    '''
 # Función para actualizar un microservicio existente
 def update_microservice(container_id, name, processing_type, endpoint, code, port=None):
     microservices = load_microservices()
