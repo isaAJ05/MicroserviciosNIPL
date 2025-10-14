@@ -44,10 +44,7 @@ Cada usuario puede administrar **únicamente sus propios microservicios**, los c
 git clone <url-repositorio>
 cd MicroserviciosNIPL
 
-# 2️⃣ Crear archivo .env en Backend
-nano Backend/.env
-
-# 3️⃣ Construir y ejecutar contenedores
+# 2️⃣ Construir y ejecutar contenedores
 docker compose up --build
 ```
 
