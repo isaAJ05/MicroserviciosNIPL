@@ -32,8 +32,8 @@ Cada usuario puede administrar **únicamente sus propios microservicios**, los c
 
 ```bash
 # 1️⃣ Clonar el repositorio
-git clone <url-repositorio>
-cd MicroserviciosNIPL
+git clone https://github.com/isaAJ05/Oak-Services-NIPL.git
+cd Oak-Services-NIPL
 
 # 2️⃣ Construir y ejecutar contenedores
 docker compose up --build
