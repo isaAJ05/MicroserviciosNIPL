@@ -91,7 +91,12 @@ Accede a:
 5. Haz clic en **Crear** para desplegarlo en un contenedor **Docker**.
 
 ---
+## 📈 Diagrama de arquitectura
+./Diagrama_Arquitectura.png
+Diagrama de arquitectura realizado en Enterprise Architect
+![Diagrama](./Diagrama_Arquitectura.png)
 
+--.
 ## 🔐 Validación automática con Roble
 
 > **¿Qué es Roble?**  
@@ -355,3 +360,6 @@ Este proyecto fue desarrollado por Natalia Carpintero, Isabella Arrieta, Paula N
 
 
 
+
+
+[./Diagrama_Arquitectura.png]: ./Diagrama_Arquitectura.png
