@@ -92,7 +92,6 @@ Accede a:
 
 ---
 ## 📈 Diagrama de arquitectura
-./Diagrama_Arquitectura.png
 Diagrama de arquitectura realizado en Enterprise Architect
 ![Diagrama](./Diagrama_Arquitectura.png)
 
