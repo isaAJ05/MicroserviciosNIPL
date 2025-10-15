@@ -386,9 +386,9 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                       });
                       const data = await res.json();
                       if (res.ok && data.accessToken) {
-                        sessionStorage.setItem("accessToken", data.accessToken);
-                        sessionStorage.setItem("tokenContract", token);
-                        sessionStorage.setItem("userPassword", "");
+                        localStorage.setItem("accessToken", data.accessToken);
+                        localStorage.setItem("tokenContract", token);
+                        localStorage.setItem("userPassword", "");
                         handleLogin({ email: "Invitado" });
                         setIsLoggedIn(true);
                         setLoginFade(false);

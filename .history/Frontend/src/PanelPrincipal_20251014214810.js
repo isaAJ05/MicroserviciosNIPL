@@ -13,7 +13,7 @@ function PanelPrincipal() {
   const [microservices, setMicroservices] = useState([])
   const [editId, setEditId] = useState(null)
   const [lightTheme, setLightTheme] = useState(() => {
-    const saved = sessionStorage.getItem("lightTheme")
+    const saved = localStorage.getItem("lightTheme")
     return saved === "true"
   })
   const userPanelRef = useRef(null)
@@ -1027,7 +1027,7 @@ function PanelPrincipal() {
                     setShowEndpointModal(true)
                     try {
                       const token = (sessionStorage.getItem("accessToken") || "").trim()
-                      const tokenContract = (sessionStorage.getItem("tokenContract") || "").trim()
+                      const tokenContract = (localStorage.getItem("tokenContract") || "").trim()
                       const res = await fetch(customUrl, {
                         method: "GET",
                         headers: {

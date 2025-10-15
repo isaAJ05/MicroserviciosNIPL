@@ -13,7 +13,7 @@ function PanelPrincipal() {
   const [microservices, setMicroservices] = useState([])
   const [editId, setEditId] = useState(null)
   const [lightTheme, setLightTheme] = useState(() => {
-    const saved = sessionStorage.getItem("lightTheme")
+    const saved = localStorage.getItem("lightTheme")
     return saved === "true"
   })
   const userPanelRef = useRef(null)
@@ -634,8 +634,8 @@ function PanelPrincipal() {
                             cursor: "pointer",
                           }}
                           onClick={async () => {
-                            const token = (sessionStorage.getItem("accessToken") || "").trim()
-                            const tokenContract = (sessionStorage.getItem("tokenContract") || "").trim()
+                            const token = (localStorage.getItem("accessToken") || "").trim()
+                            const tokenContract = (localStorage.getItem("tokenContract") || "").trim()
                             let url = `http://localhost:${microservice.port}/${microservice.endpoint}`
                             if (microservice.processing_type === "Suma") {
                               url += `?a=5&b=3`
@@ -1026,8 +1026,8 @@ function PanelPrincipal() {
                     setEndpointResponse("Cargando...")
                     setShowEndpointModal(true)
                     try {
-                      const token = (sessionStorage.getItem("accessToken") || "").trim()
-                      const tokenContract = (sessionStorage.getItem("tokenContract") || "").trim()
+                      const token = (localStorage.getItem("accessToken") || "").trim()
+                      const tokenContract = (localStorage.getItem("tokenContract") || "").trim()
                       const res = await fetch(customUrl, {
                         method: "GET",
                         headers: {

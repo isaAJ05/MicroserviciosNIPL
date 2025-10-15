@@ -112,9 +112,10 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
 
                 const data = await res.json();
                 if (res.ok && data.accessToken) {
+                  // Guardar tokens y usuario en sessionStorage para que no persistan al cerrar la pestaña
                   sessionStorage.setItem("accessToken", data.accessToken);
                   sessionStorage.setItem("tokenContract", token);
-                  sessionStorage.setItem("userPassword", pass); // Guardar contraseña
+                  // No guardar la contraseña en el navegador por seguridad
                   handleLogin({ email: user });
                   setIsLoggedIn(true);
                   setLoginFade(false);
@@ -385,10 +386,10 @@ export default function Login({ isLoggedIn, setIsLoggedIn, handleLogin }) {
                         }),
                       });
                       const data = await res.json();
-                      if (res.ok && data.accessToken) {
+                        if (res.ok && data.accessToken) {
                         sessionStorage.setItem("accessToken", data.accessToken);
                         sessionStorage.setItem("tokenContract", token);
-                        sessionStorage.setItem("userPassword", "");
+                        // No guardar contraseña
                         handleLogin({ email: "Invitado" });
                         setIsLoggedIn(true);
                         setLoginFade(false);

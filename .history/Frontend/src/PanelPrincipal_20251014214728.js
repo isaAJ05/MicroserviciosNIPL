@@ -13,7 +13,7 @@ function PanelPrincipal() {
   const [microservices, setMicroservices] = useState([])
   const [editId, setEditId] = useState(null)
   const [lightTheme, setLightTheme] = useState(() => {
-    const saved = sessionStorage.getItem("lightTheme")
+    const saved = localStorage.getItem("lightTheme")
     return saved === "true"
   })
   const userPanelRef = useRef(null)
@@ -160,7 +160,7 @@ function PanelPrincipal() {
   // Función para refrescar la lista de microservicios
   const refreshMicroservices = () => {
     // Obtener usuario actual (si no hay, usar 'Invitado')
-    const savedUser = sessionStorage.getItem("user")
+    const savedUser = localStorage.getItem("user")
     let username = "Invitado"
     if (savedUser) {
       try {
@@ -168,8 +168,8 @@ function PanelPrincipal() {
         username = userObj.username || userObj.name || userObj.email || "Invitado"
       } catch { }
     }
-    // Guardar el username usado para filtrar en sessionStorage
-    sessionStorage.setItem("usernameFiltrado", username)
+    // Guardar el username usado para filtrar en localStorage
+    localStorage.setItem("usernameFiltrado", username)
     console.log("[refreshMicroservices] Usuario usado para filtrar:", username)
     fetch("http://127.0.0.1:5000/microservices", {
       headers: {
@@ -350,7 +350,7 @@ function PanelPrincipal() {
                 <div
                   style={{ fontSize: 13, color: lightTheme ? "#656d76" : "#b3b3b3", marginBottom: 6, marginLeft: 28 }}
                 >
-                  Project ID: {sessionStorage.getItem("tokenContract") || "N/A"}
+                  Project ID: {localStorage.getItem("tokenContract") || "N/A"}
                 </div>
                 <button
                   style={{
@@ -368,8 +368,8 @@ function PanelPrincipal() {
                   onClick={async () => {
                     try {
                       const email = ((user && (user.username || user.name || user.email)) || "").trim().toLowerCase()
-                      const pass = sessionStorage.getItem("userPassword") || "" // Obtener la contraseña guardada
-                      const token = sessionStorage.getItem("tokenContract") || ""
+                      const pass = localStorage.getItem("userPassword") || "" // Obtener la contraseña guardada
+                      const token = localStorage.getItem("tokenContract") || ""
                       const res = await fetch("http://127.0.0.1:5000/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -381,7 +381,7 @@ function PanelPrincipal() {
                       })
                       const data = await res.json()
                       if (res.ok && data.accessToken) {
-                        sessionStorage.setItem("accessToken", data.accessToken)
+                        localStorage.setItem("accessToken", data.accessToken)
                         setShowRenewTokenToast(true)
                         setTimeout(() => setShowRenewTokenToast(false), 2000)
                       } else {
@@ -415,7 +415,7 @@ function PanelPrincipal() {
                       setShowUserPanel(false)
                       setUserPanelFade(false)
                       setUser(null)
-                      sessionStorage.removeItem("user")
+                      localStorage.removeItem("user")
                     }, 350)
                   }}
                   onMouseOver={(e) => (e.currentTarget.style.background = "#680010")}
@@ -634,8 +634,8 @@ function PanelPrincipal() {
                             cursor: "pointer",
                           }}
                           onClick={async () => {
-                            const token = (sessionStorage.getItem("accessToken") || "").trim()
-                            const tokenContract = (sessionStorage.getItem("tokenContract") || "").trim()
+                            const token = (localStorage.getItem("accessToken") || "").trim()
+                            const tokenContract = (localStorage.getItem("tokenContract") || "").trim()
                             let url = `http://localhost:${microservice.port}/${microservice.endpoint}`
                             if (microservice.processing_type === "Suma") {
                               url += `?a=5&b=3`
@@ -1026,8 +1026,8 @@ function PanelPrincipal() {
                     setEndpointResponse("Cargando...")
                     setShowEndpointModal(true)
                     try {
-                      const token = (sessionStorage.getItem("accessToken") || "").trim()
-                      const tokenContract = (sessionStorage.getItem("tokenContract") || "").trim()
+                      const token = (localStorage.getItem("accessToken") || "").trim()
+                      const tokenContract = (localStorage.getItem("tokenContract") || "").trim()
                       const res = await fetch(customUrl, {
                         method: "GET",
                         headers: {

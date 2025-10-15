@@ -203,7 +203,7 @@ function Informacion({ onBack, section, onSectionChange, isHistoryOpen, setIsHis
                   })
                   const data = await res.json()
                   if (res.ok && data.accessToken) {
-                    sessionStorage.setItem("accessToken", data.accessToken)
+                    localStorage.setItem("accessToken", data.accessToken)
                     setShowRenewTokenToast(true)
                     setTimeout(() => setShowRenewTokenToast(false), 2000)
                   } else {
@@ -237,7 +237,7 @@ function Informacion({ onBack, section, onSectionChange, isHistoryOpen, setIsHis
                   setShowUserPanel(false)
                   setUserPanelFade(false)
                   setUser(null)
-                  sessionStorage.removeItem("user")
+                  localStorage.removeItem("user")
                 }, 350)
               }}
               onMouseOver={(e) => (e.currentTarget.style.background = "#680010")}

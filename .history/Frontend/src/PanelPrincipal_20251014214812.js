@@ -13,7 +13,7 @@ function PanelPrincipal() {
   const [microservices, setMicroservices] = useState([])
   const [editId, setEditId] = useState(null)
   const [lightTheme, setLightTheme] = useState(() => {
-    const saved = sessionStorage.getItem("lightTheme")
+    const saved = localStorage.getItem("lightTheme")
     return saved === "true"
   })
   const userPanelRef = useRef(null)

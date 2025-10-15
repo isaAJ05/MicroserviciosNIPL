@@ -563,7 +563,7 @@ def main(data=None):
                   setShowUserPanel(false)
                   setUserPanelFade(false)
                   setUser(null)
-                  sessionStorage.removeItem("user")
+                  localStorage.removeItem("user")
                 }, 350)
               }}
               onMouseOver={(e) => (e.currentTarget.style.background = "#680010")}

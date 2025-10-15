@@ -498,7 +498,7 @@ def main(data=None):
             <div
               style={{ fontSize: 13, color: lightTheme ? "#656d76" : "#b3b3b3", marginBottom: 6, marginLeft: 28 }}
             >
-              Project ID: {sessionStorage.getItem("tokenContract") || "N/A"}
+              Project ID: {localStorage.getItem("tokenContract") || "N/A"}
             </div>
             <button
               style={{
@@ -516,8 +516,8 @@ def main(data=None):
               onClick={async () => {
                 try {
                   const email = ((user && (user.username || user.name || user.email)) || "").trim().toLowerCase()
-                  const pass = sessionStorage.getItem("userPassword") || "" // Obtener la contraseña guardada
-                  const token = sessionStorage.getItem("tokenContract") || ""
+                  const pass = localStorage.getItem("userPassword") || "" // Obtener la contraseña guardada
+                  const token = localStorage.getItem("tokenContract") || ""
                   const res = await fetch("http://127.0.0.1:5000/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -529,7 +529,7 @@ def main(data=None):
                   })
                   const data = await res.json()
                   if (res.ok && data.accessToken) {
-                    sessionStorage.setItem("accessToken", data.accessToken)
+                    localStorage.setItem("accessToken", data.accessToken)
                     setShowRenewTokenToast(true)
                     setTimeout(() => setShowRenewTokenToast(false), 2000)
                   } else {
@@ -563,7 +563,7 @@ def main(data=None):
                   setShowUserPanel(false)
                   setUserPanelFade(false)
                   setUser(null)
-                  sessionStorage.removeItem("user")
+                  localStorage.removeItem("user")
                 }, 350)
               }}
               onMouseOver={(e) => (e.currentTarget.style.background = "#680010")}

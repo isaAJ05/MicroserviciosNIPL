@@ -237,7 +237,7 @@ function Informacion({ onBack, section, onSectionChange, isHistoryOpen, setIsHis
                   setShowUserPanel(false)
                   setUserPanelFade(false)
                   setUser(null)
-                  sessionStorage.removeItem("user")
+                  localStorsessionStorageage.removeItem("user")
                 }, 350)
               }}
               onMouseOver={(e) => (e.currentTarget.style.background = "#680010")}
